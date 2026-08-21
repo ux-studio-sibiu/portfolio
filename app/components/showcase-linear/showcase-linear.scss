@@ -1,0 +1,772 @@
+@use "@/app/styles/breakpoints" as *;
+
+// Linear showcase — two-pane track, loud typography, a single linear left
+// column. Black on white throughout; the only inverted surfaces are the View
+// more buttons, which fill and then hollow out on hover.
+.nsc-showcase-linear {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh; // fallback for browsers without svh
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-bg);
+
+  // Structural weights for this page — heavier than the hairlines in v1.
+  --rule: 2px solid var(--color-ink);
+  --rule-hair: 1px solid var(--color-faint);
+
+  .showcase-track {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+
+    &.is-detail {
+      transform: translateX(-50%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .showcase-pane {
+    flex: 0 0 50%;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .pane-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // --- Bands ----------------------------------------------------------------
+
+  .band {
+    padding: 5rem var(--gutter);
+    border-top: var(--rule);
+
+    &:first-child {
+      border-top: 0;
+    }
+
+    @include respond-to("tablet") {
+      padding: 7rem var(--gutter);
+    }
+  }
+
+  .band-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .band-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .band-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  // --- Masthead -------------------------------------------------------------
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100svh;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .masthead-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .masthead-name {
+    margin: auto 0;
+    // Edge to edge on purpose — the type is the layout.
+    font-size: clamp(3.5rem, 15vw, 14rem);
+    line-height: 0.82;
+    letter-spacing: -0.055em;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .masthead-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.03em;
+
+    > span {
+      display: block;
+    }
+  }
+
+  .masthead-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  // --- Statement ------------------------------------------------------------
+
+  .statement-copy {
+    margin: 0;
+    max-width: 22ch;
+    font-size: clamp(1.75rem, 5.5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+
+  // --- Marquee --------------------------------------------------------------
+
+  .marquee {
+    overflow: hidden;
+    border-top: var(--rule);
+    border-bottom: var(--rule);
+    padding: 0.75rem 0;
+    white-space: nowrap;
+  }
+
+  .marquee-track {
+    display: inline-flex;
+    // Two identical copies; shifting by half the track loops seamlessly.
+    animation: marquee-slide 26s linear infinite;
+    font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    text-transform: uppercase;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  // --- Work list ------------------------------------------------------------
+
+  .work-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule);
+  }
+
+  .work-row {
+    border-bottom: var(--rule-hair);
+  }
+
+  .row-trigger {
+    display: block;
+    width: 100%;
+    padding: 2rem 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover .row-title,
+    &:focus-visible .row-title {
+      transform: translateX(0.75rem);
+    }
+
+    &:hover .row-more,
+    &:focus-visible .row-more {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    &:hover .row-arrow,
+    &:focus-visible .row-arrow {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  .row-index {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .row-title {
+    display: block;
+    padding: 0.5rem 0 1rem;
+    font-size: clamp(2.25rem, 7vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    transition: transform 0.35s cubic-bezier(0.2, 0, 0.1, 1);
+  }
+
+  .row-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .row-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  // Filled black by default so the affordance is unmistakable; hollows out on
+  // hover rather than lighting up.
+  .row-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .row-arrow,
+  .back-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+
+  // --- Projects ---------------------------------------------------------
+
+  // Rails run the full height of the list, behind every entry. Positioned
+  // relative only — a transform here would break the sticky thumbnails inside.
+  .project-scroll {
+    position: relative;
+    border-top: var(--rule);
+    padding-left: 2rem;
+
+    @include respond-to("tablet") {
+      padding-left: 0;
+    }
+  }
+
+  .scroll-rail,
+  .scroll-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+
+    @include respond-to("tablet") {
+      // Centre of the gap between the thumbnail column and the copy.
+      left: calc(16rem + 1.75rem);
+      margin-left: -1px;
+    }
+  }
+
+  .scroll-rail {
+    bottom: 0;
+    background: var(--color-faint);
+  }
+
+  .scroll-progress {
+    height: 100%;
+    background: var(--color-ink);
+    transform-origin: top center;
+    // GSAP scrubs this to 1; without JS only the static rail shows.
+    transform: scaleY(0);
+  }
+
+  // The visual column stretches to the full entry height (grid default), which
+  // is what gives the sticky thumbnail inside exactly one entry of travel.
+  .scroll-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 2.5rem 0;
+
+    @include respond-to("tablet") {
+      grid-template-columns: minmax(0, 16rem) 1fr;
+      gap: 3.5rem;
+      padding: 4rem 0;
+      // The copy alone is shorter than the thumbnail, which would leave the
+      // sticky image nothing to hold through. Give each entry a real share of
+      // the viewport so the pin has travel and reads as deliberate.
+      min-height: 65svh;
+    }
+  }
+
+  // No transform, filter or overflow here — any of them would break the sticky
+  // child below.
+  .entry-visual {
+    min-width: 0;
+  }
+
+  .visual-sticky {
+    position: sticky;
+    top: 1.5rem;
+
+    @include respond-to("tablet") {
+      top: 2.5rem;
+    }
+  }
+
+
+  // Flat placeholder block — swap for an <Image> once there are real shots.
+  .entry-thumb {
+    position: relative;
+    width: clamp(9rem, 26vw, 16rem);
+    aspect-ratio: 4 / 3;
+    background: var(--color-wash);
+    border: var(--rule);
+  }
+
+  .thumb-index {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .entry-title {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+  }
+
+  .entry-role {
+    margin: 0.65rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .entry-summary {
+    margin: 1.25rem 0 0;
+    max-width: 46ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  .entry-points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: 52ch;
+
+    li {
+      position: relative;
+      padding-left: 1.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-muted);
+
+      // Square bullet, in keeping with the rail markers.
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0.55em;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        background: var(--color-ink);
+      }
+    }
+  }
+
+  .entry-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    // Sits at the right edge of the copy column, below the description.
+    align-self: flex-end;
+    margin-top: 2rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    &:hover .row-arrow,
+    &:focus-visible .row-arrow {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  // --- Capabilities ---------------------------------------------------------
+
+  .cap-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: var(--rule);
+
+    @include respond-to("tablet") {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cap-item {
+    padding: 2rem 0;
+    border-bottom: var(--rule-hair);
+
+    @include respond-to("tablet") {
+      padding: 2.5rem 2rem 2.5rem 0;
+
+      // Vertical rule between the two columns.
+      &:nth-child(2n) {
+        padding-left: 2rem;
+        padding-right: 0;
+        border-left: var(--rule-hair);
+      }
+    }
+  }
+
+  .cap-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .cap-title {
+    margin: 0.75rem 0 0.75rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+
+  .cap-copy {
+    margin: 0;
+    max-width: 34ch;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  // --- Process --------------------------------------------------------------
+
+  .step-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 2.5rem 0;
+    border-bottom: var(--rule-hair);
+
+    @include respond-to("tablet") {
+      grid-template-columns: 8rem 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .step-index {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+  }
+
+  .step-title {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+
+  .step-copy {
+    margin: 0;
+    max-width: 46ch;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+
+  // --- Recognition ----------------------------------------------------------
+
+  .client-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule);
+  }
+
+  .client {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: var(--rule-hair);
+    font-size: clamp(1.5rem, 4vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+
+  .client-year {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  // --- Contact --------------------------------------------------------------
+
+  .contact-label {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .contact-mail {
+    display: block;
+    font-size: clamp(1.75rem, 8vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+    // Word-breaks rather than overflowing the pane on narrow screens.
+    overflow-wrap: anywhere;
+    border-bottom: 0.08em solid var(--color-ink);
+    padding-bottom: 0.08em;
+  }
+
+  .contact-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  // --- Detail pane ----------------------------------------------------------
+
+  .detail-pane .pane-scroll {
+    padding: 0 var(--gutter) 5rem;
+  }
+
+  .detail-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 0 1rem;
+    background: var(--color-bg);
+    border-bottom: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover .back-arrow,
+    &:focus-visible .back-arrow {
+      transform: translateX(-0.35rem);
+    }
+  }
+
+  .detail-count {
+    color: var(--color-muted);
+  }
+
+  .detail-title {
+    margin: 3.5rem 0 0;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+    font-size: clamp(2.5rem, 10vw, 8rem);
+    line-height: 0.85;
+    letter-spacing: -0.055em;
+    font-weight: 800;
+    text-transform: uppercase;
+
+    > span {
+      display: block;
+    }
+  }
+
+  .detail-figure {
+    margin-top: 2.5rem;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--color-wash);
+  }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-top: 3rem;
+
+    @include respond-to("tablet") {
+      grid-template-columns: 1fr 1.5fr;
+      gap: 4rem;
+    }
+  }
+
+  .detail-facts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-self: start;
+    border-top: var(--rule);
+    padding-top: 1rem;
+
+    .fact {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    dt {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1.0625rem;
+      font-weight: 600;
+    }
+  }
+
+  .detail-copy {
+    max-width: 40rem;
+
+    p {
+      margin: 0 0 1.25rem;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+
+    p:first-child {
+      font-size: clamp(1.375rem, 2.6vw, 2rem);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      font-weight: 600;
+    }
+  }
+
+  .detail-visit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease;
+
+    &:hover {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+  }
+}
+
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}

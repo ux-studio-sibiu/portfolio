@@ -1,0 +1,88 @@
+@use "breakpoints" as *;
+@use "modern-normalize" as *;
+
+:root {
+  // White paper, black ink, one grey. No accent colour by design.
+  --color-bg: #ffffff;
+  --color-ink: #000000;
+  --color-muted: #737373;
+  --color-line: #000000;
+  --color-faint: #d4d4d4;
+  --color-wash: #f4f4f2;
+
+  // Loaded via next/font in layout.tsx.
+  --font-sans: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --gutter: 1.25rem;
+
+  @include respond-to("tablet") {
+    --gutter: 2rem;
+  }
+
+  @include respond-to("desktop") {
+    --gutter: 2.75rem;
+  }
+}
+
+html {
+  min-height: 100%;
+  width: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-faint) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-faint);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  // The showcase is a fixed, self-scrolling shell — the document itself never
+  // scrolls, so lock it here rather than fighting it per component.
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-bg);
+}
+
+// Micro-label: uppercase mono, used for every meta / eyebrow line in the site.
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.desktop-only { @include respond-to-max("tablet") { display: none; } }
+.mobile-only  { @include respond-to("tablet")     { display: none; } }

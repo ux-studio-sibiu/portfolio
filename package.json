@@ -1,0 +1,32 @@
+{
+  "name": "web-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.13.0",
+    "next": "^16.2.7",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "sass": "^1.100.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^6.0.3"
+  },
+  "browserslist": [
+    "iOS >= 15.4",
+    "Safari >= 15.4",
+    "Chrome >= 64",
+    "Firefox >= 67",
+    "Edge >= 79"
+  ]
+}
