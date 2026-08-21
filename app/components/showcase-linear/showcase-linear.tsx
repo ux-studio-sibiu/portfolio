@@ -355,10 +355,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               {/* Tools. Cards carry no logo yet — the copy stands on its own,
                   and a mark can drop in above the title later. */}
               <section className="band tools">
-                <div className="band-label">
+                {/* <div className="band-label">
                   <h2 className="band-title">Tools</h2>
                   <span className="band-count">08</span>
-                </div>
+                </div> */}
 
                 <div className="band-content">
                   <ul className="tool-grid">
@@ -411,12 +411,13 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
                       <div className="entry-visual">
                         <div className="visual-sticky">
                           {/* The image opens the project too — same target as the
-                              View more button, so the obvious click works. */}
+                              View project button, so the obvious click works. */}
                           <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}`} onClick={() => openItem(idx)} aria-label={`Open ${child.props.title}`}>
                             {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 18rem, (min-width: 1024px) 14rem, 10rem" placeholder="blur" className="thumb-img" />}
                             {/* <span className="thumb-index">{num(idx)}</span> */}
                           </button>
                           {/* <span className="visual-marker" aria-hidden="true" /> */}
+
                         </div>
                       </div>
 
@@ -427,8 +428,9 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
                           <p className="entry-summary">{child.props.summary}</p>
                           {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
                         </div>
+
                         <button type="button" className="entry-more" onClick={() => openItem(idx)}>
-                          View more <span className="row-arrow" aria-hidden="true">&rarr;</span>
+                          View project <span className="row-arrow" aria-hidden="true">&rarr;</span>
                         </button>
                       </div>
                     </article>

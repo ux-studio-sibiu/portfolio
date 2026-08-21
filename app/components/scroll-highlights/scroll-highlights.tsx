@@ -2,46 +2,91 @@
 
 import { useEffect } from "react";
 
-// Adds .is-lit to every .highlight-on-scroll the first time it comes into view,
-// then stops watching it — so the highlight sweeps once and never reverts on the
-// way back up. The animation itself is CSS (see .highlight-on-scroll in
-// globals.scss); this only decides when it starts.
+// Scrubs .highlight-on-scroll spans: each phrase's band tracks scroll position
+// through a --lit custom property (0 to 1), so it sweeps forwards on the way
+// down and unwinds on the way back up. The sweep itself is CSS — see
+// .highlight-on-scroll in globals.scss; this only supplies the progress.
 //
-// An IntersectionObserver is deliberate: it accounts for clipping by scrolling
-// ancestors, so it works inside the panes without being told which element
-// scrolls. ScrollTrigger would need an explicit `scroller` per pane, and the
-// scroller differs between mobile and desktop here.
+// It stands down entirely where the browser can run the same sweep natively off
+// a view() timeline, which is cheaper and off the main thread.
+//
+// Two observers rather than one handler over everything: an IntersectionObserver
+// keeps a small set of phrases that are near the viewport, and only those get
+// measured on scroll. There are ~30 spans on the page and typically two or three
+// are in play at once.
 export function ScrollHighlights() {
   useEffect(() => {
-    const SELECTOR = ".highlight-on-scroll:not(.is-lit)";
+    const SELECTOR = ".highlight-on-scroll";
+
+    // The browser does it better; nothing for this component to do.
+    if (CSS.supports("animation-timeline", "view()")) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timers = new Set<number>();
+
+    // Where the sweep starts and finishes, as fractions of viewport height
+    // measured against the phrase's own top edge. Matched to the native range:
+    // begins as the phrase clears the bottom edge, completes as it centres —
+    // finishing any earlier means it is already done by the time you reach it.
+    const START = 1;
+    const END = 0.5;
+
+    const live = new Set<HTMLElement>();
+    // A small random offset per phrase, so several in one paragraph do not
+    // complete in lockstep.
+    const offsets = new WeakMap<HTMLElement, number>();
+
+    const progressOf = (el: HTMLElement, viewportH: number) => {
+      const top = el.getBoundingClientRect().top;
+      const from = viewportH * START;
+      const to = viewportH * END;
+      const raw = (from - top) / (from - to);
+      const shifted = raw - (offsets.get(el) ?? 0);
+      return Math.min(1, Math.max(0, shifted));
+    };
+
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const viewportH = window.innerHeight;
+
+      // Read every rect first, then write — mixing them would thrash layout.
+      const readings: Array<[HTMLElement, number]> = [];
+      live.forEach((el) => readings.push([el, progressOf(el, viewportH)]));
+
+      for (const [el, p] of readings) {
+        el.style.setProperty("--lit", String(p));
+        // Only the no-text-clip fallback uses this; harmless elsewhere.
+        el.classList.toggle("is-lit", p > 0.5);
+      }
+    };
+
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
 
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const el = entry.target;
-          io.unobserve(el);
-
-          // Stagger by a random 100–400ms. Several phrases usually cross the
-          // threshold in the same frame, and lighting them in lockstep reads as
-          // one block flipping rather than separate selections being made.
-          if (reduceMotion) {
-            el.classList.add("is-lit");
-            continue;
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            if (!offsets.has(el)) offsets.set(el, Math.random() * 0.18);
+            live.add(el);
+          } else {
+            live.delete(el);
+            // Settle to whichever end it left by, so a phrase scrolled past
+            // quickly does not freeze half swept.
+            const done = entry.boundingClientRect.top < 0;
+            el.style.setProperty("--lit", done ? "1" : "0");
+            el.classList.toggle("is-lit", done);
           }
-
-          const timer = window.setTimeout(() => {
-            el.classList.add("is-lit");
-            timers.delete(timer);
-          }, 100 + Math.random() * 300);
-          timers.add(timer);
         }
+        schedule();
       },
-      // Most of the phrase has to be on screen before it lights.
-      { threshold: 0.8 }
+      // Generous margin: start tracking before the phrase is on screen so its
+      // band is already partway when it arrives.
+      { rootMargin: "20% 0px 20% 0px" }
     );
 
     const watch = (node: Node) => {
@@ -50,18 +95,34 @@ export function ScrollHighlights() {
       node.querySelectorAll(SELECTOR).forEach((el) => io.observe(el));
     };
 
-    watch(document.body);
+    if (reduceMotion) {
+      // No scrub: show the finished state and leave it.
+      document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
+        el.style.setProperty("--lit", "1");
+      });
+    } else {
+      watch(document.body);
+    }
 
     // Project detail bodies mount on demand, so pick up whatever arrives later.
     const mo = new MutationObserver((records) => {
-      for (const record of records) record.addedNodes.forEach(watch);
+      for (const record of records) record.addedNodes.forEach(reduceMotion ? () => {} : watch);
     });
     mo.observe(document.body, { childList: true, subtree: true });
+
+    // Scroll events do not bubble, but they do reach a capturing listener on the
+    // document — which matters because the scrolling element differs by
+    // breakpoint and the detail pane scrolls separately.
+    if (!reduceMotion) {
+      document.addEventListener("scroll", schedule, { capture: true, passive: true });
+      window.addEventListener("resize", schedule, { passive: true });
+    }
 
     return () => {
       io.disconnect();
       mo.disconnect();
-      timers.forEach(clearTimeout);
+      document.removeEventListener("scroll", schedule, { capture: true });
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 
