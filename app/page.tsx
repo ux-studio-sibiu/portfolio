@@ -1,13 +1,17 @@
 import { ShowcaseLinear, LinearProject } from "@/app/components/showcase-linear/showcase-linear";
 
+// `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
+// Each one lives in app/components/projects/<slug>/ with its own stylesheet and
+// is fetched only when the project is opened.
 export default function Home() {
   return (
     <ShowcaseLinear>
       <LinearProject
+        slug="advisor"
         title="Advisor"
         year="2018 —"
         role="Frontend engineer, Visma"
-        stack="KendoUI, .NET MVC, jQuery, SignalR, Cypress"
+        stack="KendoUI, .NET MVC, jQuery, SignalR"
         summary="Accounting office management studio — SaaS for Nordic accounting firms and their clients, at 8,000 firms and 40,000 active users."
         points={
           <>
@@ -19,13 +23,68 @@ export default function Home() {
             <li>Long-running tasks pushing live updates over SignalR</li>
           </>
         }
-      >
-        <p>Accounting office management studio, sold as SaaS to Nordic accounting firms and their clients — 8,000 firms and 40,000 active users.</p>
-        <p>The UI system is KendoUI over .NET MVC, with a custom SPA framework and the Visma Unified Design token set on top. Base components are styled to VUD and then extended well past it: intricate comboboxes with chained async loading and inline add, async chained inputs, multi-step wizards with branching and reversible logic, validation on both client and server.</p>
-        <p>The work was mostly archaeology. Inherited code with ad-hoc implementations, inconsistent patterns and undocumented logic, at a scale where nothing could be rewritten in one go — so refactoring ran incrementally under version control until it covered the UI. Large data sets forced async dropdowns, segmented endless scroll and server-side filtering. A steady part of the job was bridging design intent and technical reality, and pushing back when a proposed flow would not scale.</p>
-      </LinearProject>
+      />
 
       <LinearProject
+        slug="clasa-zero"
+        embed
+        title="Clasa Zero"
+        year="2026 —"
+        role="Design & build"
+        stack="Next.js, Zustand, Sanity"
+        href="https://clasa-zero.vercel.app/game"
+        summary="A STEM game for pre-school kids — randomly generated puzzles, tested on car trips with a six year old."
+        points={
+          <>
+            <li>Randomly generated puzzles and answer sets, 10+ types: sequences, matching, counting, simple reading</li>
+            <li>Settings persist to local storage; custom puzzles can be added in Sanity</li>
+            <li>Next puzzle preloads so transitions never wait on the network</li>
+            <li>Slide back to review previous puzzles and answers</li>
+            <li>AI-generated graphics; in progress, still under user testing</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="map"
+        embed
+        title="Map"
+        year="2026"
+        role="Design & build"
+        stack="Vue, Nuxt, MapLibre, Sanity"
+        href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
+        summary="A map-based site for the centre of Sibiu, highlighting notable architecture and telling its story."
+        points={
+          <>
+            <li>Vector .pmtiles self-hosted as a single static file, mounted with MapLibre</li>
+            <li>Content managed in Sanity; geolocation with boundary awareness</li>
+            <li>Feature flags via query string — this stripped-down build omits unfinished work</li>
+            <li>Draft concept, shown here embedded</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="zoom"
+        embed
+        title="Zoom"
+        year="2026"
+        role="Concept & build"
+        stack="Vue, Nuxt, Zoomooz.js"
+        href="https://vue-playground-mauve.vercel.app/zoom"
+        summary="Zoom-based navigation for a presentation website, built on CSS transforms."
+        points={
+          <>
+            <li>Navigation by CSS transform rather than by route change</li>
+            <li>Iframe to parent-page messaging, so the embed can drive its host</li>
+            <li>Draft concept, shown here embedded</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="casedeschise"
+        embed
         title="Casedeschise"
         year="2025 — 2026"
         role="Design & build"
@@ -41,13 +100,46 @@ export default function Home() {
             <li>Map views on the Google Maps API, analytics through Umami</li>
           </>
         }
-      >
-        <p>Website for the annual open house event, built with the local architects guild OAR and running twin events in Sibiu and Valcea.</p>
-        <p>Organisers own the content in Sanity — listings, forms, map views and registrations — with reports coming off a dashboard there rather than out of a spreadsheet. Registration is per location, issuing a QR by email through Resend and validating it at the door with a built-in scanner.</p>
-        <p>The constraint that shaped everything: heavy architectural photography on the Sanity free plan, under strenuous load for the one or two months around the event. Queries are cached aggressively and invalidated by webhook, so the traffic spike lands on the cache and not the API.</p>
-      </LinearProject>
+      />
 
       <LinearProject
+        slug="slow-days"
+        embed
+        title="Slow Days Outside"
+        year="2026"
+        role="Design & build"
+        stack="Next.js, Sanity"
+        href="https://slow-days-outside.vercel.app/"
+        summary="A platform for kids activities — educators post events and manage signups and group communication."
+        points={
+          <>
+            <li>Educators publish events and own their own listings</li>
+            <li>Signup management per event, with group communication built in</li>
+            <li>Custom signup forms rather than one fixed shape</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="photography"
+        embed
+        title="Photography Portfolio"
+        year="2026"
+        role="Design & build"
+        stack="Next.js, Sanity"
+        href="https://photography-prototype.vercel.app"
+        summary="Portfolio concept for a photography studio — minimal, restrained, and fully editable by the studio."
+        points={
+          <>
+            <li>Minimal, restrained design that puts the photography first</li>
+            <li>Availability calendar and contact form</li>
+            <li>Full content flexibility — the studio controls every page</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="mipay-admin"
         title="Mi-Pay Admin"
         year="2017"
         role="Frontend developer, Mi-Pay"
@@ -60,12 +152,10 @@ export default function Home() {
             <li>Client-scoped access control for users</li>
           </>
         }
-      >
-        <p>An admin dashboard for fraud screening, tracking customers, orders and transactions across the payment platform.</p>
-        <p>Built as a single-page app on .NET Core and Angular 2. Search and filtering run live against the database, and the filter state lives in the query string — which sounds like a detail until you are investigating a customer case and need to hand the exact view to a colleague as a link.</p>
-      </LinearProject>
+      />
 
       <LinearProject
+        slug="multidevice"
         title="MultiDevice"
         year="2016"
         role="Frontend developer, Mi-Pay"
@@ -78,12 +168,10 @@ export default function Home() {
             <li>Localised for the German market</li>
           </>
         }
-      >
-        <p>The first implementation of the 4-in-1 concept: a mobile-optimised payment service for O2 Germany that merged the desktop and mobile customer experiences.</p>
-        <p>Collapsing two front ends into one improved the customer journey and, just as usefully, the development and test story. The catch was the support matrix — O2 required IE7, and the service shipped in German.</p>
-      </LinearProject>
+      />
 
       <LinearProject
+        slug="white-label"
         title="White Label"
         year="2016"
         role="Frontend developer, Mi-Pay"
@@ -96,12 +184,10 @@ export default function Home() {
             <li>Responsive, mobile-first, cross-browser</li>
           </>
         }
-      >
-        <p>A white-label implementation of the micro-payment concept — one UI structure, re-skinned per client from their own design guide.</p>
-        <p>Custom SPA built with jQuery over .NET MVC, responsive and mobile-first, across the browser matrix the clients demanded at the time.</p>
-      </LinearProject>
+      />
 
       <LinearProject
+        slug="four-in-one"
         title="4-in-1"
         year="2015"
         role="Concept & design, Mi-Pay"
@@ -114,10 +200,7 @@ export default function Home() {
             <li>Notable clients: O2 Germany, Tesco, 3Roi, FooCall UK</li>
           </>
         }
-      >
-        <p>A design concept for a micro-payment product, standardising the product structure across devices and across clients.</p>
-        <p>The move that made it work was pushing client branding into background media instead of into the layout — so the same structure could carry O2 Germany, Tesco, 3Roi and FooCall UK without forking the front end for each.</p>
-      </LinearProject>
+      />
     </ShowcaseLinear>
   );
 }

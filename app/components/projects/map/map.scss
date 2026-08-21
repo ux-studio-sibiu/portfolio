@@ -1,0 +1,12 @@
+// Fills the detail pane edge to edge — the pane adds no padding for embeds.
+.nsc-project-map {
+  height: 100%;
+  background: var(--color-wash);
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}

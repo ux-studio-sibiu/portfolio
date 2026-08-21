@@ -1,12 +1,31 @@
 "use client";
 
-import { Children, cloneElement, isValidElement, useEffect, useRef, useState } from "react";
+import { Children, isValidElement, Suspense, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import "./showcase-linear.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+// Detail bodies, one component per project, each with its own stylesheet. Keyed
+// by slug and wrapped in next/dynamic, so a project's chunk (and its CSS, and
+// any images or iframes it contains) is fetched the first time that project is
+// opened — never on first paint of the index.
+const DETAILS: Record<string, React.ComponentType> = {
+  advisor: dynamic(() => import("@/app/components/projects/advisor/advisor")),
+  "clasa-zero": dynamic(() => import("@/app/components/projects/clasa-zero/clasa-zero")),
+  zoom: dynamic(() => import("@/app/components/projects/zoom/zoom")),
+  "slow-days": dynamic(() => import("@/app/components/projects/slow-days/slow-days")),
+  photography: dynamic(() => import("@/app/components/projects/photography/photography")),
+  map: dynamic(() => import("@/app/components/projects/map/map")),
+  casedeschise: dynamic(() => import("@/app/components/projects/casedeschise/casedeschise")),
+  "mipay-admin": dynamic(() => import("@/app/components/projects/mipay-admin/mipay-admin")),
+  multidevice: dynamic(() => import("@/app/components/projects/multidevice/multidevice")),
+  "white-label": dynamic(() => import("@/app/components/projects/white-label/white-label")),
+  "four-in-one": dynamic(() => import("@/app/components/projects/four-in-one/four-in-one")),
+};
 
 type ProjectProps = {
   title: string;
@@ -15,47 +34,40 @@ type ProjectProps = {
   stack?: string;
   summary?: string;
   points?: React.ReactNode;
+  slug: string;
+  // Embeds fill the detail pane edge to edge; everything else gets padding.
+  embed?: boolean;
   href?: string;
-  children: React.ReactNode;
-  index?: number;
-  onOpen?: () => void;
 };
 
 const num = (idx: number) => String(idx + 1).padStart(2, "0");
 
-// A row in the work list. The write-up passed as `children` is rendered by
-// ShowcaseLinear in the detail pane, not here.
-export function LinearProject({ title, year, role, index = 0, onOpen }: ProjectProps) {
-  return (
-    <li className="work-row reveal">
-      <button type="button" className="row-trigger" onClick={onOpen}>
-        <span className="row-index">{num(index)}</span>
-        <span className="row-title">{title}</span>
-        <span className="row-foot">
-          <span className="row-meta">{role} / {year}</span>
-          <span className="row-more">View more <span className="row-arrow" aria-hidden="true">&rarr;</span></span>
-        </span>
-      </button>
-    </li>
-  );
+// Declaration only: ShowcaseLinear reads these props to build the projects
+// section and the detail pane. It renders nothing itself — the work list that
+// used to render a row per project is gone.
+export function LinearProject(_props: ProjectProps) {
+  return null;
 }
 
 // Two-pane track: the left pane is a single linear column scrolling through
-// eight sections, the right pane is the project detail. Its sibling in
+// seven sections, the right pane is the project detail. Its sibling in
 // project-showcase splits the left pane into two columns instead.
 export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [lastIndex, setLastIndex] = useState(0);
+  // Null until the first open, which is what keeps every detail chunk unfetched
+  // on load. It then sticks through the slide back so the pane never blanks.
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const items = Children.toArray(children).filter(isValidElement) as React.ReactElement<ProjectProps>[];
-  const detail = items[lastIndex]?.props;
+  const detail = openIndex === null ? undefined : items[openIndex]?.props;
+  const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
 
   const openItem = (idx: number) => {
-    setLastIndex(idx);
+    setOpenIndex(idx);
     setActiveIndex(idx);
     history.pushState({ project: idx }, "");
   };
@@ -114,19 +126,19 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     ScrollTrigger.refresh();
   }, { scope: root });
 
+  // Fade the incoming body in behind the slide. The title and facts strip it
+  // used to animate are gone; the frame is all there is.
   useGSAP(() => {
     if (!isDetail || prefersReducedMotion()) return;
 
-    gsap.timeline({ delay: 0.25, defaults: { ease: "power3.out" } })
-      .from(".detail-title span", { yPercent: 110, duration: 0.85 })
-      .from(".detail-fade", { opacity: 0, y: 18, duration: 0.55, stagger: 0.06 }, "-=0.55");
-  }, { dependencies: [isDetail, lastIndex], scope: root });
+    gsap.from(".detail-frame", { opacity: 0, duration: 0.5, delay: 0.35, ease: "power2.out" });
+  }, { dependencies: [isDetail, openIndex], scope: root });
 
   return (
     <div className="nsc-showcase-linear" ref={root}>
       <div className={`showcase-track${isDetail ? " is-detail" : ""}`}>
 
-        {/* Index pane — one linear column, eight sections deep. */}
+        {/* Index pane — one linear column, seven sections deep. */}
         <section className="showcase-pane index-pane" inert={isDetail}>
           <div className="pane-scroll" ref={scroller}>
 
@@ -158,18 +170,6 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <section className="band work">
-              <header className="band-head reveal">
-                <h2 className="band-title">Selected work</h2>
-                <span className="band-count">{items.length} projects</span>
-              </header>
-              <ul className="work-list">
-                {items.map((child, idx) =>
-                  cloneElement(child, { index: idx, onOpen: () => openItem(idx) })
-                )}
-              </ul>
-            </section>
-
             {/* Projects. Timeline rail and markers, but keyed to the thumbnail
                 rather than a date — the thumbnail is the scroll device:
                 its column is full-entry height and holds a sticky box, so the
@@ -191,7 +191,11 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
                   <article className="scroll-entry" key={child.props.title}>
                     <div className="entry-visual">
                       <div className="visual-sticky">
-                        <div className="entry-thumb" aria-hidden="true"><span className="thumb-index">{num(idx)}</span></div>
+                        {/* The image opens the project too — same target as the
+                            View more button, so the obvious click works. */}
+                        <button type="button" className="entry-thumb" onClick={() => openItem(idx)} aria-label={`Open ${child.props.title}`}>
+                          <span className="thumb-index">{num(idx)}</span>
+                        </button>
                         {/* <span className="visual-marker" aria-hidden="true" /> */}
                       </div>
                     </div>
@@ -295,48 +299,21 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
           </div>
         </section>
 
-        {/* Detail pane. */}
+        {/* Detail pane. Chrome is the back button and nothing else — the
+            per-project component owns the whole surface, and for embeds that
+            means a full-bleed iframe. Bodies are code-split and mount only
+            once a project has been opened. */}
         <section className="showcase-pane detail-pane" inert={!isDetail}>
+          <button type="button" className="detail-back" onClick={closeItem}>
+            <span className="back-arrow" aria-hidden="true">&larr;</span> Back
+          </button>
+
           <div className="pane-scroll">
-            <div className="detail-bar">
-              <button type="button" className="detail-back" onClick={closeItem}>
-                <span className="back-arrow" aria-hidden="true">&larr;</span> Index
-              </button>
-              <span className="detail-count">{num(lastIndex)} / {num(items.length - 1)}</span>
-            </div>
-
-            {detail && (
-              <div className="detail-inner">
-                <h2 className="detail-title"><span>{detail.title}</span></h2>
-                <div className="detail-figure detail-fade" aria-hidden="true" />
-
-                <div className="detail-body">
-                  <dl className="detail-facts detail-fade">
-                    <div className="fact">
-                      <dt>Year</dt>
-                      <dd>{detail.year}</dd>
-                    </div>
-                    <div className="fact">
-                      <dt>Role</dt>
-                      <dd>{detail.role}</dd>
-                    </div>
-                    {detail.stack && (
-                      <div className="fact">
-                        <dt>Stack</dt>
-                        <dd>{detail.stack}</dd>
-                      </div>
-                    )}
-                  </dl>
-
-                  <div className="detail-copy detail-fade">
-                    {detail.children}
-                    {detail.href && (
-                      <a className="detail-visit" href={detail.href} target="_blank" rel="noopener noreferrer">
-                        Visit site <span aria-hidden="true">&rarr;</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
+            {detail && Body && (
+              <div className={`detail-frame${detail.embed ? " is-embed" : ""}`}>
+                <Suspense fallback={<p className="detail-loading">Loading {detail.title}…</p>}>
+                  <Body />
+                </Suspense>
               </div>
             )}
           </div>

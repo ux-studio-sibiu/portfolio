@@ -1,9 +1,9 @@
 @use "@/app/styles/breakpoints" as *;
 
-// Linear showcase — two-pane track, loud typography, a single linear left
-// column. Black on white throughout; the only inverted surfaces are the View
-// more buttons, which fill and then hollow out on hover.
-.nsc-showcase-linear {
+// v2 — same two-pane track as the v1 showcase, louder typography and a single
+// linear left column. Black on white throughout; the only inverted surface is
+// the View more button, which fills on hover.
+.nsc-showcase-v2 {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -171,7 +171,98 @@
     }
   }
 
-  // Shared by the projects View more button and the detail back button.
+  // --- Work list ------------------------------------------------------------
+
+  .work-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--rule);
+  }
+
+  .work-row {
+    border-bottom: var(--rule-hair);
+  }
+
+  .row-trigger {
+    display: block;
+    width: 100%;
+    padding: 2rem 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover .row-title,
+    &:focus-visible .row-title {
+      transform: translateX(0.75rem);
+    }
+
+    &:hover .row-more,
+    &:focus-visible .row-more {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    &:hover .row-arrow,
+    &:focus-visible .row-arrow {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  .row-index {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .row-title {
+    display: block;
+    padding: 0.5rem 0 1rem;
+    font-size: clamp(2.25rem, 7vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    transition: transform 0.35s cubic-bezier(0.2, 0, 0.1, 1);
+  }
+
+  .row-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .row-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  // Filled black by default so the affordance is unmistakable; hollows out on
+  // hover rather than lighting up.
+  .row-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
   .row-arrow,
   .back-arrow {
     display: inline-block;
@@ -179,16 +270,6 @@
   }
 
   // --- Projects ---------------------------------------------------------
-
-  // Narrower measure than the rest of the bands — the band rule stays
-  // full-bleed, only the content is constrained.
-  .projects {
-    > .band-head,
-    > .project-scroll {
-      max-width: 1000px;
-      margin-inline: auto;
-    }
-  }
 
   // Rails run the full height of the list, behind every entry. Positioned
   // relative only — a transform here would break the sticky thumbnails inside.
@@ -242,7 +323,6 @@
       grid-template-columns: minmax(0, 16rem) 1fr;
       gap: 3.5rem;
       padding: 4rem 0;
-      padding-bottom: 0;
       // The copy alone is shorter than the thumbnail, which would leave the
       // sticky image nothing to hold through. Give each entry a real share of
       // the viewport so the pin has travel and reads as deliberate.
@@ -267,27 +347,12 @@
 
 
   // Flat placeholder block — swap for an <Image> once there are real shots.
-.entry-thumb {
+  .entry-thumb {
     position: relative;
-    display: block;
     width: clamp(9rem, 26vw, 16rem);
     aspect-ratio: 4 / 3;
-    padding: 0;
     background: var(--color-wash);
-    border: 2px solid var(--color-ink);
-    cursor: pointer;
-    transition: background-color 0.25s ease;
-
-    &:hover,
-    &:focus-visible {
-      background: var(--color-ink);
-    }
-
-    // Index flips to the paper colour once the block fills.
-    &:hover .thumb-index,
-    &:focus-visible .thumb-index {
-      color: var(--color-bg);
-    }
+    border: var(--rule);
   }
 
   .thumb-index {
@@ -364,6 +429,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    // Sits at the right edge of the copy column, below the description.
+    align-self: flex-end;
     margin-top: 2rem;
     padding: 0.75rem 1.25rem;
     background: var(--color-ink);
@@ -555,58 +622,37 @@
 
   // --- Detail pane ----------------------------------------------------------
 
-  // The pane is just a surface for the project component now, plus the back
-  // button floating over it.
-  .detail-pane {
-    position: relative;
-  }
-
   .detail-pane .pane-scroll {
-    padding: 0;
+    padding: 0 var(--gutter) 5rem;
   }
 
-  .detail-frame {
-    min-height: 100%;
-    padding: 6rem var(--gutter) 4rem;
-
-    // Embeds get the whole surface, no padding, exact height so a 100%-height
-    // iframe inside has something to measure against.
-    &.is-embed {
-      height: 100%;
-      min-height: 0;
-      padding: 0;
-    }
-  }
-
-  // Floats over whatever the project renders, including a third-party iframe —
-  // hence the white ring, so it stays legible on any background it lands on.
-  .detail-back {
-    position: absolute;
-    top: 1.25rem;
-    left: var(--gutter);
-    z-index: 2;
-    display: inline-flex;
+  .detail-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 1rem 1.5rem;
-    background: var(--color-ink);
-    color: var(--color-bg);
-    border: 0;
-    box-shadow: 0 0 0 2px var(--color-bg), 0 6px 24px rgba(0, 0, 0, 0.28);
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 0 1rem;
+    background: var(--color-bg);
+    border-bottom: var(--rule);
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    font-weight: 700;
+    font-size: 0.6875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+  }
 
-    &:hover,
-    &:focus-visible {
-      background: var(--color-bg);
-      color: var(--color-ink);
-      box-shadow: 0 0 0 2px var(--color-ink), 0 6px 24px rgba(0, 0, 0, 0.28);
-    }
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
 
     &:hover .back-arrow,
     &:focus-visible .back-arrow {
@@ -614,14 +660,110 @@
     }
   }
 
-  .detail-loading {
-    margin: 0;
-    padding: 6rem var(--gutter);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  .detail-count {
     color: var(--color-muted);
+  }
+
+  .detail-title {
+    margin: 3.5rem 0 0;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+    font-size: clamp(2.5rem, 10vw, 8rem);
+    line-height: 0.85;
+    letter-spacing: -0.055em;
+    font-weight: 800;
+    text-transform: uppercase;
+
+    > span {
+      display: block;
+    }
+  }
+
+  .detail-figure {
+    margin-top: 2.5rem;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--color-wash);
+  }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-top: 3rem;
+
+    @include respond-to("tablet") {
+      grid-template-columns: 1fr 1.5fr;
+      gap: 4rem;
+    }
+  }
+
+  .detail-facts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-self: start;
+    border-top: var(--rule);
+    padding-top: 1rem;
+
+    .fact {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    dt {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1.0625rem;
+      font-weight: 600;
+    }
+  }
+
+  .detail-copy {
+    max-width: 40rem;
+
+    p {
+      margin: 0 0 1.25rem;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+
+    p:first-child {
+      font-size: clamp(1.375rem, 2.6vw, 2rem);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      font-weight: 600;
+    }
+  }
+
+  .detail-visit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease;
+
+    &:hover {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
   }
 }
 
