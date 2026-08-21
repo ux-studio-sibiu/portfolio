@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
+import { ScrollHighlights } from "@/app/components/scroll-highlights/scroll-highlights";
 import "@/app/styles/globals.scss";
 
 const archivo = Archivo({
@@ -29,7 +30,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ScrollHighlights />
+      </body>
     </html>
   );
 }

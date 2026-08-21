@@ -75,6 +75,77 @@ a {
   color: var(--color-bg);
 }
 
+// Sweeps a black band across a phrase like a manual selection, then leaves the
+// text inverted. Drop the class on any inline span; ScrollHighlights adds
+// .is-lit once it comes into view and never takes it off.
+.highlight-on-scroll {
+  // A background image rather than a pseudo-element, so the band wraps with the
+  // text across line breaks instead of being one box over both lines.
+  background-image: linear-gradient(var(--color-ink), var(--color-ink));
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  // Breathing room for the band. Re-enable the negative margin to cancel it, so
+  // a highlighted phrase occupies exactly the same width as plain text.
+  padding: 0.06em 0.16em;
+  // margin: 0 -0.16em;
+  transition:
+    background-size 1s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.01s steps(1, end) 0.72s;
+
+  &.is-lit {
+    background-size: 100% 100%;
+    color: var(--color-bg);
+  }
+
+  // Pixel-perfect variant. The glyphs are painted by two text-clipped layers
+  // instead of by `color`: an inverted layer that grows with the band, over a
+  // layer in the inherited colour. Both share the band’s animated size, so the
+  // inversion tracks the band edge per pixel and there is no moment where the
+  // whole phrase flips colour at once.
+  //
+  // Duplicating the element would also be pixel-perfect, but only on one line:
+  // an overlay copy has to be absolutely positioned to sit on top, and an
+  // absolute box cannot reflow across line breaks the way the original does.
+  // Eight of these spans wrap, so the layer approach is the one that holds.
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    // `color` stays put so currentColor below still resolves to the real ink;
+    // the glyphs themselves are painted by the clipped layers.
+    -webkit-text-fill-color: transparent;
+    background-image:
+      linear-gradient(var(--color-bg), var(--color-bg)),
+      linear-gradient(currentColor, currentColor),
+      linear-gradient(var(--color-ink), var(--color-ink));
+    -webkit-background-clip: text, text, border-box;
+    background-clip: text, text, border-box;
+    background-position: left center, left center, left center;
+    background-size: 0% 100%, 100% 100%, 0% 100%;
+    transition: background-size 1s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-lit {
+      background-size: 100% 100%, 100% 100%, 100% 100%;
+      // Must not flip: currentColor feeds the second layer, and turning it to
+      // paper would erase the glyphs the band has not reached yet.
+      color: inherit;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  // Backgrounds are dropped when printing and under forced colours, which would
+  // leave the glyphs transparent and the phrase blank. Paint the text normally
+  // in both, and drop the band with it.
+  @media print, (forced-colors: active) {
+    -webkit-text-fill-color: currentColor;
+    background-image: none;
+    color: inherit;
+  }
+}
+
 // Micro-label: uppercase mono, used for every meta / eyebrow line in the site.
 .label {
   font-family: var(--font-mono);
