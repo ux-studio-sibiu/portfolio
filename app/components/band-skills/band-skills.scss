@@ -1,0 +1,19 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-band-skills {
+  .skills-title {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+  }
+
+  .skills-lede {
+    margin: 0.75rem 0 0;
+    max-width: 44ch;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+}

@@ -1,0 +1,36 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-band-contact {
+  .contact-label {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .contact-mail {
+    display: block;
+    font-size: clamp(1.75rem, 8vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+    // Word-breaks rather than overflowing the pane on narrow screens.
+    overflow-wrap: anywhere;
+    border-bottom: 0.08em solid var(--color-ink);
+    padding-bottom: 0.08em;
+  }
+
+  .contact-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+}

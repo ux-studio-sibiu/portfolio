@@ -1,0 +1,53 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-band-tools {
+  .tool-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    // The gap is 1px and the cards carry a 1px border, so neighbours share a
+    // single hairline instead of doubling up into a 2px seam.
+    background: var(--color-faint);
+    border: 1px solid var(--color-faint);
+
+    @include respond-to("tablet") {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to("desktop") {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include respond-to("wide") {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem 1.25rem;
+    background: var(--color-bg);
+    // Space where a logo can drop in above the title later.
+    min-height: 10rem;
+  }
+
+  .tool-name {
+    margin: auto 0 0;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .tool-note {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+}

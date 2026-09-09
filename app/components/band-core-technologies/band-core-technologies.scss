@@ -1,0 +1,12 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-band-core-technologies {
+  .list-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: var(--rule);
+  }
+}

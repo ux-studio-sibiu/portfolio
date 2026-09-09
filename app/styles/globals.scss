@@ -171,6 +171,58 @@ a {
   to { background-size: 100% 100%, 100% 100%, 100% 100%; }
 }
 
+// Numbered list. A shared device rather than a per-section style: Core
+// technologies and Skills both use it, so it lives here and neither owns it.
+// Rows are index + name, with an optional note under the name.
+.spec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  align-items: baseline;
+  gap: 0 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--color-faint);
+}
+
+.spec-num {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+}
+
+.spec-name {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+
+  // Variant for sentence-length entries. Nested so it wins over the base
+  // font-size regardless of source order.
+  &.spec-name-small {
+    font-size: 1.25rem;
+    // The base tracks tight at display size; sentences that wrap need room.
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+  }
+}
+
+.spec-note {
+  grid-column: 2;
+  margin: 0.5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
 // Micro-label: uppercase mono, used for every meta / eyebrow line in the site.
 .label {
   font-family: var(--font-mono);

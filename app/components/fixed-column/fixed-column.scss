@@ -1,0 +1,152 @@
+@use "@/app/styles/breakpoints" as *;
+
+// Contents of column 1. The column's own box — width, padding, position, and
+// the pointer-events lockout once faded — belongs to the showcase shell, since
+// the width is what the divider is measured against.
+.nsc-fixed-column {
+  // The identity fades as one unit, so the whole group carries the opacity
+  // rather than each part carrying its own.
+  .fixed-identity {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    opacity: var(--identity-fade, 1);
+  }
+
+  // Section titles sit outside .fixed-identity so they outlast that fade, and
+  // are laid over the same box. `padding: inherit` keeps them on the column's
+  // own gutter without repeating the value.
+  .fixed-sections {
+    position: absolute;
+    inset: 0;
+    padding: inherit;
+    pointer-events: none;
+  }
+
+  .fixed-label.is-ghost {
+    visibility: hidden;
+  }
+
+  // Same offset the name has, so a title lands where the name was.
+  .section-stack {
+    position: relative;
+    margin-top: 1.5rem;
+  }
+
+  .fixed-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    line-height: 0.85;
+    letter-spacing: -0.045em;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(1.75rem, 9vw, 3rem);
+
+    @include respond-to("tablet") {
+      // Same box as the name but a larger divisor: WORKED WITH and CAPABILITIES
+      // are longer than TURCANU and still have to fit column 1.
+      font-size: calc((50vw - var(--col-media) - 4rem) / 8.5);
+    }
+
+    &.is-active {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .fixed-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fixed-name {
+    margin: 1.5rem 0 0;
+    // Below tablet column 1 is the full pane width.
+    font-size: clamp(2.5rem, 13vw, 5rem);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+    text-transform: uppercase;
+
+    @include respond-to("tablet") {
+      // Fill column 1. Its width is 50vw - --col-media, less 2rem of padding
+      // either side; the divisor is the width-to-size ratio of the longest line
+      // (TURCANU) in Archivo 800 — measured at 4.92, plus slack.
+      font-size: calc((50vw - var(--col-media) - 4rem) / 5.1);
+    }
+  }
+
+  .name-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.03em;
+
+    > span {
+      display: block;
+    }
+  }
+
+  .fixed-blurb {
+    margin: 2rem 0 0;
+    max-width: 30ch;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+
+    @include respond-to("tablet") {
+      // Spans the column with the name rather than sitting in a narrow measure.
+      max-width: none;
+    }
+  }
+
+  .fixed-facts {
+    margin: auto 0 0;
+    padding-top: 2rem;
+
+    .fact {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+      padding: 0.9rem 0;
+      border-top: 1px solid var(--color-faint);
+
+      @include respond-to("desktop") {
+        grid-template-columns: 9rem 1fr;
+        gap: 1.5rem;
+        align-items: baseline;
+      }
+    }
+
+    dt {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.9375rem;
+    }
+  }
+
+  .fixed-mail {
+    border-bottom: 1px solid var(--color-faint);
+
+    &:hover {
+      border-bottom-color: var(--color-ink);
+    }
+  }
+}

@@ -1,0 +1,75 @@
+@use "@/app/styles/breakpoints" as *;
+
+// The pane is just a surface for the project component, plus the back button
+// floating over it. Its size comes from .showcase-pane in the showcase shell.
+.nsc-detail-pane {
+  position: relative;
+
+  .pane-scroll {
+    padding: 0;
+  }
+
+  .detail-frame {
+    min-height: 100%;
+    padding: 6rem var(--gutter) 4rem;
+
+    // Embeds get the whole surface, no padding, exact height so a 100%-height
+    // iframe inside has something to measure against.
+    &.is-embed {
+      height: 100%;
+      min-height: 0;
+      padding: 0;
+    }
+  }
+
+  // Floats over whatever the project renders, including a third-party iframe —
+  // hence the white ring, so it stays legible on any background it lands on.
+  .detail-back {
+    position: absolute;
+    top: 1.25rem;
+    left: var(--gutter);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: 0;
+    box-shadow: 0 0 0 2px var(--color-bg), 0 6px 24px rgba(0, 0, 0, 0.28);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-bg);
+      color: var(--color-ink);
+      box-shadow: 0 0 0 2px var(--color-ink), 0 6px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    &:hover .back-arrow,
+    &:focus-visible .back-arrow {
+      transform: translateX(-0.35rem);
+    }
+  }
+
+  .back-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+
+  .detail-loading {
+    margin: 0;
+    padding: 6rem var(--gutter);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}
