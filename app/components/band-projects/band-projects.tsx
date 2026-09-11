@@ -19,7 +19,7 @@ export function BandProjects({
   onOpen,
 }: {
   items: React.ReactElement<ProjectProps>[];
-  onOpen: (idx: number) => void;
+  onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
   return (
     <section className="band nsc-band-projects" data-section="Projects">
@@ -33,7 +33,7 @@ export function BandProjects({
               <div className="visual-sticky">
                 {/* The image opens the project too — same target as the
                     View project button, so the obvious click works. */}
-                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(idx)} aria-label={`Open ${child.props.title}`}>
+                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`}>
                   {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 320px, (min-width: 768px) 25vw, 100vw" placeholder="blur" className="thumb-img" />}
                   {/* <span className="thumb-index">{num(idx)}</span> */}
                 </button>
@@ -50,7 +50,7 @@ export function BandProjects({
                 {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
               </div>
 
-              <button type="button" className="entry-more" onClick={() => onOpen(idx)}>
+              <button type="button" className="entry-more" onClick={() => onOpen(child)}>
                 View project <span className="row-arrow" aria-hidden="true">&rarr;</span>
               </button>
             </div>

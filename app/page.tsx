@@ -2,10 +2,11 @@ import { ShowcaseLinear, LinearProject } from "@/app/components/showcase-linear/
 import advisorThumb from "@/app/assets/projects/advisor.jpg";
 import clasaZeroThumb from "@/app/assets/projects/clasa-zero.jpg";
 import mapThumb from "@/app/assets/projects/map.jpg";
+import zoomThumb from "@/app/assets/projects/zoom.jpg";
 import casedeschiseThumb from "@/app/assets/projects/casedeschise.jpg";
 import slowDaysThumb from "@/app/assets/projects/slow-days.jpg";
 import photographyThumb from "@/app/assets/projects/photography.jpg";
-import fourInOneThumb from "@/app/assets/projects/4in1.jpg";
+import fourInOneThumb from "@/app/assets/projects/multidevice.jpg";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -34,6 +35,46 @@ export default function Home() {
       />
 
       <LinearProject
+        slug="casedeschise"
+        thumb={casedeschiseThumb}
+        embed
+        title="Casedeschise"
+        year="2025 — 2026"
+        role="Design & build"
+        stack="Next.js, Sanity, Vercel"
+        href="https://www.casedeschise.ro"
+        summary={<>Website for the annual open house event, run with the local architects guild OAR across <span className="highlight-on-scroll">twin events in Sibiu and Valcea</span>.</>}
+        points={
+          <>
+            <li>Registration per location: built-in form, <span className="highlight-on-scroll">email QR via Resend</span>, built-in QR validator</li>
+            <li>Organisers handle all content in Sanity; reports run off a Sanity dashboard</li>
+            <li>Heavy architectural photography, tuned to stay inside the <span className="highlight-on-scroll">Sanity free plan</span></li>
+            <li>Aggressive query caching — webhooks, revalidation and the Next cache</li>
+            <li>Map views on the Google Maps API, analytics through Umami</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="photography"
+        thumb={photographyThumb}
+        embed
+        title="Photography Portfolio"
+        year="2026"
+        role="Design & build"
+        stack="Next.js, Sanity"
+        href="https://photography-prototype.vercel.app"
+        summary={<>Portfolio concept for a photography studio — <span className="highlight-on-scroll">minimal, restrained</span>, and fully editable by the studio.</>}
+        points={
+          <>
+            <li>Minimal, restrained design that puts the photography first</li>
+            <li><span className="highlight-on-scroll">Availability calendar</span> and contact form</li>
+            <li>Full content flexibility — the studio controls every page</li>
+          </>
+        }
+      />
+
+      <LinearProject
         slug="clasa-zero"
         thumb={clasaZeroThumb}
         embed
@@ -50,6 +91,23 @@ export default function Home() {
             <li>Next puzzle <span className="highlight-on-scroll">preloads</span> so transitions never wait on the network</li>
             <li>Slide back to review previous puzzles and answers</li>
             <li>AI-generated graphics; in progress, still under user testing</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="four-in-one"
+        thumb={fourInOneThumb}
+        title="4-in-1"
+        year="2015"
+        role="Concept & design, Mi-Pay"
+        stack="Design concept"
+        summary={<>Design concept for a micro-payment product, standardising the product structure <span className="highlight-on-scroll">across devices and clients</span>.</>}
+        points={
+          <>
+            <li>One structure spanning devices and client brands</li>
+            <li>Client branding carried by <span className="highlight-on-scroll">background media</span> rather than by layout changes</li>
+            <li>Notable clients: <span className="highlight-on-scroll">O2 Germany, Tesco, 3Roi, FooCall UK</span></li>
           </>
         }
       />
@@ -76,6 +134,7 @@ export default function Home() {
 
       <LinearProject
         slug="zoom"
+        thumb={zoomThumb}
         embed
         title="Zoom"
         year="2026"
@@ -92,27 +151,7 @@ export default function Home() {
         }
       />
 
-      <LinearProject
-        slug="casedeschise"
-        thumb={casedeschiseThumb}
-        embed
-        title="Casedeschise"
-        year="2025 — 2026"
-        role="Design & build"
-        stack="Next.js, Sanity, Vercel"
-        href="https://www.casedeschise.ro"
-        summary={<>Website for the annual open house event, run with the local architects guild OAR across <span className="highlight-on-scroll">twin events in Sibiu and Valcea</span>.</>}
-        points={
-          <>
-            <li>Registration per location: built-in form, <span className="highlight-on-scroll">email QR via Resend</span>, built-in QR validator</li>
-            <li>Organisers handle all content in Sanity; reports run off a Sanity dashboard</li>
-            <li>Heavy architectural photography, tuned to stay inside the <span className="highlight-on-scroll">Sanity free plan</span></li>
-            <li>Aggressive query caching — webhooks, revalidation and the Next cache</li>
-            <li>Map views on the Google Maps API, analytics through Umami</li>
-          </>
-        }
-      />
-
+      {/* Temporarily out of the list.
       <LinearProject
         slug="slow-days"
         thumb={slowDaysThumb}
@@ -131,25 +170,7 @@ export default function Home() {
           </>
         }
       />
-
-      <LinearProject
-        slug="photography"
-        thumb={photographyThumb}
-        embed
-        title="Photography Portfolio"
-        year="2026"
-        role="Design & build"
-        stack="Next.js, Sanity"
-        href="https://photography-prototype.vercel.app"
-        summary={<>Portfolio concept for a photography studio — <span className="highlight-on-scroll">minimal, restrained</span>, and fully editable by the studio.</>}
-        points={
-          <>
-            <li>Minimal, restrained design that puts the photography first</li>
-            <li><span className="highlight-on-scroll">Availability calendar</span> and contact form</li>
-            <li>Full content flexibility — the studio controls every page</li>
-          </>
-        }
-      />
+      */}
 
       {/* Temporarily out of the list — no live site to embed yet.
       <LinearProject
@@ -205,21 +226,62 @@ export default function Home() {
       />
       */}
 
+      {/* Experiments. Declared alongside the projects because they are the same
+          kind of thing to the shell — `experiment` is what sends them to the
+          other band, and `href` is both the frame in the index and the embed in
+          the detail pane. Each is a folder of plain HTML in the
+          effects-collection repo, served at /<folder>/. */}
+
       <LinearProject
-        slug="four-in-one"
-        thumb={fourInOneThumb}
-        title="4-in-1"
-        year="2015"
-        role="Concept & design, Mi-Pay"
-        stack="Design concept"
-        summary={<>Design concept for a micro-payment product, standardising the product structure <span className="highlight-on-scroll">across devices and clients</span>.</>}
-        points={
-          <>
-            <li>One structure spanning devices and client brands</li>
-            <li>Client branding carried by <span className="highlight-on-scroll">background media</span> rather than by layout changes</li>
-            <li>Notable clients: <span className="highlight-on-scroll">O2 Germany, Tesco, 3Roi, FooCall UK</span></li>
-          </>
-        }
+        experiment
+        embed
+        slug="background-experiments"
+        title="Background Experiments"
+        role="SVG, CSS"
+        href="https://experiments-five-bice.vercel.app/background-experiments/"
+        summary={<>A browser for <span className="highlight-on-scroll">86 tileable SVG patterns</span>, with live controls for scale, opacity, colour tint and blend mode.</>}
+      />
+
+      <LinearProject
+        experiment
+        embed
+        slug="fluid-hover"
+        title="Fluid hover"
+        role="WebGL"
+        stack="three.js, GLSL"
+        href="https://experiments-five-bice.vercel.app/effect/"
+        summary={<>A shader that <span className="highlight-on-scroll">smears an image toward the cursor</span> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
+      />
+
+      <LinearProject
+        experiment
+        embed
+        slug="randomize-studio"
+        title="Randomize Studio"
+        role="Typography"
+        stack="Google Fonts"
+        href="https://experiments-five-bice.vercel.app/font-experiments/"
+        summary={<>A type-pairing playground: editable heading, subheading and body over a background image, with <span className="highlight-on-scroll">~40 fonts swapped live</span>.</>}
+      />
+
+      <LinearProject
+        experiment
+        embed
+        slug="paint"
+        title="Paint"
+        role="Canvas, UI"
+        href="https://experiments-five-bice.vercel.app/paint-concept/"
+        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <span className="highlight-on-scroll">nothing but CSS borders</span>.</>}
+      />
+
+      <LinearProject
+        experiment
+        embed
+        slug="static-background"
+        title="Static background"
+        role="Canvas, Motion"
+        href="https://experiments-five-bice.vercel.app/static-background/"
+        summary={<>The animated film-grain overlay that fades in behind navigation menus. Canvas 2D, no dependencies, <span className="highlight-on-scroll">about 5 KB</span>.</>}
       />
     </ShowcaseLinear>
   );

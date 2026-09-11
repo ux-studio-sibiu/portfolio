@@ -1,0 +1,182 @@
+@use "@/app/styles/breakpoints" as *;
+
+// Experiments. Same geometry as the project entries in band-projects — the same
+// --col-media grid, the same sticky visual against the divider, the same order
+// of frame, copy and button — under .scroll-entry-secondary rather than
+// .scroll-entry, so the two are addressable apart and can be pulled apart
+// further without touching the other.
+//
+// Where they already differ is scale: no points list, a shorter row, and type
+// a step down, because an experiment is a smaller claim than a project.
+.nsc-band-experiments {
+  // How much of its real size each frame is shown at. The iframe is rendered at
+  // 1 / --shot of the frame and scaled back down, so the experiment lays itself
+  // out at a desktop width instead of squeezing into a 320px box and dropping
+  // to its mobile layout.
+  --shot: 0.25;
+
+  .experiment-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  // The visual column stretches to the full entry height (grid default), which
+  // is what gives the sticky frame inside exactly one entry of travel.
+  .scroll-entry-secondary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 2.5rem 0 0;
+
+    @include respond-to("tablet") {
+      grid-template-columns: var(--col-media) 1fr;
+      gap: 0;
+      padding: 3rem 0 0;
+      // Shorter than a project's 65svh: there is no points list to hold, so the
+      // pin needs less travel and the band stays quicker to scroll through.
+      min-height: 50svh;
+    }
+  }
+
+  // No transform, filter or overflow here — any of them would break the sticky
+  // child below. The scaled iframe is fine: it is inside .visual-sticky, not
+  // above it.
+  .entry-visual {
+    min-width: 0;
+    padding: 0 var(--gutter);
+
+    @include respond-to("tablet") {
+      padding: 0 2rem 0 var(--gutter);
+    }
+  }
+
+  .visual-sticky {
+    position: sticky;
+    top: 1.5rem;
+
+    @include respond-to("tablet") {
+      top: 2.5rem;
+    }
+  }
+
+  // The counterpart of .entry-thumb, sized off the same --thumb so an
+  // experiment's frame lands on exactly the line a project's thumbnail does.
+  // Fixed ratio rather than an image's own proportion, because what is inside
+  // is a viewport and has none.
+  .entry-frame {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    background: var(--color-wash);
+    border: 1px solid var(--color-ink);
+    cursor: pointer;
+    // Clips the oversized iframe back to the frame.
+    overflow: hidden;
+
+    @include respond-to("tablet") {
+      width: min(var(--thumb), 100%);
+      margin-left: auto;
+    }
+
+    iframe {
+      display: block;
+      // Percentages rather than a measured pixel width: the frame stays in step
+      // with the box at any viewport with nothing to recompute.
+      width: calc(100% / var(--shot));
+      height: calc(100% / var(--shot));
+      transform: scale(var(--shot));
+      transform-origin: top left;
+      border: 0;
+      // A live frame over the pane would swallow the wheel and the page would
+      // stop scrolling on it, and it would eat the click meant for the button
+      // it sits in. It is a picture of the experiment until it is opened.
+      pointer-events: none;
+    }
+
+    // No fill on hover, unlike .entry-thumb: a black box over a running
+    // experiment reads as the thing having crashed. The frame's own edge
+    // doubles instead.
+    &:hover,
+    &:focus-visible {
+      outline: 1px solid var(--color-ink);
+      outline-offset: -3px;
+    }
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 0 var(--gutter);
+
+    @include respond-to("tablet") {
+      padding: 0 var(--gutter) 0 2rem;
+    }
+  }
+
+  .entry-title {
+    margin: 0;
+    font-size: clamp(1.375rem, 2.4vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+
+  .entry-role {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .entry-summary {
+    margin: 1rem 0 0;
+    max-width: 46ch;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  // Same hollow-to-filled button as a project's, one size down and without the
+  // 10rem of air under it — the entries here follow each other closely.
+  .entry-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    align-self: flex-start;
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 0.35rem 1rem;
+    background: transparent;
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-ink);
+      color: var(--color-bg);
+    }
+
+    &:hover .row-arrow,
+    &:focus-visible .row-arrow {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  .row-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+}

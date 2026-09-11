@@ -19,4 +19,12 @@ export const DETAILS: Record<string, React.ComponentType> = {
   multidevice: dynamic(() => import("./multidevice/multidevice")),
   "white-label": dynamic(() => import("./white-label/white-label")),
   "four-in-one": dynamic(() => import("./four-in-one/four-in-one")),
+
+  // Experiments. Same registry, same lazy chunk per entry — they open into the
+  // same detail pane as a project does, and only the index entry differs.
+  "background-experiments": dynamic(() => import("./experiments/background-experiments")),
+  "fluid-hover": dynamic(() => import("./experiments/fluid-hover")),
+  "randomize-studio": dynamic(() => import("./experiments/randomize-studio")),
+  paint: dynamic(() => import("./experiments/paint")),
+  "static-background": dynamic(() => import("./experiments/static-background")),
 };

@@ -11,6 +11,7 @@ import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
 import { BandTools } from "@/app/components/band-tools/band-tools";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
+import { BandExperiments } from "@/app/components/band-experiments/band-experiments";
 import { BandSkills } from "@/app/components/band-skills/band-skills";
 import { BandContact } from "@/app/components/band-contact/band-contact";
 import type { ProjectProps } from "./project";
@@ -48,11 +49,19 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const [section, setSection] = useState<string | null>(null);
 
   const items = Children.toArray(children).filter(isValidElement) as React.ReactElement<ProjectProps>[];
+  // One list, split for display only: both bands open into the same pane, and
+  // the index that reaches history is the position in `items` either way.
+  const projects = items.filter((child) => !child.props.experiment);
+  const experiments = items.filter((child) => child.props.experiment);
   const detail = openIndex === null ? undefined : items[openIndex]?.props;
   const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
 
-  const openItem = (idx: number) => {
+  // Takes the element rather than a number, so a band can hand back whatever it
+  // was given without having to know where that sits in the whole list.
+  const openItem = (item: React.ReactElement<ProjectProps>) => {
+    const idx = items.indexOf(item);
+    if (idx < 0) return;
     setOpenIndex(idx);
     setActiveIndex(idx);
     history.pushState({ project: idx }, "");
@@ -238,7 +247,8 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               </div> */}
 
               <BandTools />
-              <BandProjects items={items} onOpen={openItem} />
+              <BandProjects items={projects} onOpen={openItem} />
+              <BandExperiments items={experiments} onOpen={openItem} />
               <BandSkills />
               <BandContact />
             </div>

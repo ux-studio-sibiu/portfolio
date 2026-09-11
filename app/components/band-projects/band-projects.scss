@@ -57,12 +57,16 @@
     // No aspect-ratio: the height comes from the image, so every thumbnail is
     // the same width and keeps its own proportion.
     background: var(--color-wash);
-    border: 1px solid var(--color-ink);
+    border: 2px solid var(--color-ink);
     filter:grayscale(1);
     cursor: pointer;
     // Clips the image to the button box.
     overflow: hidden;
     transition: background-color 0.25s ease;
+
+    &:hover{
+      filter:grayscale(0);
+    }
 
     @include respond-to("tablet") {
       // One fixed measure rather than whatever the column happens to be — the

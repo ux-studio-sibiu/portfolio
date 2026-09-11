@@ -2,7 +2,9 @@ import type { StaticImageData } from "next/image";
 
 export type ProjectProps = {
   title: string;
-  year: string;
+  // Experiments carry no date, so this is optional — everything else reads it
+  // as "print it if it is there".
+  year?: string;
   role: string;
   stack?: string;
   summary?: React.ReactNode;
@@ -14,6 +16,10 @@ export type ProjectProps = {
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;
+  // Which band this belongs to. Projects and experiments are one list with one
+  // detail pane behind them — they differ in how the entry is laid out, not in
+  // what happens when it is opened.
+  experiment?: boolean;
 };
 
 // Declaration only. ShowcaseLinear reads these props off its children to build
