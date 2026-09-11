@@ -7,9 +7,12 @@ import "./fixed-column.scss";
 //
 //   .fixed-identity   label, name, blurb and facts — faded as ONE unit by
 //                     --identity-fade, which the showcase writes on scroll
-//   .fixed-sections   the section titles, stacked and all transparent until one
-//                     takes over — deliberately OUTSIDE .fixed-identity so it
-//                     outlasts that fade
+//   .fixed-sections   the black rail down the left edge, carrying the section
+//                     titles rotated on their side, stacked and all transparent
+//                     until one takes over — deliberately OUTSIDE
+//                     .fixed-identity so it outlasts that fade. The rail itself
+//                     is lit by `active`, on the same transition as a title, so
+//                     the black and the first word fade in together
 //
 // `sections` comes from the showcase, which reads it off the `data-section`
 // attributes in the DOM. Nothing here needs updating when a band is added.
@@ -43,11 +46,7 @@ export function FixedColumn({ sections, active }: { sections: string[]; active: 
         </dl>
       </div>
 
-      <div className="fixed-sections" aria-hidden="true">
-        {/* Hidden copy of the label reserves exactly the space above the name,
-            so the titles land on the name's position without a hard-coded
-            offset to keep in sync. */}
-        <p className="fixed-label is-ghost">Frontend developer</p>
+      <div className={`fixed-sections${active ? " is-active" : ""}`} aria-hidden="true">
         <div className="section-stack">
           {sections.map((label) => (
             <span className={`fixed-section${active === label ? " is-active" : ""}`} key={label}>{label}</span>

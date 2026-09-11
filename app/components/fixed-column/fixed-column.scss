@@ -4,6 +4,9 @@
 // the pointer-events lockout once faded — belongs to the showcase shell, since
 // the width is what the divider is measured against.
 .nsc-fixed-column {
+  // Width of the black title rail down the left edge.
+  --rail: 5rem;
+
   // The identity fades as one unit, so the whole group carries the opacity
   // rather than each part carrying its own.
   .fixed-identity {
@@ -14,44 +17,78 @@
     opacity: var(--identity-fade, 1);
   }
 
-  // Section titles sit outside .fixed-identity so they outlast that fade, and
-  // are laid over the same box. `padding: inherit` keeps them on the column's
-  // own gutter without repeating the value.
+  // Section titles sit outside .fixed-identity so they outlast that fade. They
+  // are a black rail down the left edge of the column, flush to the pane: the
+  // box is absolute, so `left: 0` is measured off the column's padding box and
+  // clears the column's own 2rem gutter.
+  //
+  // The rail is not a permanent fixture — it comes and goes with the titles, so
+  // it is never sitting over the name at the top of the scroll. It carries the
+  // SAME transition as a title and flips on the same instant, which is what
+  // makes the black and the first word arrive as one thing. Once it is up it
+  // stays up: the later sections only cross-fade against it.
+  //
+  // Below tablet no band ever owns a title, so the rail never shows there.
   .fixed-sections {
     position: absolute;
-    inset: 0;
-    padding: inherit;
-    pointer-events: none;
-  }
-
-  .fixed-label.is-ghost {
-    visibility: hidden;
-  }
-
-  // Same offset the name has, so a title lands where the name was.
-  .section-stack {
-    position: relative;
-    margin-top: 1.5rem;
-  }
-
-  .fixed-section {
-    position: absolute;
+    z-index: 1;
     top: 0;
+    bottom: 0;
     left: 0;
-    right: 0;
+    width: var(--rail);
+    background: var(--color-ink);
     opacity: 0;
     transition: opacity 0.45s ease;
-    line-height: 0.85;
+    pointer-events: none;
+
+    &.is-active {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .section-stack {
+    position: relative;
+    height: 100%;
+  }
+
+  // All titles occupy the whole rail and cross-fade in place — same in/out
+  // transition as before, only the box under them has changed.
+  //
+  // Rotation is `writing-mode`, not a transform: the glyphs turn with the line
+  // and the box keeps its real size, so nothing has to be measured by hand.
+  // vertical-rl on its own reads top-to-bottom, and the half turn flips it to
+  // read bottom-to-top. (`sideways-lr` does this in one declaration, but it is
+  // too new to rely on.)
+  //
+  // The word still sits at the TOP of the rail — the placement is written as
+  // its mirror image because the rotation turns the box with the text. Grid
+  // axes turn with the writing mode too, so `align-items` is the horizontal one
+  // (centre across the rail) and `justify-items` the vertical: `end` is the
+  // bottom, which the half turn puts at the top, and padding-bottom lands there
+  // with it.
+  .fixed-section {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center end;
+    padding-bottom: 2.5rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    // Not the 0.85 the horizontal titles had: line-height is the rail's width
+    // here, and anything under 1 clips the glyphs against the black.
+    line-height: 1;
     letter-spacing: -0.045em;
     font-weight: 800;
     text-transform: uppercase;
-    font-size: clamp(1.75rem, 9vw, 3rem);
-
-    @include respond-to("tablet") {
-      // Same box as the name but a larger divisor: WORKED WITH and CAPABILITIES
-      // are longer than TURCANU and still have to fit column 1.
-      font-size: calc((50vw - var(--col-media) - 4rem) / 8.5);
-    }
+    color: var(--color-bg);
+    // Tied to the rail rather than the column, so the two stay in proportion.
+    font-size: calc(var(--rail) * 0.5);
 
     &.is-active {
       opacity: 1;
