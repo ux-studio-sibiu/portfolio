@@ -4,9 +4,9 @@
 // lives in that component's own stylesheet; what stays here is the geometry
 // they all sit in — the track, the three columns, and the divider.
 //
-// The one number that ties it together is --col-media: column 2's width. The
-// divider is placed off it, and so are the project entries, which is why they
-// cannot drift apart.
+// The one number that ties it together is --col-media: column 2's width, itself
+// derived from --thumb. The divider is placed off it, and so are the project
+// entries, which is why they cannot drift apart.
 .nsc-showcase-linear {
   position: fixed;
   inset: 0;
@@ -16,17 +16,28 @@
   overflow: hidden;
   background: var(--color-bg);
 
+  // The project thumbnail is what column 2 exists to hold, so it is the number
+  // everything else is derived from rather than a value column 2 hands down.
+  --thumb: 320px;
+
   // Columns 1 + 2 together are 50% of the pane, so column 1 is
   // 50% - --col-media and the divider lands exactly on the halfway line.
-  --col-media: 10rem;
+  //
+  // Column 2 is the thumbnail plus the gutter either side of it — that is what
+  // puts the thumbnail's right edge on the divider with nothing left over.
+  //
+  // The second term is the floor under column 1, because below roughly 1440px
+  // there is no room for a full 320px thumbnail AND a readable identity. It
+  // leaves column 1 at least 20rem, and never takes the rail below the 20vw it
+  // was before, so small screens keep the proportions they had and the
+  // thumbnail shrinks with the rail rather than sliding under column 1.
+  --col-media: min(calc(var(--thumb) + var(--gutter) + 2rem), max(20vw, calc(50vw - 20rem)));
 
-  @include respond-to("desktop") {
-    --col-media: 14rem;
-  }
-
-  @include respond-to("wide") {
-    --col-media: 18rem;
-  }
+  // Column 1's width. Measured in vw, not %, because the scroller it is laid
+  // over is also the box that carries the scrollbar — a percentage would be
+  // short by the scrollbar width and drift the divider off the halfway line.
+  // The pane is exactly 100vw wide, so 50vw is its middle.
+  --col-fixed: calc(50vw - var(--col-media));
 
   --rule: 1px solid var(--color-ink);
   --rule-hair: 1px solid var(--color-faint);
@@ -57,6 +68,9 @@
   // --- Index pane: three columns --------------------------------------------
 
   .index-pane {
+    // Containing block for column 1, which is lifted out of the flow from
+    // tablet up and laid over the scroller.
+    position: relative;
     display: flex;
     flex-direction: column;
     // Below tablet the pane itself scrolls, so the identity block scrolls away
@@ -73,6 +87,9 @@
 
   // Column 1's box. Its contents belong to the fixed-column component; the
   // width lives here because the divider is measured against it.
+  //
+  // From tablet up it sits ON TOP of the scroller rather than beside it, so it
+  // needs its own background — content passes underneath, not around.
   .pane-fixed {
     position: relative;
     display: flex;
@@ -81,15 +98,19 @@
     border-bottom: var(--rule);
 
     @include respond-to("tablet") {
-      // Fixed: full height, never scrolls, no shrink. Width is the remainder of
-      // the left half once column 2 is taken out. No border against column 2 —
-      // the two read as one half.
-      flex: 0 0 calc(50% - var(--col-media));
-      width: calc(50% - var(--col-media));
+      // Fixed: full height, never scrolls. Width is the remainder of the left
+      // half once column 2 is taken out. No border against column 2 — the two
+      // read as one half.
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+      width: var(--col-fixed);
       height: 100%;
       overflow: hidden;
       padding: 2.5rem 2rem;
       border-bottom: 0;
+      background: var(--color-bg);
     }
   }
 
@@ -99,7 +120,10 @@
     pointer-events: none;
   }
 
-  // Columns 2 + 3. Shared with the detail pane, which scrolls its own body.
+  // The scroller. It spans the WHOLE pane and runs under column 1 rather than
+  // starting after it, so content is free to be wider than column 2 and to pass
+  // beneath the fixed column. Shared with the detail pane, which scrolls its own
+  // body.
   .pane-scroll {
     flex: 1 1 auto;
     min-width: 0;
@@ -108,6 +132,7 @@
     // NOTE: ScrollTrigger is pointed at this element, so any re-enabled
     // scroll-driven tween needs the mobile scroller swapped to .index-pane.
     @include respond-to("tablet") {
+      width: 100%;
       height: 100%;
       overflow-y: auto;
       overscroll-behavior: contain;
@@ -115,12 +140,20 @@
     }
   }
 
-  // No horizontal padding: the columns carry their own, so the divider can sit
-  // at exactly --col-media from this box edge.
+  // No horizontal padding: the columns carry their own. The single inset is the
+  // width of column 1, so the bands keep the exact measure and position they had
+  // when the scroller began after that column instead of under it.
   .scroll-inner {
     position: relative;
+
+    @include respond-to("tablet") {
+      padding-left: var(--col-fixed);
+    }
   }
 
+  // Absolutely placed, so it is measured from the pane's left edge, not from
+  // the padded content box: column 1's width plus --col-media, i.e. the halfway
+  // line the project thumbnails sit against.
   .column-rule {
     display: none;
 
@@ -129,7 +162,7 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      left: var(--col-media);
+      left: calc(var(--col-fixed) + var(--col-media));
       width: 1px;
       margin-left: -1px;
       background: var(--color-ink);

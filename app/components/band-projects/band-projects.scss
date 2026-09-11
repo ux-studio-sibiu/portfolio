@@ -27,15 +27,15 @@
 
   // No transform, filter or overflow here — any of them would break the sticky
   // child below.
+  //
+  // The padding is half of what sizes column 2: --col-media is --thumb plus
+  // exactly these two values, so changing one without the other takes the
+  // thumbnail off the divider.
   .entry-visual {
     min-width: 0;
     padding: 0 var(--gutter);
 
     @include respond-to("tablet") {
-      padding: 0 1rem 0 var(--gutter);
-    }
-
-    @include respond-to("desktop") {
       padding: 0 2rem 0 var(--gutter);
     }
   }
@@ -58,10 +58,22 @@
     // the same width and keeps its own proportion.
     background: var(--color-wash);
     border: 1px solid var(--color-ink);
+    filter:grayscale(1);
     cursor: pointer;
     // Clips the image to the button box.
     overflow: hidden;
     transition: background-color 0.25s ease;
+
+    @include respond-to("tablet") {
+      // One fixed measure rather than whatever the column happens to be — the
+      // column is sized off --thumb, so this fills it exactly. The `min` is for
+      // the screens where column 2 has been capped to protect column 1: the
+      // thumbnail gives way with the rail instead of running under it, and
+      // `margin-left: auto` keeps the right edge on the divider gutter either
+      // way.
+      width: min(var(--thumb), 100%);
+      margin-left: auto;
+    }
 
     // Nothing to size the box with, so fall back to a fixed ratio.
     &.is-empty {

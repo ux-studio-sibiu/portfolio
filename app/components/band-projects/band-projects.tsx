@@ -31,7 +31,7 @@ export function BandProjects({
                 {/* The image opens the project too — same target as the
                     View project button, so the obvious click works. */}
                 <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(idx)} aria-label={`Open ${child.props.title}`}>
-                  {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 18rem, (min-width: 1024px) 14rem, 10rem" placeholder="blur" className="thumb-img" />}
+                  {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 320px, (min-width: 768px) 25vw, 100vw" placeholder="blur" className="thumb-img" />}
                   {/* <span className="thumb-index">{num(idx)}</span> */}
                 </button>
                 {/* <span className="visual-marker" aria-hidden="true" /> */}
