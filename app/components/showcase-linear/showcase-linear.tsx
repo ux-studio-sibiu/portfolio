@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { DETAILS } from "@/app/components/projects/registry";
 import { FixedColumn } from "@/app/components/fixed-column/fixed-column";
 import { DetailPane } from "@/app/components/detail-pane/detail-pane";
+import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
 import { BandTools } from "@/app/components/band-tools/band-tools";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
@@ -33,6 +34,9 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
+  // The index pane, which is also the surface the divider watches the cursor
+  // over — see ElasticLine at the foot of the JSX.
+  const pane = useRef<HTMLElement>(null);
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   // Null until the first open, which is what keeps every detail chunk unfetched
@@ -201,21 +205,11 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     //   });
     // });
 
-    // Divider progress, also disabled. To bring it back, render a
-    // <span className="column-progress" /> next to .column-rule (same position,
-    // scaleY(0), transform-origin top) and re-enable this:
-    //
-    // gsap.fromTo(".column-progress", { scaleY: 0 }, {
-    //   scaleY: 1,
-    //   ease: "none",
-    //   scrollTrigger: {
-    //     trigger: ".nsc-band-projects",
-    //     scroller: scroller.current,
-    //     start: "top 65%",
-    //     end: "bottom 85%",
-    //     scrub: true,
-    //   },
-    // });
+    // Scroll progress on the divider was tried and dropped: the line is a solid
+    // black rule at all times, which leaves a read/unread split nothing to say.
+    // If it comes back it wants to be weight or opacity, not colour, and it
+    // wants a second <path> over the first sharing its `d` — elastic-line
+    // already writes every path in the svg, so it would be carried along.
 
     ScrollTrigger.refresh();
   }, { scope: root });
@@ -228,17 +222,12 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             scrolls; columns 2 and 3 scroll together inside .pane-scroll. The
             rule between 2 and 3 is the same line the project thumbnails sit
             against: both are placed off --col-media, so they cannot drift. */}
-        <section className="showcase-pane index-pane" inert={isDetail}>
+        <section className="showcase-pane index-pane" ref={pane} inert={isDetail}>
           <FixedColumn sections={sections} active={section} />
 
           {/* Columns 2 + 3 — scrolling. */}
           <div className="pane-scroll" ref={scroller}>
             <div className="scroll-inner">
-              {/* The divider between columns 2 and 3, full height of the
-                  scrolling content. Static for now — see the disabled scrub
-                  in the GSAP block above. */}
-              <span className="column-rule" aria-hidden="true" />
-
               <BandCoreTechnologies />
 
               {/* <div className="marquee" aria-hidden="true">
@@ -254,6 +243,15 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               <BandContact />
             </div>
           </div>
+
+          {/* The divider between columns 2 and 3. It sits on the pane rather
+              than in the scrolling content — the content is always taller than
+              the pane, so it reads as the same full-height line, the cursor can
+              be measured straight off the viewport, and it ends on the bottom
+              edge of the screen rather than somewhere down the content. The
+              pane is what it watches for the cursor; .column-rule is only where
+              it goes. */}
+          <ElasticLine surface={pane} className="column-rule" />
         </section>
 
         <DetailPane detail={detail} Body={Body} isOpen={isDetail} onClose={closeItem} />

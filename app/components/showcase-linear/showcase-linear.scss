@@ -151,21 +151,27 @@
     }
   }
 
-  // Absolutely placed, so it is measured from the pane's left edge, not from
-  // the padded content box: column 1's width plus --col-media, i.e. the halfway
-  // line the project thumbnails sit against.
+  // Where the divider goes. What it is — its width, its stroke, the fact that
+  // it is a line at all — belongs to the elastic-line component; this only puts
+  // it on the halfway line, column 1's width plus --col-media, and under column
+  // 1 in the stack.
+  //
+  // height: 100%, NOT top/bottom: 0. An svg is a replaced element: pinning both
+  // edges leaves its height auto, and an auto height resolves off the viewBox
+  // ratio instead of stretching — at a 500x1000 viewBox and a 500px width that
+  // is a 1000px line hanging past the bottom of a 900px screen. An explicit
+  // height is what actually makes it end on the bottom edge, and it also stops
+  // the viewBox the script writes from feeding off its own output.
   .column-rule {
     display: none;
 
     @include respond-to("tablet") {
       display: block;
       position: absolute;
+      z-index: 1;
       top: 0;
-      bottom: 0;
       left: calc(var(--col-fixed) + var(--col-media));
-      width: 1px;
-      margin-left: -1px;
-      background: var(--color-ink);
+      height: 100%;
     }
   }
 
