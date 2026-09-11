@@ -24,8 +24,11 @@ export function BandProjects({
   return (
     <section className="band nsc-band-projects" data-section="Projects">
       <div className="band-content is-full">
+        {/* The FIRST entry is what the fixed column is timed off — see
+            `data-section-anchor` in showcase-linear.tsx. Without it the band box
+            is measured, and its padding crosses the trigger line 9rem early. */}
         {items.map((child, idx) => (
-          <article className="scroll-entry" key={child.props.title}>
+          <article className="scroll-entry" key={child.props.title} data-section-anchor={idx === 0 ? "" : undefined}>
             <div className="entry-visual">
               <div className="visual-sticky">
                 {/* The image opens the project too — same target as the

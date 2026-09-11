@@ -92,6 +92,12 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     const FADE_OVER = 0.45;
 
     let bands: HTMLElement[] = [];
+    // What is actually measured against the trigger line, one per band. A band
+    // is a box with padding on it, so its own top crosses the line well before
+    // anything you can see does: a band can nominate the element it wants timed
+    // off instead with `data-section-anchor`. Projects points at its first
+    // entry, so the title arrives as that entry's top hits the line.
+    let anchors: HTMLElement[] = [];
     let labels = "";
     let fadeEnd = 0;
     let fadeStart = 0;
@@ -100,6 +106,9 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     // on resize and whenever the content changes height.
     const measure = () => {
       bands = Array.from(el.querySelectorAll<HTMLElement>("[data-section]"));
+      // Resolved here rather than per frame: this is the only place the DOM
+      // can have changed under us.
+      anchors = bands.map((node) => node.querySelector<HTMLElement>("[data-section-anchor]") ?? node);
 
       // Publish the labels only when they actually change: this runs from a
       // ResizeObserver, and setting state unconditionally would have it
@@ -110,7 +119,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
         setSections(next);
       }
 
-      const first = bands[0];
+      const first = anchors[0];
       if (!first) return;
       const paneTop = el.getBoundingClientRect().top;
       const offset = first.getBoundingClientRect().top - paneTop + el.scrollTop;
@@ -132,16 +141,16 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // The last band whose top has passed the trigger line owns the title. Not
-      // "the band covering the line": the final section starts below the
+      // The last band whose anchor has passed the trigger line owns the title.
+      // Not "the band covering the line": the final section starts below the
       // furthest that line can ever reach, so a containment test would never
       // light Contact at all.
       const paneTop = el.getBoundingClientRect().top;
       const line = el.clientHeight * TRIGGER;
       let owner: string | null = null;
-      for (const node of bands) {
-        if (node.getBoundingClientRect().top - paneTop > line) break;
-        owner = node.dataset.section ?? null;
+      for (let i = 0; i < bands.length; i++) {
+        if (anchors[i].getBoundingClientRect().top - paneTop > line) break;
+        owner = bands[i].dataset.section ?? null;
       }
       // The final band is shorter than the pane, so its top never reaches the
       // line however far you scroll — at the bottom of the scroll it wins
