@@ -180,20 +180,11 @@ a {
   padding: 0;
 }
 
+// A plain block: the grid it used to be existed to hold a numbering column on
+// the left, and there is no longer anything to align against.
 .spec-row {
-  display: grid;
-  grid-template-columns: 2.5rem 1fr;
-  align-items: baseline;
-  gap: 0 1rem;
   padding: 1.5rem 0;
   border-bottom: 1px solid var(--color-faint);
-}
-
-.spec-num {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.12em;
-  color: var(--color-muted);
 }
 
 .spec-name {
@@ -214,7 +205,6 @@ a {
 }
 
 .spec-note {
-  grid-column: 2;
   margin: 0.5rem 0 0;
   font-family: var(--font-mono);
   font-size: 0.6875rem;

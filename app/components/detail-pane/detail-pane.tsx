@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, useRef } from "react";
-import { gsap } from "gsap";
-import { useGSAP } from "@gsap/react";
+import { Suspense } from "react";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
+import { TileReveal } from "@/app/components/tile-reveal/tile-reveal";
 import "./detail-pane.scss";
 
 // Right pane of the track. Chrome is the back button and nothing else — the
@@ -24,17 +23,8 @@ export function DetailPane({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const root = useRef<HTMLElement>(null);
-
-  // Fade the incoming body in behind the slide.
-  useGSAP(() => {
-    if (!isOpen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    gsap.from(".detail-frame", { opacity: 0, duration: 0.5, delay: 0.35, ease: "power2.out" });
-  }, { dependencies: [isOpen, detail?.slug], scope: root });
-
   return (
-    <section className="showcase-pane detail-pane nsc-detail-pane" inert={!isOpen} ref={root}>
+    <section className="showcase-pane detail-pane nsc-detail-pane" inert={!isOpen}>
       <button type="button" className="detail-back" onClick={onClose}>
         <span className="back-arrow" aria-hidden="true">&larr;</span> Back
       </button>
@@ -48,6 +38,11 @@ export function DetailPane({
           </div>
         )}
       </div>
+
+      {/* Covers the frame for the length of the slide, then dissolves off it.
+          Sits over the back button as well, so the pane arrives as one surface
+          rather than a button floating on a grid. */}
+      <TileReveal play={isOpen} />
     </section>
   );
 }

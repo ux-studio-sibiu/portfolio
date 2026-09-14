@@ -8,8 +8,12 @@
   --rail: 5rem;
 
   // The identity fades as one unit, so the whole group carries the opacity
-  // rather than each part carrying its own.
+  // rather than each part carrying its own. Positioned only to sit above the
+  // column's backdrop, which is a pseudo-element and would otherwise paint over
+  // it — see .pane-fixed in showcase-linear.scss.
   .fixed-identity {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -102,7 +106,7 @@
   .fixed-label {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
@@ -117,10 +121,11 @@
     text-transform: uppercase;
 
     @include respond-to("tablet") {
-      // Fill column 1. Its width is 50vw - --col-media, less 2rem of padding
-      // either side; the divisor is the width-to-size ratio of the longest line
-      // (TURCANU) in Archivo 800 — measured at 4.92, plus slack.
-      font-size: calc((50vw - var(--col-media) - 4rem) / 5.1);
+      // Fill column 1, which is now the whole left half less 2rem of padding
+      // either side. The divisor is the width-to-size ratio of the longest line
+      // (TURCANU) in Archivo 800 — measured at 4.92, plus slack — so raising it
+      // is how the name comes back down without the column moving.
+      font-size: calc((50vw - 4rem) / 5.1);
     }
   }
 
@@ -137,17 +142,21 @@
   .fixed-blurb {
     margin: 2rem 0 0;
     max-width: 30ch;
-    font-size: 1rem;
+    font-size: 1.125rem;
     line-height: 1.5;
     color: var(--color-muted);
 
     @include respond-to("tablet") {
-      // Spans the column with the name rather than sitting in a narrow measure.
-      max-width: none;
+      // Wider than the mobile measure but not the whole column: half the screen
+      // is far past the point where a line is still readable. In ch, so it
+      // opens up with the type rather than pinning it back.
+      max-width: 44ch;
+      font-size: 1.375rem;
     }
   }
 
   .fixed-facts {
+    opacity:0;
     margin: auto 0 0;
     padding-top: 2rem;
 
@@ -167,7 +176,7 @@
 
     dt {
       font-family: var(--font-mono);
-      font-size: 0.6875rem;
+      font-size: 0.8125rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--color-muted);
@@ -175,7 +184,7 @@
 
     dd {
       margin: 0;
-      font-size: 0.9375rem;
+      font-size: 1.0625rem;
     }
   }
 

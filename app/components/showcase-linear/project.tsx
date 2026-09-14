@@ -20,6 +20,10 @@ export type ProjectProps = {
   // detail pane behind them — they differ in how the entry is laid out, not in
   // what happens when it is opened.
   experiment?: boolean;
+  // Put on the entry's root, next to .scroll-entry. "large" and "small" are the
+  // off-size thumbnails in band-projects.scss; anything else you add there is
+  // reachable the same way.
+  className?: string;
 };
 
 // Declaration only. ShowcaseLinear reads these props off its children to build

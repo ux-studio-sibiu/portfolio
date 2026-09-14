@@ -11,11 +11,16 @@ import fourInOneThumb from "@/app/assets/projects/multidevice.jpg";
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
 // is fetched only when the project is opened.
+//
+// `className` lands on the entry in the index. "large" and "small" are the
+// off-size thumbnails — set them per project by eye, drop the prop for the
+// middle size. They are defined in band-projects.scss.
 export default function Home() {
   return (
     <ShowcaseLinear>
       <LinearProject
         slug="advisor"
+        className="large"
         thumb={advisorThumb}
         title="Advisor"
         year="2018 —"
@@ -57,6 +62,7 @@ export default function Home() {
 
       <LinearProject
         slug="photography"
+        className="small"
         thumb={photographyThumb}
         embed
         title="Photography Portfolio"
@@ -76,6 +82,7 @@ export default function Home() {
 
       <LinearProject
         slug="clasa-zero"
+        className="small"
         thumb={clasaZeroThumb}
         embed
         title="Clasa Zero"
@@ -114,6 +121,7 @@ export default function Home() {
 
       <LinearProject
         slug="map"
+        className="large"
         thumb={mapThumb}
         embed
         title="Map"
@@ -134,6 +142,7 @@ export default function Home() {
 
       <LinearProject
         slug="zoom"
+        className="small"
         thumb={zoomThumb}
         embed
         title="Zoom"

@@ -15,6 +15,12 @@
   // to its mobile layout.
   --shot: 0.25;
 
+  // The frames are one size, and it is the middle of the two the projects
+  // alternate between — the rhythm up there is the projects' own, and repeating
+  // it here would read as the same band continuing rather than a second one.
+  // Column 2 is cut for the widest project thumbnail, so this always fits.
+  --thumb: 320px;
+
   .experiment-list {
     list-style: none;
     margin: 0;

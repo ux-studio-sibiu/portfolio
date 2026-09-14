@@ -7,6 +7,11 @@
   // The visual column stretches to the full entry height (grid default), which
   // is what gives the sticky thumbnail inside exactly one entry of travel.
   .scroll-entry {
+    // The size an entry is unless it says otherwise — see .large / .small
+    // below. NOT the root --thumb, which is the widest a thumbnail may get and
+    // exists to cut column 2 for it.
+    --thumb: 320px;
+
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -23,6 +28,23 @@
       // the viewport so the pin has travel and reads as deliberate.
       min-height: 65svh;
     }
+  }
+
+  // Off-size entries, put on whichever projects you want from page.tsx —
+  // <LinearProject className="large"> / "small". Redeclaring --thumb is all it
+  // takes: the column these sit in is measured off the value at the showcase
+  // root and is already resolved by the time it reaches here, so this moves the
+  // thumbnail's left edge and nothing else. Every thumbnail still ends on the
+  // divider whatever size it is, which is what keeps a mixed column deliberate
+  // rather than ragged.
+  //
+  // A third size is a third class: add it here, name it on the entry.
+  .scroll-entry.large {
+    --thumb: 420px;
+  }
+
+  .scroll-entry.small {
+    --thumb: 200px;
   }
 
   // No transform, filter or overflow here — any of them would break the sticky
