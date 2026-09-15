@@ -13,6 +13,11 @@
   .detail-frame {
     min-height: 100%;
     padding: 6rem var(--gutter) 4rem;
+    // The pane is black so an embed letterboxes against something deliberate.
+    // A prose body is not an embed: it is set in --color-ink on --color-faint
+    // rules like the rest of the site, so it needs the site's surface under it
+    // or it is black on black.
+    background: var(--color-bg);
 
     // Embeds get the whole surface, no padding, exact height so a 100%-height
     // iframe inside has something to measure against.
@@ -20,6 +25,7 @@
       height: 100%;
       min-height: 0;
       padding: 0;
+      background: transparent;
     }
   }
 

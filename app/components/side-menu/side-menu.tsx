@@ -10,8 +10,13 @@ import "./side-menu.scss";
 // transform — can reach the pane geometry underneath.
 //
 // Only the panel takes pointer events, so the half of the screen it does not
-// cover stays live while it is open. Closing is the close button, Escape, a
-// section, or a press anywhere outside the panel.
+// cover stays live while it is open.
+//
+// Two reveals, picked with `reveal`: it fades in where it already is, or it
+// slides in from the left edge.
+//
+// Closing is the close button, Escape, a section, or a press anywhere outside
+// the panel.
 //
 // `sections` is the same list the fixed column's rail is built from — read off
 // the `data-section` attributes in the DOM by the showcase — so a band that
@@ -27,11 +32,15 @@ export function SideMenu({
   isOpen,
   onClose,
   onSelect,
+  reveal = "slide",
 }: {
   sections: string[];
   isOpen: boolean;
   onClose: () => void;
   onSelect: (label: string) => void;
+  // Which way it arrives. Both live alongside each other — switching is this
+  // one word, and neither costs the other anything.
+  reveal?: "slide" | "fade";
 }) {
   const panel = useRef<HTMLElement>(null);
   const close = useRef<HTMLButtonElement>(null);
@@ -61,10 +70,10 @@ export function SideMenu({
   if (!mounted) return null;
 
   return createPortal(
-    <div className={`nsc-side-menu${isOpen ? " is-open" : ""}`}>
+    <div className={`nsc-side-menu ${reveal}${isOpen ? " is-open" : ""}`}>
       <nav className="menu-panel" aria-label="Sections" inert={!isOpen} ref={panel}>
-        <button type="button" className="menu-close" onClick={onClose} ref={close}>
-          Close <span className="close-mark" aria-hidden="true">&times;</span>
+        <button type="button" className="menu-close" onClick={onClose} ref={close} aria-label="Close the menu">
+          <span className="close-mark" aria-hidden="true" />
         </button>
 
         <ul className="menu-list">

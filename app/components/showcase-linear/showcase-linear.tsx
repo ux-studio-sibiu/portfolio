@@ -87,6 +87,35 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     band?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   };
 
+  // The fixed column is laid OVER the scroller, not inside it. Most of it is
+  // click-through so the wheel falls straight to the pane and scrolls it
+  // natively, but the two things that have to take pointer events — the mail
+  // link and the menu button — have no scrollable ancestor for a wheel to
+  // reach: .pane-scroll is their SIBLING. This fires only over those two, and
+  // hands the delta to the pane by hand.
+  //
+  // Forwarded scrolling does not feel like the real thing — no inertia, no
+  // smoothing — which is exactly why the name is no longer a button. Keep what
+  // takes pointer events here small, or this becomes noticeable again.
+  useEffect(() => {
+    const column = pane.current?.querySelector<HTMLElement>(".pane-fixed");
+    const el = scroller.current;
+    if (!column || !el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      // Below tablet this element does not scroll — the pane around it does,
+      // and the column is in its flow, so there is nothing to forward.
+      if (el.scrollHeight <= el.clientHeight) return;
+      e.preventDefault();
+      // deltaMode is lines or pages on some mice, pixels everywhere else.
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientHeight : 1;
+      el.scrollTop += e.deltaY * unit;
+    };
+
+    column.addEventListener("wheel", onWheel, { passive: false });
+    return () => column.removeEventListener("wheel", onWheel);
+  }, []);
+
   useEffect(() => {
     const onPop = () => setActiveIndex(null);
     window.addEventListener("popstate", onPop);
@@ -289,7 +318,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
 
       {/* Portalled to <body> from here, so it is outside the shell entirely —
           it only needs the section list and the open state. */}
-      <SideMenu sections={sections} isOpen={menuOpen} onClose={() => setMenuOpen(false)} onSelect={goToSection} />
+      <SideMenu sections={sections} isOpen={menuOpen} onClose={() => setMenuOpen(false)} onSelect={goToSection} reveal="fade" />
     </div>
   );
 }

@@ -140,10 +140,20 @@
     }
   }
 
-  // Set by the scroll handler once the identity has fully faded, so an
-  // invisible column cannot swallow clicks on the email link.
-  &.is-identity-hidden .pane-fixed {
+  // Column 1 is laid OVER the scroller, so with pointer events on it is a dead
+  // half of the screen: the wheel lands on a box that does not scroll and the
+  // pane underneath never moves. It is a backdrop — it takes no events at all,
+  // and the three things you can actually press take them back for themselves.
+  //
+  // The mail link is scoped to the un-faded state rather than given a blunt
+  // `auto`: a descendant re-enables events through an ancestor that switched
+  // them off, so an invisible link would otherwise still be clickable.
+  .pane-fixed {
     pointer-events: none;
+  }
+
+  &:not(.is-identity-hidden) .pane-fixed .fixed-mail {
+    pointer-events: auto;
   }
 
   // The scroller. It spans the WHOLE pane and runs under column 1 rather than
@@ -188,13 +198,20 @@
   // is a 1000px line hanging past the bottom of a 900px screen. An explicit
   // height is what actually makes it end on the bottom edge, and it also stops
   // the viewBox the script writes from feeding off its own output.
+  //
+  // Above column 1, not under it. The line sits exactly on 50vw, which is the
+  // column's right edge, and its box reaches half a throw either side of that —
+  // so under the column, every wiggle to the LEFT disappeared behind the
+  // identity's backdrop. It takes no pointer events, so being on top costs
+  // nothing; narrowing the column to dodge it would have moved the halfway line
+  // the whole layout is measured from.
   .column-rule {
     display: none;
 
     @include respond-to("tablet") {
       display: block;
       position: absolute;
-      z-index: 1;
+      z-index: 3;
       top: 0;
       left: calc(var(--col-fixed) + var(--col-media));
       height: 100%;

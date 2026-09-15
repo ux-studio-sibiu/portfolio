@@ -21,12 +21,9 @@ export function FixedColumn({ sections, active, onOpenMenu }: { sections: string
     <aside className="pane-fixed nsc-fixed-column">
       <div className="fixed-identity">
         <p className="fixed-label">Frontend developer</p>
-        {/* The name is the way into the section nav — see SideMenu. */}
         <h1 className="fixed-name">
-          <button type="button" className="name-open" onClick={onOpenMenu} aria-label="Open the section menu">
-            <span className="name-mask"><span>Razvan</span></span>
-            <span className="name-mask"><span>Turcanu</span></span>
-          </button>
+          <span className="name-mask"><span>Razvan</span></span>
+          <span className="name-mask"><span>Turcanu</span></span>
         </h1>
         <p className="fixed-blurb">
           I build web interfaces where motion, performance and clarity pull in the
@@ -49,23 +46,27 @@ export function FixedColumn({ sections, active, onOpenMenu }: { sections: string
         </dl>
       </div>
 
-      {/* The rail outlasts the identity fade, so the hamburger in it is how
-          the nav is reached once the name has gone. aria-hidden sits on the
-          stack rather than the whole rail — the rotated titles are decorative,
-          but the button in here is not. */}
-      <div className={`fixed-sections${active ? " is-active" : ""}`}>
-        <div className="section-stack" aria-hidden="true">
+      {/* Decorative: the rotated titles say what the scroll already says. */}
+      <div className={`fixed-sections${active ? " is-active" : ""}`} aria-hidden="true">
+        <div className="section-stack">
           {sections.map((label) => (
             <span className={`fixed-section${active === label ? " is-active" : ""}`} key={label}>{label}</span>
           ))}
         </div>
-
-        {/* Inert until the rail is up: it fades in with the rail, and an
-            invisible button must not be focusable. */}
-        <button type="button" className="rail-menu" onClick={onOpenMenu} aria-label="Open the section menu" inert={!active}>
-          <span className="menu-bars" aria-hidden="true" />
-        </button>
       </div>
+
+      {/* The only thing in this column that takes a click, and deliberately so:
+          the column is laid over the scroller, and anything here that accepts
+          pointer events is a patch of screen the wheel cannot fall through. A
+          44px button is a price worth paying; the name, at 576x199, was not.
+
+          It sits outside .fixed-sections rather than in it so it does not
+          inherit that rail's fade — the nav has to be reachable from the top of
+          the page, not only once a section has taken the title. It inverts when
+          the rail comes up underneath it. */}
+      <button type="button" className="rail-menu" onClick={onOpenMenu} aria-label="Open the section menu">
+        <span className="menu-bars" aria-hidden="true" />
+      </button>
 
       {/* Entrance timeline for this column, currently disabled:
           gsap.timeline({ defaults: { ease: "power3.out" } })
