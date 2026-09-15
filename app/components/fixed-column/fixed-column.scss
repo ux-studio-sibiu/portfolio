@@ -16,6 +16,15 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
+    // Centred on the column, which is the height of the fold — so the identity
+    // sits in the middle of the first screen rather than hanging off its top.
+    //
+    // Not quite the middle: the block centres within the column LESS the padding
+    // below, so it ends up half that padding above true centre — about a quarter
+    // of the gap it would otherwise have above it. In vh rather than rem so the
+    // offset keeps its proportion as the fold gets taller.
+    justify-content: center;
+    padding-bottom: 12vh;
     flex: 1;
     min-height: 0;
     opacity: var(--identity-fade, 1);
@@ -74,12 +83,16 @@
   // (centre across the rail) and `justify-items` the vertical: `end` is the
   // bottom, which the half turn puts at the top, and padding-bottom lands there
   // with it.
+  //
+  // Which is why the clearance for the menu button — now at the head of the rail
+  // — is written as padding-BOTTOM: 100px of it appears above the word, not
+  // below it.
   .fixed-section {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center end;
-    padding-bottom: 2.5rem;
+    padding-bottom: calc(2.5rem + 100px);
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     opacity: 0;
@@ -103,7 +116,7 @@
     }
   }
 
-  // The hamburger, at the foot of the rail — but not inside it, so it is here
+  // The hamburger, at the head of the rail — but not inside it, so it is here
   // from the first paint rather than waiting for a section to light the rail.
   // Centred on the rail's width, which is where the rail will arrive.
   //
@@ -114,7 +127,7 @@
     position: absolute;
     z-index: 2;
     left: calc(var(--rail) / 2);
-    bottom: 1.75rem;
+    top: 1.75rem;
     transform: translateX(-50%);
     pointer-events: auto;
     display: grid;
@@ -177,9 +190,11 @@
   }
 
   .fixed-label {
-    margin: 0;
+    // Indented off the column's own gutter, so the line the identity starts on
+    // is not the line everything under it starts on.
+    margin: 0 0 0 10px;
     font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-size: 1rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
@@ -187,7 +202,7 @@
   .fixed-name {
     margin: 1.5rem 0 0;
     // Below tablet column 1 is the full pane width.
-    font-size: clamp(2.5rem, 13vw, 5rem);
+    font-size: clamp(2.25rem, 12vw, 4.5rem);
     line-height: 0.85;
     letter-spacing: -0.05em;
     font-weight: 800;
@@ -196,9 +211,10 @@
     @include respond-to("tablet") {
       // Fill column 1, which is now the whole left half less 2rem of padding
       // either side. The divisor is the width-to-size ratio of the longest line
-      // (TURCANU) in Archivo 800 — measured at 4.92, plus slack — so raising it
-      // is how the name comes back down without the column moving.
-      font-size: calc((50vw - 4rem) / 5.1);
+      // (TURCANU) in Archivo 800 — measured at 4.92 — plus slack, and then a
+      // further tenth on top, which is what holds the name off the divider.
+      // Raising it is how the name comes down without the column moving.
+      font-size: calc((50vw - 4rem) / 5.7);
     }
   }
 
@@ -214,7 +230,7 @@
 
   .fixed-blurb {
     margin: 2rem 0 0;
-    max-width: 30ch;
+    // max-width: 30ch;
     font-size: 1.125rem;
     line-height: 1.5;
     color: var(--color-muted);
@@ -223,14 +239,22 @@
       // Wider than the mobile measure but not the whole column: half the screen
       // is far past the point where a line is still readable. In ch, so it
       // opens up with the type rather than pinning it back.
-      max-width: 44ch;
-      font-size: 1.375rem;
+      // max-width: 44ch;
+      font-size: 1.2rem;
     }
   }
 
+  // Out of the flow rather than pushed to the foot of it with an auto margin.
+  // It lands in exactly the same place either way, but an auto margin eats the
+  // free space the centring above needs — and this block is currently invisible,
+  // so 178px of it would have pulled the visible text well off centre.
   .fixed-facts {
-    opacity:0;
-    margin: auto 0 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    margin: 0;
     padding-top: 2rem;
 
     .fact {
@@ -249,7 +273,7 @@
 
     dt {
       font-family: var(--font-mono);
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--color-muted);
@@ -257,7 +281,7 @@
 
     dd {
       margin: 0;
-      font-size: 1.0625rem;
+      font-size: 1rem;
     }
   }
 

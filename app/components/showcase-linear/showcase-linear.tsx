@@ -151,6 +151,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
 
     const TRIGGER = 0.5;
     const FADE_OVER = 0.45;
+    // How far the pane scrolls before a pinned highlight is fully swept, as a
+    // fraction of the pane height. A phrase in the fixed column has no travel of
+    // its own to measure against, so this is the travel of the PAGE instead.
+    const SWEEP_OVER = 0.5;
 
     let bands: HTMLElement[] = [];
     // What is actually measured against the trigger line, one per band. A band
@@ -192,6 +196,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       const span = fadeEnd - fadeStart;
       const t = span > 0 ? Math.min(1, Math.max(0, (el.scrollTop - fadeStart) / span)) : 0;
       shell.style.setProperty("--identity-fade", String(1 - t));
+      // Published for .highlight-on-scroll.pinned, which cannot time itself off a
+      // box that never moves.
+      const sweepOver = el.clientHeight * SWEEP_OVER;
+      shell.style.setProperty("--sweep", sweepOver > 0 ? String(Math.min(1, el.scrollTop / sweepOver)) : "0");
       // Fully invisible: stop it swallowing clicks on the email link.
       shell.classList.toggle("is-identity-hidden", t === 1);
 

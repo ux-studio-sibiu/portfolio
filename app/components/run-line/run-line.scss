@@ -1,0 +1,14 @@
+// Nothing is drawn here — the effect is the characters themselves, and in a
+// monospace face a same-length scramble is the same size as the word it stands
+// in for. There is no width or height to hold: the box cannot change.
+//
+// No pointer events either. This runs on a timer rather than on hover, which is
+// what lets the column above the scroller stay entirely click-through — see
+// .pane-fixed.
+.nsc-run-line {
+  display: inline-block;
+  // The words are swapped for ones of a different length, so the line's own
+  // width changes; it must not be allowed to find a new place to break while
+  // that happens.
+  white-space: nowrap;
+}

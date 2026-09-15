@@ -149,6 +149,24 @@ a {
     }
   }
 
+  // Pinned variant, for a phrase that does not travel with the scroll — the
+  // identity blurb sits in the fixed column, so its own view() timeline reads as
+  // permanently in range and the band starts full. This drives the sweep off how
+  // far the PANE has been scrolled instead, published as --sweep by the
+  // showcase, which means it starts at nothing because the page does and unwinds
+  // on the way back up.
+  //
+  // Two classes beats the one-class rule on specificity, so the native animation
+  // is off regardless of source order.
+  &.pinned {
+    --lit: var(--sweep, 0);
+    animation: none;
+
+    @media (prefers-reduced-motion: reduce) {
+      --lit: 1;
+    }
+  }
+
   // Nothing to scrub: show the finished state.
   @media (prefers-reduced-motion: reduce) {
     --lit: 1;
@@ -207,9 +225,9 @@ a {
 .spec-note {
   margin: 0.5rem 0 0;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: lowercase;
   color: var(--color-muted);
 }
 

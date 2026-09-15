@@ -1,5 +1,6 @@
 "use client";
 
+import { RunLine, RunWord } from "@/app/components/run-line/run-line";
 import "./fixed-column.scss";
 
 // Column 1 of the index pane: fixed, never scrolls, and carries two things that
@@ -20,14 +21,19 @@ export function FixedColumn({ sections, active, onOpenMenu }: { sections: string
   return (
     <aside className="pane-fixed nsc-fixed-column">
       <div className="fixed-identity">
-        <p className="fixed-label">Frontend developer</p>
+        <p className="fixed-label">
+          <RunLine>
+            <RunWord alt="Frontend">Creative</RunWord>
+            <RunWord alt="Engineer">Developer</RunWord>
+          </RunLine>
+        </p>
         <h1 className="fixed-name">
           <span className="name-mask"><span>Razvan</span></span>
           <span className="name-mask"><span>Turcanu</span></span>
         </h1>
         <p className="fixed-blurb">
-          I build web interfaces where motion, performance and clarity pull in the
-          same direction. Ten years of shipping things that stay fast after launch.
+          Passionate about craft, I <span className="highlight-on-scroll pinned">bridge design and dev</span> to build polished, practical interfaces. 
+          I enjoy putting together <span className="highlight-on-scroll pinned">creative custom designs</span>, using AI tools to move from quick prototypes to finished products.
         </p>
 
         <dl className="fixed-facts">

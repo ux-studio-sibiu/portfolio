@@ -17,23 +17,31 @@ export function BandCoreTechnologies() {
         </div> */}
         <ul className="spec-list">
           <li className="spec-row">
-            <h2 className="spec-name">Next.js</h2>
-            <p className="spec-note">App Router, server components, caching and revalidation</p>
+            <h2 className="spec-name">Next.js, React</h2>
+            <p className="spec-note">SSR, SSG, App Router, server components, caching and revalidation</p>
           </li>
+
           <li className="spec-row">
-            <h2 className="spec-name">TypeScript</h2>
-            <p className="spec-note">Strict mode, typed data layers end to end</p>
+            <h2 className="spec-name">HTML, CSS, JS, TypeScript</h2>
+            <p className="spec-note">proficient with the fundamentals, Core Web Vitals optimization, performance profiling </p>
           </li>
+
           <li className="spec-row">
-            <h2 className="spec-name">TailwindCSS</h2>
-            <p className="spec-note">Utility-first, driven off a shared token set</p>
+            <h2 className="spec-name">Design focus</h2>
+            <p className="spec-note">Figma</p>
           </li>
+
           <li className="spec-row">
-            <h2 className="spec-name">Framer Motion, GSAP, Rive</h2>
+            <h2 className="spec-name">AI Tools</h2>
+            <p className="spec-note">Responsible use of AI tools, balance strengths/limitations: claude, github copilot, chatGPT</p>
+          </li>
+
+          <li className="spec-row">
+            <h2 className="spec-name">GSAP</h2>
             <p className="spec-note">Timelines, scroll-driven motion, interactive vector</p>
           </li>
           <li className="spec-row">
-            <h2 className="spec-name">Headless CMS platforms</h2>
+            <h2 className="spec-name">Headless CMS</h2>
             <p className="spec-note">Sanity, structured content, webhook-driven caching</p>
           </li>
         </ul>

@@ -149,7 +149,7 @@
   // `auto`: a descendant re-enables events through an ancestor that switched
   // them off, so an invisible link would otherwise still be clickable.
   .pane-fixed {
-    pointer-events: none;
+    // pointer-events: none;
   }
 
   &:not(.is-identity-hidden) .pane-fixed .fixed-mail {

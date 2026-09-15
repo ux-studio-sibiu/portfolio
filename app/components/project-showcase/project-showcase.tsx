@@ -110,7 +110,7 @@ export function ProjectShowcase({ children }: { children: React.ReactNode }) {
             <div className="pane-grid">
 
               <div className="intro-col">
-                <p className="intro-label label">Frontend developer</p>
+                <p className="intro-label label">Creative Developer</p>
                 <h1 className="intro-name">
                   <span className="name-mask"><span>Razvan</span></span>
                   <span className="name-mask"><span>Turcanu</span></span>
