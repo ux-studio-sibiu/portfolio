@@ -54,7 +54,7 @@ export function BandProjects({
             `data-section-anchor` in showcase-linear.tsx. Without it the band box
             is measured, and its padding crosses the trigger line 9rem early. */}
         {items.map((child, idx) => (
-          <article className={`scroll-entry${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-section-anchor={idx === 0 ? "" : undefined}>
+          <article className={`scroll-entry${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-preload={child.props.href} data-section-anchor={idx === 0 ? "" : undefined}>
             <div className="entry-visual">
               <div className="visual-sticky">
                 {/* The image opens the project too — same target as the

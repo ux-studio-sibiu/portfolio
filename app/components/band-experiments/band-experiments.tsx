@@ -28,7 +28,7 @@ export function BandExperiments({
       <div className="band-content is-full">
         <ul className="experiment-list">
           {items.map((child) => (
-            <li className="scroll-entry-secondary" key={child.props.title}>
+            <li className="scroll-entry-secondary" key={child.props.title} data-preload={child.props.href}>
               <div className="entry-visual">
                 <div className="visual-sticky">
                   {/* The frame opens the experiment too — same target as the

@@ -7,7 +7,9 @@ import { useGSAP } from "@gsap/react";
 import { DETAILS } from "@/app/components/projects/registry";
 import { FixedColumn } from "@/app/components/fixed-column/fixed-column";
 import { DetailPane } from "@/app/components/detail-pane/detail-pane";
+import { useEmbedPreload } from "@/app/components/embed-preload/embed-preload";
 import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
+import { SideMenu } from "@/app/components/side-menu/side-menu";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
 import { BandTools } from "@/app/components/band-tools/band-tools";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
@@ -47,6 +49,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   // twice, and which of them currently owns the title.
   const [sections, setSections] = useState<string[]>([]);
   const [section, setSection] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const items = Children.toArray(children).filter(isValidElement) as React.ReactElement<ProjectProps>[];
   // One list, split for display only: both bands open into the same pane, and
@@ -56,6 +59,11 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const detail = openIndex === null ? undefined : items[openIndex]?.props;
   const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
+
+  // Warms each embed URL as its entry scrolls into view, so the connection is
+  // open — and usually the document cached — by the time the cover comes down
+  // over the detail pane. Entries opt in with `data-preload` on themselves.
+  useEmbedPreload(scroller);
 
   // Takes the element rather than a number, so a band can hand back whatever it
   // was given without having to know where that sits in the whole list.
@@ -67,6 +75,17 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     history.pushState({ project: idx }, "");
   };
   const closeItem = () => history.back();
+
+  // Menu entries are section LABELS, matched back to the band that declared
+  // one. scrollIntoView rather than a scrollTop sum, because which element
+  // actually scrolls changes with the breakpoint — .pane-scroll from tablet up,
+  // .index-pane below it — and this walks up to whichever one it is.
+  const goToSection = (label: string) => {
+    setMenuOpen(false);
+    const band = scroller.current?.querySelector<HTMLElement>(`[data-section="${label}"]`);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    band?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  };
 
   useEffect(() => {
     const onPop = () => setActiveIndex(null);
@@ -232,7 +251,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             rule between 2 and 3 is the same line the project thumbnails sit
             against: both are placed off --col-media, so they cannot drift. */}
         <section className="showcase-pane index-pane" ref={pane} inert={isDetail}>
-          <FixedColumn sections={sections} active={section} />
+          <FixedColumn sections={sections} active={section} onOpenMenu={() => setMenuOpen(true)} />
 
           {/* Columns 2 + 3 — scrolling. */}
           <div className="pane-scroll" ref={scroller}>
@@ -267,6 +286,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
         <DetailPane detail={detail} Body={Body} isOpen={isDetail} onClose={closeItem} />
 
       </div>
+
+      {/* Portalled to <body> from here, so it is outside the shell entirely —
+          it only needs the section list and the open state. */}
+      <SideMenu sections={sections} isOpen={menuOpen} onClose={() => setMenuOpen(false)} onSelect={goToSection} />
     </div>
   );
 }

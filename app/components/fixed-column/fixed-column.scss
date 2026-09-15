@@ -103,6 +103,63 @@
     }
   }
 
+  // The hamburger, at the foot of the rail. Two ancestors turn pointer events
+  // off over this column — the rail itself, and .pane-fixed once the identity
+  // has faded — and a descendant setting them back to auto is what re-enables
+  // clicks through both, so this stays the one live thing in a dead column.
+  .rail-menu {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 1.75rem;
+    transform: translateX(-50%);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--color-bg);
+    border-radius: 50%;
+    color: var(--color-bg);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  // Three rules out of one box: the middle bar is the element, the other two
+  // are its edges, so there is nothing to keep in step by hand.
+  .menu-bars {
+    position: relative;
+    display: block;
+    width: 1.125rem;
+    height: 2px;
+    background: currentColor;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: currentColor;
+    }
+
+    &::before { top: -6px; }
+    &::after { top: 6px; }
+  }
+
   .fixed-label {
     margin: 0;
     font-family: var(--font-mono);
@@ -127,6 +184,21 @@
       // is how the name comes back down without the column moving.
       font-size: calc((50vw - 4rem) / 5.1);
     }
+  }
+
+  // The name is a button, so it has to be stripped back to the type it was.
+  .name-open {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    text-transform: inherit;
+    cursor: pointer;
   }
 
   .name-mask {
