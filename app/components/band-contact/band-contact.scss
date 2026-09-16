@@ -1,19 +1,29 @@
 @use "@/app/styles/breakpoints" as *;
 
 .nsc-band-contact {
-  .contact-label {
-    margin: 0 0 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
+  // Same air above it as the projects band, so the two big bands are spaced
+  // alike down the page.
+  margin-top: 25rem;
+
+  // Set like the card: surname heavy, given name light, on one line.
+  .contact-name {
+    margin: 0 0 2.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 800;
     text-transform: uppercase;
+
+    .name-given {
+      font-weight: 300;
+    }
   }
 
   .contact-mail {
     display: block;
-    font-size: clamp(1.75rem, 8vw, 6rem);
-    line-height: 0.9;
-    letter-spacing: -0.05em;
+    font-size: clamp(1.5rem, 4.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
     font-weight: 800;
     // Word-breaks rather than overflowing the pane on narrow screens.
     overflow-wrap: anywhere;
@@ -21,11 +31,58 @@
     padding-bottom: 0.08em;
   }
 
+  .contact-phone {
+    display: block;
+    margin-top: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    letter-spacing: 0.06em;
+  }
+
+  // GitHub and the CV sit together on one line, both reading as links rather
+  // than buttons — the section is a card, not a call to action.
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 2px solid var(--color-ink);
+      padding-bottom: 0.25rem;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 0.55;
+      }
+    }
+  }
+
+  // Drawn rather than an icon font: a page with a folded corner, stroked in the
+  // current colour so it follows the link on hover.
+  .pdf-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linejoin: round;
+  }
+
   .contact-foot {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-top: 3rem;
+    margin-top: 4rem;
     padding-top: 1.5rem;
     border-top: var(--rule);
     font-family: var(--font-mono);

@@ -13,13 +13,16 @@ export type ProjectProps = {
   slug: string;
   // Thumbnail for the index. Without one the block stays a flat placeholder.
   thumb?: StaticImageData;
+  // A second thumbnail, shown beside the first. For a project where one frame
+  // does not say enough on its own; both open the same detail.
+  thumbAlt?: StaticImageData;
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;
-  // Which band this belongs to. Projects and experiments are one list with one
-  // detail pane behind them — they differ in how the entry is laid out, not in
-  // what happens when it is opened.
-  experiment?: boolean;
+  // Which band this belongs to. Everything is one list with one detail pane
+  // behind it — the groups differ in how an entry is laid out, not in what
+  // happens when it is opened. No group means the projects band.
+  group?: "experiments" | "tools";
   // Put on the entry's root, next to .scroll-entry. "large" and "small" are the
   // off-size thumbnails in band-projects.scss; anything else you add there is
   // reachable the same way.

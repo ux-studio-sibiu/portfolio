@@ -4,6 +4,11 @@
 // owned by the showcase shell, is the line these entries sit against. Both are
 // placed off --col-media, which is why they cannot drift apart.
 .nsc-band-projects {
+  // A long run-in off the fold, on top of the padding every band carries. The
+  // first project is the first thing after the identity, and this is the gap
+  // that makes arriving at it feel like arriving somewhere.
+  margin-top: 25rem;
+
   // This band is `is-full`, so its content starts at the pane edge rather than
   // in the second track. The heading is inset to land on the same line the
   // entry copy starts on, instead of under the rail at the far left.
@@ -11,7 +16,7 @@
     padding: 0 var(--gutter);
 
     @include respond-to("tablet") {
-      padding: 0 var(--gutter) 0 calc(var(--col-media) + 2rem);
+      padding: 0 var(--gutter) 0 calc(var(--col-media) + 3rem);
     }
   }
 
@@ -21,7 +26,6 @@
     // The size an entry is unless it says otherwise — see .large / .small
     // below. NOT the root --thumb, which is the widest a thumbnail may get and
     // exists to cut column 2 for it.
-    --thumb: 320px;
 
     display: grid;
     grid-template-columns: 1fr;
@@ -42,91 +46,35 @@
   }
 
   // Off-size entries, put on whichever projects you want from page.tsx —
-  // <LinearProject className="large"> / "small". Redeclaring --thumb is all it
-  // takes: the column these sit in is measured off the value at the showcase
-  // root and is already resolved by the time it reaches here, so this moves the
-  // thumbnail's left edge and nothing else. Every thumbnail still ends on the
-  // divider whatever size it is, which is what keeps a mixed column deliberate
-  // rather than ragged.
+  // No transform, filter or overflow on this or anything above it — either would
+  // break the sticky child below.
   //
-  // A third size is a third class: add it here, name it on the entry.
-  .scroll-entry.large {
-    --thumb: 420px;
-  }
-
-  .scroll-entry.small {
-    --thumb: 200px;
-  }
-
-  .scroll-entry.xxl {
-    --thumb: 650px;
-  }
-
-  // No transform, filter or overflow here — any of them would break the sticky
-  // child below.
-  //
-  // The padding is half of what sizes column 2: --col-media is --thumb plus
-  // exactly these two values, so changing one without the other takes the
-  // thumbnail off the divider.
-  .entry-visual {
-    min-width: 0;
-    padding: 0 var(--gutter);
-
-    @include respond-to("tablet") {
-      padding: 0 2rem 0 var(--gutter);
-    }
-  }
-
+  // A row, so an entry with two thumbnails sets them side by side. Packed to
+  // the right, which is what puts the last one's edge on the divider — the job
+  // `margin-left: auto` on the thumbnail used to do, and could not do twice.
   .visual-sticky {
     position: sticky;
     top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 1rem;
 
     @include respond-to("tablet") {
       top: 2.5rem;
     }
   }
 
+  // The last entry has nothing coming after it to release the pin, so its
+  // thumbnail would hold at the top of the screen through the whole gap below
+  // the band. It scrolls away with its own copy instead.
+  .scroll-entry:last-of-type .visual-sticky {
+    position: static;
+  }
+
+  // Everything this looks like is the shared .entry-thumb in globals.scss.
+  // What belongs to a PROJECT thumbnail is only the index badge over it.
   .entry-thumb {
-    position: relative;
-    display: block;
-    width: 100%;
-    padding: 0;
-    // No aspect-ratio: the height comes from the image, so every thumbnail is
-    // the same width and keeps its own proportion.
-    background: var(--color-wash);
-    border: 2px solid var(--color-ink);
-    box-shadow: 3px 5px #00000033;
-    filter:grayscale(1);
-    cursor: pointer;
-    // Clips the image to the button box.
-    overflow: hidden;
-    transition: background-color 0.25s ease;
-
-    &:hover{
-      filter:grayscale(0);
-    }
-
-    @include respond-to("tablet") {
-      // One fixed measure rather than whatever the column happens to be — the
-      // column is sized off --thumb, so this fills it exactly. The `min` is for
-      // the screens where column 2 has been capped to protect column 1: the
-      // thumbnail gives way with the rail instead of running under it, and
-      // `margin-left: auto` keeps the right edge on the divider gutter either
-      // way.
-      width: min(var(--thumb), 100%);
-      margin-left: auto;
-    }
-
-    // Nothing to size the box with, so fall back to a fixed ratio.
-    &.is-empty {
-      aspect-ratio: 4 / 3;
-    }
-
-    &:hover,
-    &:focus-visible {
-      background: var(--color-ink);
-    }
-
     // Index flips to the paper colour once the block fills.
     &:hover .thumb-index,
     &:focus-visible .thumb-index {
@@ -165,7 +113,7 @@
     padding: 0 var(--gutter);
 
     @include respond-to("tablet") {
-      padding: 0 var(--gutter) 0 2rem;
+      padding: 0 var(--gutter) 0 3rem;
     }
   }
 
@@ -192,14 +140,6 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-muted);
-  }
-
-  .entry-summary {
-    margin: 1.25rem 0 0;
-    // .entry-text carries the measure now.
-    max-width: none;
-    font-size: 1.0625rem;
-    line-height: 1.55;
   }
 
   .entry-points {
@@ -253,9 +193,21 @@
   // Hollow with a heavy frame, filling black on hover. Outline against the
   // filled inline highlights is what keeps the two apart: same palette, opposite
   // treatment, so the button reads as a control rather than another lit phrase.
+  // The line between an entry's copy and its button. Same weight, colour and
+  // 1.5rem of air either side as the rule under a .spec-row, so the two devices
+  // read as the same one; the measure is .entry-text's, so it ends where the
+  // copy above it does rather than running out into the column.
+  .entry-rule {
+    width: 100%;
+    max-width: 38rem;
+    margin: 1.5rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--color-faint);
+  }
+
   // Everything the button looks like is the shared .view-more-button in
   // globals.scss; what belongs to THIS band is only how much room it takes.
   .view-more-button {
-    margin: 2rem 0 10rem;
+    margin: 1.5rem 0 10rem;
   }
 }

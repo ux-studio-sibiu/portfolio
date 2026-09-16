@@ -16,6 +16,11 @@
 
   --gutter: 1.25rem;
 
+  // Width of the black section rail down the left edge of column 1. Global
+  // because three separate things measure off it: the rail itself, the fixed
+  // column's left padding, and the menu button that sits centred on it.
+  --rail: 5rem;
+
   @include respond-to("tablet") {
     --gutter: 2rem;
   }
@@ -152,14 +157,21 @@ a {
   // Pinned variant, for a phrase that does not travel with the scroll — the
   // identity blurb sits in the fixed column, so its own view() timeline reads as
   // permanently in range and the band starts full. This drives the sweep off how
-  // far the PANE has been scrolled instead, published as --sweep by the
-  // showcase, which means it starts at nothing because the page does and unwinds
-  // on the way back up.
+  // far the PANE has been scrolled instead, published as --sweep-px (pixels
+  // scrolled) and --sweep-over (pixels the sweep takes) by the showcase, which
+  // means it starts at nothing because the page does and unwinds on the way back
+  // up.
+  //
+  // In pixels rather than as a ready-made 0-to-1 fraction so a phrase can be held
+  // back: --sweep-delay is how many pixels of scrolling pass before this one
+  // starts, which is what keeps two phrases in the same paragraph from sweeping
+  // as a single wide band. Set it through <Highlight delay={…}>.
   //
   // Two classes beats the one-class rule on specificity, so the native animation
   // is off regardless of source order.
   &.pinned {
-    --lit: var(--sweep, 0);
+    --sweep-delay: 0;
+    --lit: clamp(0, calc((var(--sweep-px, 0) - var(--sweep-delay)) / var(--sweep-over, 1)), 1);
     animation: none;
 
     @media (prefers-reduced-motion: reduce) {
@@ -240,8 +252,6 @@ a {
   color: var(--color-muted);
 }
 
-.desktop-only { @include respond-to-max("tablet") { display: none; } }
-.mobile-only  { @include respond-to("tablet")     { display: none; } }
 
 // The large title at the head of a band. One device for every section, so a
 // band reads as a band wherever it sits — it is the shape the Skills title had
@@ -319,4 +329,127 @@ a {
       transition: none;
     }
   }
+}
+
+// The column a thumbnail or a live frame sits in. Shared by every band that has
+// one — it was written out identically in band-projects and band-experiments,
+// and a third band would have copied it again.
+//
+// What it owns is the INSET: how far the media is held off the edges of the
+// pane. What goes inside it — a picture, a live frame, a grid of them — is the
+// band's business, and so is how wide that is (--thumb).
+//
+// The left inset never drops below --media-inset, which is the width of the
+// black section rail. Below that the rail crosses the media instead of sitting
+// beside it, which is exactly what happened once column 2 was allowed to take
+// the whole half: on a narrow screen the gutter alone is about 20px and the
+// thumbnail ran under the black.
+.entry-visual {
+  --media-inset: 5rem;
+
+  min-width: 0;
+  padding: 0 var(--gutter) 0 max(var(--media-inset), var(--gutter));
+
+  // The gap between the media and the divider, which is half of the air around
+  // that line: .entry-body's left padding is the other half, and the two are
+  // kept the same number so the line sits centred in the space it splits.
+  @include respond-to("tablet") {
+    padding-right: 3rem;
+  }
+}
+
+// The clickable media box: a project thumbnail, an experiment's frame, one cell
+// of the tools grid. Shared, because they had drifted — a 2px border here, a
+// 1px one there, a shadow on one of them — and there is no reason for the same
+// object to look different depending on which band it lands in.
+//
+// It carries no shape of its own. A picture brings its own proportion; anything
+// with nothing to measure says so — see .is-empty, and the :has(iframe) rule in
+// band-experiments, where a live frame has to be given one.
+.entry-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: var(--color-wash);
+  border: 2px solid var(--color-ink);
+  box-shadow: 3px 5px #00000033;
+  cursor: pointer;
+  // Clips whatever is inside back to the box.
+  overflow: hidden;
+  // Grey until pointed at — the colour arriving is what marks the one you are
+  // on. Eased out and a little longer than the fill, so the image settles
+  // rather than snapping.
+  filter: grayscale(1);
+  transition: background-color 0.25s ease, filter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  @include respond-to("tablet") {
+    // One fixed measure rather than whatever the column happens to be — the
+    // column is sized off --thumb, so this fills it exactly. The `min` is for
+    // the screens where column 2 is capped: the media gives way with the rail
+    // instead of running under it.
+    width: min(var(--thumb), 100%);
+  }
+
+  // Nothing inside to size the box with, so fall back to a fixed ratio.
+  &.is-empty {
+    aspect-ratio: 4 / 3;
+  }
+
+  // Keyboard gets the same thing the pointer does.
+  &:hover,
+  &:focus-visible {
+    background: var(--color-ink);
+    filter: grayscale(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// How wide the media in an entry is. One number per entry, which everything in
+// it is measured off — .entry-thumb fills it, and in the projects band the
+// column is cut for it.
+//
+// On BOTH entry kinds, so an experiment can be sized by the same word a project
+// is: the class comes off the <LinearProject> and lands on the row.
+.scroll-entry,
+.scroll-entry-secondary {
+  --thumb: 320px;
+
+  &.small { --thumb: 200px; }
+  &.medium { --thumb: 320px; }
+  &.large { --thumb: 420px; }
+  &.xxl { --thumb: 650px; }
+}
+
+// A row of tech pills under an entry's role line. It replaced the prose summary
+// that used to sit here, which is why the class was renamed: the element is no
+// longer a summary of anything, it is the stack.
+.entry-tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+// One item of a stack. Small, quiet, and set in the mono face like every other
+// piece of metadata on the site — it is a label, not a button, so nothing here
+// suggests it can be pressed.
+.pill {
+  padding: 0.2rem 0.55rem;
+  background: var(--color-wash);
+  border: 1px solid var(--color-faint);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  color: var(--color-ink);
+  // A stack item is one thing; breaking ".NET core" across two lines would read
+  // as two.
+  white-space: nowrap;
 }

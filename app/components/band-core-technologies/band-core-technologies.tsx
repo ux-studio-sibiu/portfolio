@@ -1,4 +1,3 @@
-import "./band-core-technologies.scss";
 
 // The fold: exactly one viewport tall, so the projects below it are only
 // reachable by scrolling. Content sits in column 3 with its own header, so the
@@ -11,10 +10,6 @@ export function BandCoreTechnologies() {
   return (
     <section className="band is-fold nsc-band-core-technologies">
       <div className="band-content">
-        {/* <div className="list-head">
-          <span className="band-count">Core technologies</span>
-          <span className="band-count">05</span>
-        </div> */}
         <ul className="spec-list">
           <li className="spec-row">
             <h2 className="spec-name">Next.js, React</h2>
@@ -40,10 +35,6 @@ export function BandCoreTechnologies() {
             <p className="spec-note">Sanity, structured content, webhook-driven caching</p>
           </li>
 
-          {/* <li className="spec-row">
-            <h2 className="spec-name">Design Oriented</h2>
-            <p className="spec-note">Figma</p>
-          </li> */}
 
           <li className="spec-row">
             <h2 className="spec-name">Workflow Tools</h2>

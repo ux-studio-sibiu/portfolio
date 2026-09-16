@@ -3,9 +3,10 @@ import advisorThumb from "@/app/assets/projects/advisor.jpg";
 import clasaZeroThumb from "@/app/assets/projects/clasa-zero.jpg";
 import mapThumb from "@/app/assets/projects/map.jpg";
 import zoomThumb from "@/app/assets/projects/zoom.jpg";
-import casedeschiseThumb from "@/app/assets/projects/casedeschise.jpg";
+import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
 import slowDaysThumb from "@/app/assets/projects/slow-days.jpg";
-import photographyThumb from "@/app/assets/projects/photography.jpg";
+import photographyThumb from "@/app/assets/projects/photo.jpg";
+import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/multidevice.jpg";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
@@ -25,7 +26,7 @@ export default function Home() {
         title="Accounting platform"
         year="2018 —"
         role="Enterprise SAAS for nordic markets, 8k firms and 40k active users"
-        stack=""
+        stack="git, .NET, vscode, jQuery, kendo ui, figma, snowplow, cypress, signalR"
         summary={<></>}
         points={
           <>
@@ -58,24 +59,34 @@ export default function Home() {
         title="Casedeschise"
         year="2025 — 2026"
         role="Design & build"
-        stack="Next.js, Sanity, Vercel"
+        stack="react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel"
         href="https://www.casedeschise.ro"
-        summary={<>Website for the annual open house event, run with the local architects guild OAR across <span className="highlight-on-scroll">twin events in Sibiu and Valcea</span>.</>}
+        summary={<>website for annual 'open house' event, in collaboration with local architects guild 'OAR'</>}
         points={
           <>
-            <li>Registration per location: built-in form, <span className="highlight-on-scroll">email QR via Resend</span>, built-in QR validator</li>
-            <li>Organisers handle all content in Sanity; reports run off a Sanity dashboard</li>
-            <li>Heavy architectural photography, tuned to stay inside the <span className="highlight-on-scroll">Sanity free plan</span></li>
-            <li>Aggressive query caching — webhooks, revalidation and the Next cache</li>
-            <li>Map views on the Google Maps API, analytics through Umami</li>
+            <li>twin events in cities Sibiu and Valcea</li>
+
+            <li className="small-heading">Stack</li>
+            <li>react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel</li>
+
+            <li>registration for each location : build-in form + email QR (Resend) + built-in QR validator</li>
+            <li>reports via dashbord in Sanity</li>
+            <li>organizers handle content in Sanity</li>
+            <li>heavy media content: architectural photography</li>
+            <li>focus on performance and optimization (uses sanity free plan)</li>
+            <li>strenuous usage for 1-2 month around the event date</li>
+            <li>aggresive caching sanity queries - webhooks, revalidate, next cache</li>
+            <li>analytics tracked via Umami</li>
+            <li>map views with google maps api</li>
           </>
         }
       />
 
       <LinearProject
         slug="photography"
-        className="small"
+        className="medium"
         thumb={photographyThumb}
+        thumbAlt={photographyThumbAlt}
         embed
         title="Photography Portfolio"
         year="2026"
@@ -93,6 +104,7 @@ export default function Home() {
       />
 
       <LinearProject
+        group="experiments"
         slug="clasa-zero"
         className="small"
         thumb={clasaZeroThumb}
@@ -100,7 +112,7 @@ export default function Home() {
         title="Clasa Zero"
         year="2026 —"
         role="Design & build"
-        stack="Next.js, Zustand, Sanity"
+        stack="react, next.js, zustand, sanity, github copilot, chat gpt, vscode"
         href="https://clasa-zero.vercel.app/game"
         summary={<>A STEM game for pre-school kids — <span className="highlight-on-scroll">randomly generated puzzles</span>, tested on car trips with a six year old.</>}
         points={
@@ -132,6 +144,7 @@ export default function Home() {
       />
 
       <LinearProject
+        group="experiments"
         slug="map"
         className="large"
         thumb={mapThumb}
@@ -139,7 +152,7 @@ export default function Home() {
         title="Map"
         year="2026"
         role="Design & build"
-        stack="Vue, Nuxt, MapLibre, Sanity"
+        stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, vscode"
         href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
         summary={<>A map-based site for the centre of Sibiu, highlighting <span className="highlight-on-scroll">notable architecture</span> and telling its story.</>}
         points={
@@ -153,6 +166,7 @@ export default function Home() {
       />
 
       <LinearProject
+        group="experiments"
         slug="zoom"
         className="small"
         thumb={zoomThumb}
@@ -160,7 +174,7 @@ export default function Home() {
         title="Zoom"
         year="2026"
         role="Concept & build"
-        stack="Vue, Nuxt, Zoomooz.js"
+        stack="vue, nuxt, vercel, git, github copilot, vscode"
         href="https://vue-playground-mauve.vercel.app/zoom"
         summary={<>Zoom-based navigation for a presentation website, <span className="highlight-on-scroll">built on CSS transforms</span>.</>}
         points={
@@ -170,6 +184,16 @@ export default function Home() {
             <li>Draft concept, shown here embedded</li>
           </>
         }
+      />
+
+      <LinearProject
+        group="experiments"
+        embed
+        slug="paint"
+        title="Paint"
+        role="Canvas, UI"
+        href="https://experiments-five-bice.vercel.app/paint-concept/"
+        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <span className="highlight-on-scroll">nothing but CSS borders</span>.</>}
       />
 
       {/* Temporarily out of the list.
@@ -254,28 +278,7 @@ export default function Home() {
           effects-collection repo, served at /<folder>/. */}
 
       <LinearProject
-        experiment
-        embed
-        slug="background-experiments"
-        title="Background Experiments"
-        role="SVG, CSS"
-        href="https://experiments-five-bice.vercel.app/background-experiments/"
-        summary={<>A browser for <span className="highlight-on-scroll">86 tileable SVG patterns</span>, with live controls for scale, opacity, colour tint and blend mode.</>}
-      />
-
-      <LinearProject
-        experiment
-        embed
-        slug="fluid-hover"
-        title="Fluid hover"
-        role="WebGL"
-        stack="three.js, GLSL"
-        href="https://experiments-five-bice.vercel.app/effect/"
-        summary={<>A shader that <span className="highlight-on-scroll">smears an image toward the cursor</span> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
-      />
-
-      <LinearProject
-        experiment
+        group="tools"
         embed
         slug="randomize-studio"
         title="Randomize Studio"
@@ -286,17 +289,28 @@ export default function Home() {
       />
 
       <LinearProject
-        experiment
+        group="tools"
         embed
-        slug="paint"
-        title="Paint"
-        role="Canvas, UI"
-        href="https://experiments-five-bice.vercel.app/paint-concept/"
-        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <span className="highlight-on-scroll">nothing but CSS borders</span>.</>}
+        slug="background-experiments"
+        title="Background Experiments"
+        role="SVG, CSS"
+        href="https://experiments-five-bice.vercel.app/background-experiments/"
+        summary={<>A browser for <span className="highlight-on-scroll">86 tileable SVG patterns</span>, with live controls for scale, opacity, colour tint and blend mode.</>}
       />
 
       <LinearProject
-        experiment
+        group="tools"
+        embed
+        slug="fluid-hover"
+        title="Fluid hover"
+        role="WebGL"
+        stack="three.js, GLSL"
+        href="https://experiments-five-bice.vercel.app/effect/"
+        summary={<>A shader that <span className="highlight-on-scroll">smears an image toward the cursor</span> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
+      />
+
+      <LinearProject
+        group="tools"
         embed
         slug="static-background"
         title="Static background"

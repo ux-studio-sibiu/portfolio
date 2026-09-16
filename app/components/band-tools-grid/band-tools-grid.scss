@@ -1,0 +1,175 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-band-tools-grid {
+  // What the iframe is scaled by. The frame renders the page at 1 / --shot of
+  // its own size and scales it back down, so an experiment lays itself out as
+  // it would on a full screen and then shrinks — rather than reflowing into a
+  // phone layout inside a small box.
+  --shot: 0.25;
+
+  // This band is `is-full`, so its content starts at the pane edge rather than
+  // in the second track. The heading is inset to land on the same line the
+  // notes start on, instead of under the rail at the far left.
+  .band-heading {
+    padding: 0 var(--gutter);
+
+    @include respond-to("tablet") {
+      padding: 0 var(--gutter) 0 calc(var(--col-media) + 2rem);
+    }
+  }
+
+  // Frames on the left, one block of notes on the right, split on the same
+  // halfway line as everything else — the divider runs down the gap.
+  .alt-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+
+    @include respond-to("tablet") {
+      grid-template-columns: var(--col-media) 1fr;
+      gap: 0;
+      align-items: start;
+    }
+  }
+
+  // The 2:1 grid.
+  .frame-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+    // Every row the same height, including one with nothing in it. The last wide
+    // frame spans a row its narrow neighbours never reached — without this that
+    // row collapses to nothing and the frame comes out half height.
+    grid-auto-rows: clamp(6rem, 9vw, 9rem);
+    margin: 0;
+    padding: 0 var(--gutter);
+    list-style: none;
+    // So the narrow column backfills the rows the wide one is spanning past,
+    // instead of leaving a hole and starting further down.
+    grid-auto-flow: dense;
+
+    @include respond-to("tablet") {
+      padding: 0 2rem 0 var(--gutter);
+    }
+  }
+
+  .frame-cell {
+    display: flex;
+    min-width: 0;
+  }
+
+  // One in three goes in the wide column and spans two rows; the other two fill
+  // the narrow one beside it. That is what puts MORE frames in the narrow
+  // column.
+  //
+  // Nothing here sets a shape: the row height above does, and a frame fills its
+  // cell. That is what makes the gap work — a wide cell is two of those rows
+  // PLUS the gap between them, so the two columns stay level however generous
+  // the spacing gets. Give the frames their own aspect-ratio instead and the
+  // columns drift apart by exactly one gap.
+  .frame-cell:nth-child(3n + 1) {
+    grid-column: 1;
+    grid-row: span 2;
+  }
+
+  .frame-cell:nth-child(3n + 2),
+  .frame-cell:nth-child(3n + 3) {
+    grid-column: 2;
+  }
+
+  .entry-frame {
+    position: relative;
+    display: block;
+    // Fills its cell rather than setting its own shape — the cell is what
+    // carries the ratio now, so the two columns stay in step across the gap.
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background: var(--color-wash);
+    border: 1px solid var(--color-ink);
+    box-shadow: 3px 5px #00000033;
+    cursor: pointer;
+    // Clips the oversized iframe back to the frame.
+    overflow: hidden;
+
+    iframe {
+      display: block;
+      // Percentages rather than a measured pixel width: the frame stays in step
+      // with the box at any viewport with nothing to recompute.
+      width: calc(100% / var(--shot));
+      height: calc(100% / var(--shot));
+      transform: scale(var(--shot));
+      transform-origin: top left;
+      border: 0;
+      // A live frame over the pane would swallow the wheel and the page would
+      // stop scrolling on it, and it would eat the click meant for the button
+      // it sits in. It is a picture of the experiment until it is opened.
+      pointer-events: none;
+    }
+
+    // No fill on hover: a black box over a running experiment reads as the
+    // thing having crashed. The frame's own edge doubles instead.
+    &:hover,
+    &:focus-visible {
+      outline: 1px solid var(--color-ink);
+      outline-offset: -3px;
+    }
+  }
+
+  .alt-notes {
+    padding: 0 var(--gutter);
+
+    @include respond-to("tablet") {
+      padding: 0 var(--gutter) 0 2rem;
+      // Holds with the frames as they scroll past, since there is only one of
+      // it and the column beside it is long.
+      position: sticky;
+      top: 4rem;
+    }
+  }
+
+  .notes-lede {
+    margin: 0;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  .notes-list {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: 38rem;
+
+    li {
+      position: relative;
+      padding-left: 1.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-ink);
+
+      // Square bullet, in keeping with the rest of the site.
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0.55em;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        background: var(--color-ink);
+      }
+    }
+  }
+
+  .notes-foot {
+    margin: 2rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}

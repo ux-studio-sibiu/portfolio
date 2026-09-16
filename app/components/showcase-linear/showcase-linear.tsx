@@ -10,8 +10,8 @@ import { DetailPane } from "@/app/components/detail-pane/detail-pane";
 import { useEmbedPreload } from "@/app/components/embed-preload/embed-preload";
 import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { SideMenu } from "@/app/components/side-menu/side-menu";
+import { MenuButton } from "@/app/components/menu-button/menu-button";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
-import { BandTools } from "@/app/components/band-tools/band-tools";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
 import { BandExperiments } from "@/app/components/band-experiments/band-experiments";
 import { BandSkills } from "@/app/components/band-skills/band-skills";
@@ -50,12 +50,18 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const [sections, setSections] = useState<string[]>([]);
   const [section, setSection] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Whether the black rail is actually up behind the menu button. Not the same
+  // question as `section`: the last band lights a title AND fades the column
+  // out from under it, so the button has to go back to ink while a section is
+  // still nominally active.
+  const [railLit, setRailLit] = useState(false);
 
   const items = Children.toArray(children).filter(isValidElement) as React.ReactElement<ProjectProps>[];
   // One list, split for display only: both bands open into the same pane, and
   // the index that reaches history is the position in `items` either way.
-  const projects = items.filter((child) => !child.props.experiment);
-  const experiments = items.filter((child) => child.props.experiment);
+  const projects = items.filter((child) => !child.props.group);
+  const experiments = items.filter((child) => child.props.group === "experiments");
+  const tools = items.filter((child) => child.props.group === "tools");
   const detail = openIndex === null ? undefined : items[openIndex]?.props;
   const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
@@ -90,17 +96,21 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   // The fixed column is laid OVER the scroller, not inside it. Most of it is
   // click-through so the wheel falls straight to the pane and scrolls it
   // natively, but the two things that have to take pointer events — the mail
-  // link and the menu button — have no scrollable ancestor for a wheel to
-  // reach: .pane-scroll is their SIBLING. This fires only over those two, and
+  // link in the column and the menu button beside it — have no scrollable
+  // ancestor for a wheel to reach: .pane-scroll is their SIBLING, and the
+  // button is not even in the same pane. This fires only over those two, and
   // hands the delta to the pane by hand.
   //
   // Forwarded scrolling does not feel like the real thing — no inertia, no
   // smoothing — which is exactly why the name is no longer a button. Keep what
   // takes pointer events here small, or this becomes noticeable again.
   useEffect(() => {
-    const column = pane.current?.querySelector<HTMLElement>(".pane-fixed");
     const el = scroller.current;
-    if (!column || !el) return;
+    const targets = [
+      pane.current?.querySelector<HTMLElement>(".pane-fixed"),
+      root.current?.querySelector<HTMLElement>(".nsc-menu-button"),
+    ].filter(Boolean) as HTMLElement[];
+    if (!el || !targets.length) return;
 
     const onWheel = (e: WheelEvent) => {
       // Below tablet this element does not scroll — the pane around it does,
@@ -112,9 +122,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       el.scrollTop += e.deltaY * unit;
     };
 
-    column.addEventListener("wheel", onWheel, { passive: false });
-    return () => column.removeEventListener("wheel", onWheel);
-  }, []);
+    targets.forEach((node) => node.addEventListener("wheel", onWheel, { passive: false }));
+    return () => targets.forEach((node) => node.removeEventListener("wheel", onWheel));
+    // Re-bound when the button comes and goes with the detail view.
+  }, [isDetail]);
 
   useEffect(() => {
     const onPop = () => setActiveIndex(null);
@@ -166,6 +177,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     let labels = "";
     let fadeEnd = 0;
     let fadeStart = 0;
+    // The mirror of those two at the other end of the scroll: where the fixed
+    // column starts and finishes fading back OUT as the last band comes up.
+    let outroEnd = 0;
+    let outroStart = 0;
 
     // Scroll offsets are only valid until something reflows, so this is redone
     // on resize and whenever the content changes height.
@@ -190,6 +205,17 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       const offset = first.getBoundingClientRect().top - paneTop + el.scrollTop;
       fadeEnd = Math.max(0, offset - el.clientHeight * TRIGGER);
       fadeStart = Math.max(0, fadeEnd - el.clientHeight * FADE_OVER);
+
+      // Same sum against the LAST band. The column is gone by the moment that
+      // band crosses the trigger line, the point at which it would take the
+      // title, so the two handovers are symmetric: the identity gives way to
+      // the rail as the first band arrives, and the whole column gives way to
+      // the last one. Its own top, not an anchor: Contact is the band being
+      // cleared for, so the gap above it is part of the run.
+      const last = bands[bands.length - 1];
+      const lastTop = last ? last.getBoundingClientRect().top - paneTop + el.scrollTop : 0;
+      outroEnd = Math.max(0, lastTop - el.clientHeight * TRIGGER);
+      outroStart = Math.max(0, outroEnd - el.clientHeight * FADE_OVER);
     };
 
     const onScroll = () => {
@@ -197,11 +223,26 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       const t = span > 0 ? Math.min(1, Math.max(0, (el.scrollTop - fadeStart) / span)) : 0;
       shell.style.setProperty("--identity-fade", String(1 - t));
       // Published for .highlight-on-scroll.pinned, which cannot time itself off a
-      // box that never moves.
+      // box that never moves. Two numbers rather than the finished fraction, so a
+      // phrase can subtract its own delay from the pixels before dividing.
       const sweepOver = el.clientHeight * SWEEP_OVER;
-      shell.style.setProperty("--sweep", sweepOver > 0 ? String(Math.min(1, el.scrollTop / sweepOver)) : "0");
+      shell.style.setProperty("--sweep-px", String(el.scrollTop));
+      shell.style.setProperty("--sweep-over", String(sweepOver > 0 ? sweepOver : 1));
       // Fully invisible: stop it swallowing clicks on the email link.
       shell.classList.toggle("is-identity-hidden", t === 1);
+
+      // And the column itself on the way out. Nothing else reads this, so it
+      // is one property on the shell like the other two.
+      const outroSpan = outroEnd - outroStart;
+      const o = outroSpan > 0 ? Math.min(1, Math.max(0, (el.scrollTop - outroStart) / outroSpan)) : 0;
+      shell.style.setProperty("--column-fade", String(1 - o));
+      // Gone rather than merely transparent, so the hamburger is not still
+      // there to be pressed over the contact band.
+      shell.classList.toggle("is-column-hidden", o === 1);
+      // Halfway through that fade is where the rail stops being a black enough
+      // backdrop to invert against. A flip rather than a ramp, smoothed by the
+      // button's own colour transition.
+      setRailLit(o < 0.5);
 
       // Below tablet this element does not scroll, so there is no meaningful
       // trigger line to measure against.
@@ -288,23 +329,18 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             rule between 2 and 3 is the same line the project thumbnails sit
             against: both are placed off --col-media, so they cannot drift. */}
         <section className="showcase-pane index-pane" ref={pane} inert={isDetail}>
-          <FixedColumn sections={sections} active={section} onOpenMenu={() => setMenuOpen(true)} />
+          <FixedColumn sections={sections} active={section} />
 
           {/* Columns 2 + 3 — scrolling. */}
           <div className="pane-scroll" ref={scroller}>
             <div className="scroll-inner">
               <BandCoreTechnologies />
 
-              {/* <div className="marquee" aria-hidden="true">
-                <div className="marquee-track">
-                  <span>Interface engineering — Motion — Performance — Design systems —&nbsp;</span>
-                  <span>Interface engineering — Motion — Performance — Design systems —&nbsp;</span>
-                </div>
-              </div> */}
-
-              {/* <BandTools /> */}
               <BandProjects items={projects} onOpen={openItem} />
-              <BandExperiments items={experiments} onOpen={openItem} />
+              {/* Two shapes for the same kind of entry: a row each with its own
+                  copy, or a wall of frames with one block of copy for the set.
+                  Which group takes which is the `group` prop in page.tsx. */}
+              <BandExperiments items={experiments} tools={tools} onOpen={openItem} />
               <BandSkills />
               <BandContact />
             </div>
@@ -323,6 +359,11 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
         <DetailPane detail={detail} Body={Body} isOpen={isDetail} onClose={closeItem} />
 
       </div>
+
+      {/* Outside the panes, fixed to the viewport: the one control that is
+          there on every screen of the scroll, including the last one where the
+          column behind it has faded away. */}
+      {!isDetail && <MenuButton inverted={!!section && railLit} onClick={() => setMenuOpen(true)} />}
 
       {/* Portalled to <body> from here, so it is outside the shell entirely —
           it only needs the section list and the open state. */}

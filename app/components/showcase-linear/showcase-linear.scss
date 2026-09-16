@@ -44,7 +44,7 @@
   // closes to nothing and the scrolling content starts at the screen edge. The
   // bands whose content sits in the second track are unaffected: that track
   // still begins on the divider, which is still exactly 50vw.
-  --col-media: min(calc(var(--thumb) + var(--gutter) + 2rem), 50vw);
+  --col-media: min(calc(var(--thumb) + var(--gutter) + 3rem), 50vw);
 
   // Where the scrolling content starts — what column 1 used to be exactly as
   // wide as, before it was given the whole left half to sit over. The bands are
@@ -127,7 +127,12 @@
       width: 50vw;
       height: 100%;
       overflow: hidden;
-      padding: 2.5rem 2rem;
+      // Just past the black section rail rather than well clear of it. --rail is
+      // that bar's width, declared on this same element in fixed-column.scss, so
+      // the two cannot fall out of step: widen the bar and the identity moves
+      // with it. The two ARE up together — the identity has not always finished
+      // fading when a band lights the rail — so this has to clear it.
+      padding: 2.5rem 2rem 2.5rem calc(var(--rail, 5rem) + 0.25rem);
       border-bottom: 0;
     }
 
@@ -156,6 +161,16 @@
   // them off, so an invisible link would otherwise still be clickable.
   .pane-fixed {
     pointer-events: none;
+    // Fades back out as the last band comes up, so Contact reads the way the
+    // top of the page does: no rail, no identity, nothing beside it. Written by
+    // the same scroll pass that writes --identity-fade.
+    opacity: var(--column-fade, 1);
+  }
+
+  // Not just transparent: hidden, so the hamburger inside it stops being a
+  // target once there is nothing to see.
+  &.is-column-hidden .pane-fixed {
+    visibility: hidden;
   }
 
   &:not(.is-identity-hidden) .pane-fixed .fixed-mail {
@@ -255,21 +270,6 @@
     }
   }
 
-  // Column 2 of a band: the label rail.
-  .band-label {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0 var(--gutter) 1.5rem;
-
-    @include respond-to("tablet") {
-      flex-direction: column;
-      justify-content: flex-start;
-      gap: 0.5rem;
-      padding: 0 2rem 0 var(--gutter);
-    }
-  }
 
   // Column 3 of a band: the content. Pinned to the second track rather than
   // left to auto-place — most bands have no label, and a lone child would
@@ -280,7 +280,7 @@
 
     @include respond-to("tablet") {
       grid-column: 2;
-      padding: 0 var(--gutter) 0 2rem;
+      padding: 0 var(--gutter) 0 3rem;
     }
 
     // Projects span both columns so their entries can define the same grid and
@@ -295,51 +295,5 @@
     }
   }
 
-  .band-title {
-    margin: 0;
-    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
 
-  .band-count {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  // --- Marquee --------------------------------------------------------------
-  // Markup currently commented out in showcase-linear.tsx.
-
-  .marquee {
-    overflow: hidden;
-    border-top: var(--rule);
-    border-bottom: var(--rule);
-    padding: 0.75rem 0;
-    white-space: nowrap;
-  }
-
-  .marquee-track {
-    display: inline-flex;
-    // Two identical copies; shifting by half the track loops seamlessly.
-    animation: marquee-slide 26s linear infinite;
-    font-size: clamp(1.25rem, 3.5vw, 2.5rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    font-weight: 800;
-    text-transform: uppercase;
-
-    @media (prefers-reduced-motion: reduce) {
-      animation: none;
-    }
-  }
-}
-
-@keyframes marquee-slide {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
 }

@@ -65,6 +65,15 @@ export function BandProjects({
                   {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 420px, (min-width: 768px) 30vw, 100vw" placeholder="blur" className="thumb-img" />}
                   {/* <span className="thumb-index">{num(idx)}</span> */}
                 </button>
+
+                {/* A second frame beside the first, for a project one image does
+                    not cover. It opens the same detail — there is nothing else
+                    to go to. */}
+                {child.props.thumbAlt && (
+                  <button type="button" className="entry-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`}>
+                    <Image src={child.props.thumbAlt} alt="" sizes="(min-width: 1440px) 320px, (min-width: 768px) 30vw, 100vw" placeholder="blur" className="thumb-img" />
+                  </button>
+                )}
                 {/* <span className="visual-marker" aria-hidden="true" /> */}
 
               </div>
@@ -73,10 +82,23 @@ export function BandProjects({
             <div className="entry-body reveal">
               <div className="entry-text">
                 <h3 className="entry-title">{child.props.title}</h3>
-                <p className="entry-role">{child.props.role}{child.props.stack ? ` / ${child.props.stack}` : ""}</p>
-                <p className="entry-summary">{child.props.summary}</p>
+                <p className="entry-role">{child.props.role}</p>
+
+                {/* The stack, one pill each, split off the `stack` prop. It replaced the
+                    prose summary that used to sit here — hence the class name. */}
+                {child.props.stack && (
+                  <ul className="entry-tech-stack">
+                    {child.props.stack.split(",").map((tech) => tech.trim()).filter(Boolean).map((tech) => (
+                      <li className="pill" key={tech}>{tech}</li>
+                    ))}
+                  </ul>
+                )}
                 {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
               </div>
+
+              {/* Closes the copy off before the button, the same way a .spec-row
+                  closes off a line of the lists. */}
+              <hr className="entry-rule" />
 
               <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
                 View project <span className="row-arrow" aria-hidden="true">&rarr;</span>

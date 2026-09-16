@@ -17,7 +17,7 @@ import { useEffect } from "react";
 export function ScrollHighlights() {
   useEffect(() => {
     // Pinned phrases are excluded: they do not travel, so there is no rect to
-    // measure. Their sweep comes off --sweep in CSS instead — see
+    // measure. Their sweep comes off --sweep-px in CSS instead — see
     // .highlight-on-scroll.pinned in globals.scss.
     const SELECTOR = ".highlight-on-scroll:not(.pinned)";
 

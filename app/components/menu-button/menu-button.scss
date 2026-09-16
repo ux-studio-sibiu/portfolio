@@ -1,0 +1,67 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-menu-button {
+  // Fixed to the viewport, not to the column it used to sit in — see the
+  // component for why. Above the panes and the divider, below the side menu it
+  // opens (that is portalled to <body> and paints over everything).
+  position: fixed;
+  z-index: 6;
+  top: 1.75rem;
+  left: calc(var(--rail) / 2);
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--color-ink);
+  border-radius: 50%;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  // Inverted once the black rail is up behind it, on a transition close enough
+  // to the rail's own that the two read as one change.
+  &.is-inverted {
+    border-color: var(--color-bg);
+    color: var(--color-bg);
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  .menu-bars {
+    position: relative;
+    display: block;
+    width: 1.125rem;
+    height: 2px;
+    background: currentColor;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: currentColor;
+    }
+
+    &::before { top: -6px; }
+    &::after { top: 6px; }
+  }
+}
