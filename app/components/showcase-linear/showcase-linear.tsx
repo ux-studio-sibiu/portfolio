@@ -302,7 +302,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
                 </div>
               </div> */}
 
-              <BandTools />
+              {/* <BandTools /> */}
               <BandProjects items={projects} onOpen={openItem} />
               <BandExperiments items={experiments} onOpen={openItem} />
               <BandSkills />

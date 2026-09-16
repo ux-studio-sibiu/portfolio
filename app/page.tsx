@@ -20,21 +20,33 @@ export default function Home() {
     <ShowcaseLinear>
       <LinearProject
         slug="advisor"
-        className="large"
+        className="xxl"
         thumb={advisorThumb}
-        title="Advisor"
+        title="Accounting platform"
         year="2018 —"
-        role="Frontend engineer, Visma"
-        stack="KendoUI, .NET MVC, jQuery, SignalR"
-        summary={<>Accounting office management studio — SaaS for Nordic accounting firms and their clients, at <span className="highlight-on-scroll">8,000 firms and 40,000 active users</span>.</>}
+        role="Enterprise SAAS for nordic markets, 8k firms and 40k active users"
+        stack=""
+        summary={<></>}
         points={
           <>
-            <li>Long-standing contribution to the product, focused on advancing the UI system</li>
-            <li>KendoUI components styled with the VUD design system and extended with significant custom behaviour</li>
-            <li>Custom SPA framework layered over .NET MVC — only possible after a <span className="highlight-on-scroll">full refactor of the UI code</span></li>
-            <li>Configurable dashboards: resizable, draggable, lazy-loading</li>
-            <li>Dynamic grids with reorderable columns, persistent filtering and <span className="highlight-on-scroll">endless scroll</span></li>
-            <li>Long-running tasks pushing live updates over SignalR</li>
+            <li>long-standing contribution to the product</li>
+            <li>styled components (KendoUI), inhouse design system, custom behaviour</li>
+            <li>custom SPA framework, .NET MVC</li>
+
+            <li>complex UI with dense functionality</li>
+            <li>configurable dashboards: resizable, draggable, lazy-loading</li>
+            <li>multi-step flows with branching logic (reversible wizard)</li>
+            <li>dynamic grids with reorderable columns, persistent filtering and <span className="highlight-on-scroll">endless scroll</span></li>
+            <li>live updates over SignalR for long-running tasks</li>
+            <li>occasional keyboard focused flows</li>
+
+            <li className="small-heading">Contributions</li>
+            <li>difficult to evolve inherited code: ad-hoc implementations, inconsistent patterns, un-documented logic, significant scale</li>
+            <li>implement <span className="highlight-on-scroll">refactoring</span> strategies with version control, eventually covering all UI</li>
+            <li>enforce consistency and constraints</li>
+            <li>large data sets require optimizing for <span className="highlight-on-scroll">performance</span>: async dropdowns, segmented with endless-scroll, server-side filtering</li>
+            <li>bridge design intent and technical implementation</li>
+            <li>push back when UX is technically flawed and propose alternatives that scale</li>
           </>
         }
       />

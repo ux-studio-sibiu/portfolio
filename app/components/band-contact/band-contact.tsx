@@ -7,6 +7,8 @@ export function BandContact() {
   return (
     <section className="band nsc-band-contact" data-section="Contact">
       <div className="band-content">
+        <h2 className="band-heading band-title-large">Contact</h2>
+
         <p className="contact-label reveal"><span className="highlight-on-scroll">Available for work</span></p>
         <a className="contact-mail reveal" href="mailto:hello@example.com">hello@example.com</a>
         <div className="contact-foot reveal">

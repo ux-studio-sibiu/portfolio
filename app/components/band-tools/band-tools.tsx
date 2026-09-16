@@ -21,6 +21,8 @@ export function BandTools() {
       </div> */}
 
       <div className="band-content">
+        <h2 className="band-heading band-title-large">Tools</h2>
+
         <ul className="tool-grid">
           <li className="tool-card lead">
             <span className="tool-icon" aria-hidden="true" />

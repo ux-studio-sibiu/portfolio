@@ -50,6 +50,8 @@ export function BandProjects({
   return (
     <section className="band nsc-band-projects" data-section="Projects">
       <div className="band-content is-full">
+        <h2 className="band-heading band-title-large">Projects</h2>
+
         {/* The FIRST entry is what the fixed column is timed off — see
             `data-section-anchor` in showcase-linear.tsx. Without it the band box
             is measured, and its padding crosses the trigger line 9rem early. */}
@@ -76,7 +78,7 @@ export function BandProjects({
                 {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
               </div>
 
-              <button type="button" className="entry-more" onClick={() => onOpen(child)}>
+              <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
                 View project <span className="row-arrow" aria-hidden="true">&rarr;</span>
               </button>
             </div>

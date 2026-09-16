@@ -9,6 +9,17 @@
 // Where they already differ is scale: no points list, a shorter row, and type
 // a step down, because an experiment is a smaller claim than a project.
 .nsc-band-experiments {
+  // This band is `is-full`, so its content starts at the pane edge rather than
+  // in the second track. The heading is inset to land on the same line the
+  // entry copy starts on, instead of under the rail at the far left.
+  .band-heading {
+    padding: 0 var(--gutter);
+
+    @include respond-to("tablet") {
+      padding: 0 var(--gutter) 0 calc(var(--col-media) + 2rem);
+    }
+  }
+
   // How much of its real size each frame is shown at. The iframe is rendered at
   // 1 / --shot of the frame and scaled back down, so the experiment lays itself
   // out at a desktop width instead of squeezing into a 320px box and dropping
@@ -124,6 +135,14 @@
     }
   }
 
+  // The measure for an entry's copy, set once here rather than on each child.
+  // A plain length on purpose: this is a text measure, not a column, so it must
+  // not move when --col-media or the gutters are retuned.
+  .entry-text {
+    width: 100%;
+    max-width: 38rem;
+  }
+
   .entry-title {
     margin: 0;
     font-size: clamp(1.375rem, 2.4vw, 2rem);
@@ -143,46 +162,17 @@
 
   .entry-summary {
     margin: 1rem 0 0;
-    max-width: 46ch;
+    // .entry-text carries the measure now.
+    max-width: none;
     font-size: 0.9375rem;
     line-height: 1.55;
   }
 
   // Same hollow-to-filled button as a project's, one size down and without the
   // 10rem of air under it — the entries here follow each other closely.
-  .entry-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    align-self: flex-start;
-    margin-top: 1.5rem;
-    margin-bottom: 3rem;
-    padding: 0.35rem 1rem;
-    background: transparent;
-    color: var(--color-ink);
-    border: 3px solid var(--color-ink);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease;
-
-    &:hover,
-    &:focus-visible {
-      background: var(--color-ink);
-      color: var(--color-bg);
-    }
-
-    &:hover .row-arrow,
-    &:focus-visible .row-arrow {
-      transform: translateX(0.35rem);
-    }
-  }
-
-  .row-arrow {
-    display: inline-block;
-    transition: transform 0.25s ease;
+  // Everything the button looks like is the shared .view-more-button in
+  // globals.scss; what belongs to THIS band is only how much room it takes.
+  .view-more-button {
+    margin: 1.5rem 0 3rem;
   }
 }

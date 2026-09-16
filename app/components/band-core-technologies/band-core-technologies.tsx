@@ -18,7 +18,7 @@ export function BandCoreTechnologies() {
         <ul className="spec-list">
           <li className="spec-row">
             <h2 className="spec-name">Next.js, React</h2>
-            <p className="spec-note">SSR, SSG, App Router, server components, caching and revalidation</p>
+            <p className="spec-note">SSR, SSG, App Router, component libraries, caching and revalidation</p>
           </li>
 
           <li className="spec-row">
@@ -27,23 +27,34 @@ export function BandCoreTechnologies() {
           </li>
 
           <li className="spec-row">
-            <h2 className="spec-name">Design focus</h2>
-            <p className="spec-note">Figma</p>
+            <h2 className="spec-name">AI Development</h2>
+            <p className="spec-note">Responsible use of AI tools, balance strengths/limitations: claude code, github copilot, chatGPT</p>
           </li>
 
           <li className="spec-row">
-            <h2 className="spec-name">AI Tools</h2>
-            <p className="spec-note">Responsible use of AI tools, balance strengths/limitations: claude, github copilot, chatGPT</p>
-          </li>
-
-          <li className="spec-row">
-            <h2 className="spec-name">GSAP</h2>
-            <p className="spec-note">Timelines, scroll-driven motion, interactive vector</p>
+            <h2 className="spec-name">GSAP, Motion, Lenis</h2>
+            <p className="spec-note">scroll-driven motion, vector animation, micro-interactions</p>
           </li>
           <li className="spec-row">
             <h2 className="spec-name">Headless CMS</h2>
             <p className="spec-note">Sanity, structured content, webhook-driven caching</p>
           </li>
+
+          {/* <li className="spec-row">
+            <h2 className="spec-name">Design Oriented</h2>
+            <p className="spec-note">Figma</p>
+          </li> */}
+
+          <li className="spec-row">
+            <h2 className="spec-name">Workflow Tools</h2>
+            <p className="spec-note">figma, github, vscode, vercel, photoshop </p>
+          </li>
+
+          <li className="spec-row">
+            <h2 className="spec-name">Legacy</h2>
+            <p className="spec-note">.net, mvc, jquery, kendoUI, signalR </p>
+          </li>
+
         </ul>
       </div>
     </section>

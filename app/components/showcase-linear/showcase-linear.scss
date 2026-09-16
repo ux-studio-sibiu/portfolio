@@ -25,7 +25,7 @@
   // redeclarations cannot disturb --col-media below — a custom property is
   // substituted where it is declared, so that line resolves here, with this
   // value, and descendants inherit the answer rather than the sum.
-  --thumb: 420px;
+  --thumb: 650px;
 
   // Columns 1 + 2 together are 50% of the pane, so column 1 is
   // 50% - --col-media and the divider lands exactly on the halfway line.
@@ -33,12 +33,18 @@
   // Column 2 is the thumbnail plus the gutter either side of it — that is what
   // puts the thumbnail's right edge on the divider with nothing left over.
   //
-  // The second term is the floor under column 1, because below roughly 1440px
-  // there is no room for a full 320px thumbnail AND a readable identity. It
-  // leaves column 1 at least 20rem, and never takes the rail below the 20vw it
-  // was before, so small screens keep the proportions they had and the
-  // thumbnail shrinks with the rail rather than sliding under column 1.
-  --col-media: min(calc(var(--thumb) + var(--gutter) + 2rem), max(20vw, calc(50vw - 20rem)));
+  // The second term is the only floor left: half the pane. There used to be one
+  // under column 1 as well, keeping it at least 20rem so a thumbnail could not
+  // run back under the identity — but the identity is laid OVER this half and
+  // fades out before the thumbnails arrive, so what it was protecting is no
+  // longer there to protect. Dropping it lets column 2 take the whole half, and
+  // the thumbnail fill it.
+  //
+  // Below the width where the thumbnail plus its gutters exceeds 50vw, column 1
+  // closes to nothing and the scrolling content starts at the screen edge. The
+  // bands whose content sits in the second track are unaffected: that track
+  // still begins on the divider, which is still exactly 50vw.
+  --col-media: min(calc(var(--thumb) + var(--gutter) + 2rem), 50vw);
 
   // Where the scrolling content starts — what column 1 used to be exactly as
   // wide as, before it was given the whole left half to sit over. The bands are
@@ -149,7 +155,7 @@
   // `auto`: a descendant re-enables events through an ancestor that switched
   // them off, so an invisible link would otherwise still be clickable.
   .pane-fixed {
-    // pointer-events: none;
+    pointer-events: none;
   }
 
   &:not(.is-identity-hidden) .pane-fixed .fixed-mail {

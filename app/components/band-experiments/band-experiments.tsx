@@ -26,6 +26,8 @@ export function BandExperiments({
   return (
     <section className="band nsc-band-experiments" data-section="Experiments">
       <div className="band-content is-full">
+        <h2 className="band-heading">Experiments</h2>
+
         <ul className="experiment-list">
           {items.map((child) => (
             <li className="scroll-entry-secondary" key={child.props.title} data-preload={child.props.href}>
@@ -46,7 +48,7 @@ export function BandExperiments({
                   <p className="entry-summary">{child.props.summary}</p>
                 </div>
 
-                <button type="button" className="entry-more" onClick={() => onOpen(child)}>
+                <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
                   View live <span className="row-arrow" aria-hidden="true">&rarr;</span>
                 </button>
               </div>

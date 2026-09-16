@@ -1,19 +1,29 @@
 @use "@/app/styles/breakpoints" as *;
 
 .nsc-band-skills {
-  .skills-title {
-    margin: 0;
-    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-weight: 700;
-  }
-
   .skills-lede {
     margin: 0.75rem 0 0;
     max-width: 44ch;
     font-size: 1.0625rem;
     line-height: 1.5;
     color: var(--color-muted);
+  }
+
+  // Square bullet at the head of every row — this band only, which is why it is
+  // here rather than on the shared .spec-name in globals.scss. Core
+  // technologies uses the same device and keeps its rows unmarked.
+  //
+  // Inline rather than hung off the row: sized in `em` it scales with the name
+  // it belongs to, and it sits on the text's own line, so there is no padding to
+  // keep in step with anything.
+  .spec-name::before {
+    content: "";
+    display: inline-block;
+    width: 0.36em;
+    height: 0.36em;
+    margin-right: 0.5em;
+    background: var(--color-ink);
+    // Off the baseline, onto the optical middle of the lowercase.
+    vertical-align: 0.12em;
   }
 }

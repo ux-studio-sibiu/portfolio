@@ -242,3 +242,81 @@ a {
 
 .desktop-only { @include respond-to-max("tablet") { display: none; } }
 .mobile-only  { @include respond-to("tablet")     { display: none; } }
+
+// The large title at the head of a band. One device for every section, so a
+// band reads as a band wherever it sits — it is the shape the Skills title had
+// before it was the only one of its kind.
+//
+// Lives here rather than in the shell because it belongs to what a band
+// CONTAINS, not to the grid a band sits in. `.band-title` in the shell is a
+// different, smaller thing: the label that goes in a band's own rail.
+// This is the SMALLER of the two flavours, and it is for long titles only — a
+// word like Experiments cannot be set at display size without running into the
+// gutter. Everything short takes .band-title-large below.
+.band-heading {
+  margin: 0 0 2rem;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+// The default flavour in practice: as large as a short word can be set in the
+// content column without wrapping. The vw term is what holds it off the gutter
+// between breakpoints — the cap only takes over on a very wide screen.
+.band-heading.band-title-large {
+  font-size: clamp(3rem, 8.5vw, 7.5rem);
+  line-height: 0.9;
+}
+
+// The control that opens a project or an experiment. It was `.entry-more`,
+// written out twice in near-identical copies that had drifted apart on border
+// width and type size; this is the reconciled one, and the name says what it is
+// rather than where it happened to sit.
+//
+// Margins are deliberately NOT here: how much room a button needs is a property
+// of the band around it, and the two bands genuinely differ.
+.view-more-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  align-self: flex-start;
+  padding: 0.4rem 1.25rem;
+  background: transparent;
+  color: var(--color-ink);
+  border: 4px solid var(--color-ink);
+  box-shadow: 3px 5px #00000033;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  // Nested rather than global: the arrow only means anything inside the button.
+  .row-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover .row-arrow,
+  &:focus-visible .row-arrow {
+    transform: translateX(0.35rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    .row-arrow {
+      transition: none;
+    }
+  }
+}

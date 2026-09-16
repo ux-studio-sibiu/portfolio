@@ -10,12 +10,12 @@ export function BandSkills() {
   return (
     <section className="band nsc-band-skills" data-section="Skills">
       <div className="band-content">
-        <h3 className="skills-title">Team Player</h3>
-        <p className="skills-lede">Able to <span className="highlight-on-scroll">challenge procedures</span> and suggest new ideas</p>
+        <h2 className="band-heading band-title-large">Skills</h2>
+        {/* <p className="skills-lede">Able to <span className="highlight-on-scroll">challenge procedures</span> and suggest new ideas</p> */}
 
         <ol className="spec-list">
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Fast learner</span>
+            <span className="spec-name spec-name-small">Fast learner, Team Player</span>
           </li>
           <li className="spec-row">
             <span className="spec-name spec-name-small">High attention to detail, can work to <span className="highlight-on-scroll">tight deadlines</span></span>
@@ -26,6 +26,15 @@ export function BandSkills() {
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can work effectively with internal animation, design, content teams</span>
           </li>
+
+          <li className="spec-row">
+            <span className="spec-name spec-name-small">Can complement vague or incomplete requirements constructively</span>
+          </li>
+
+          <li className="spec-row">
+            <span className="spec-name spec-name-small">Can <span className="highlight-on-scroll">challenge procedures</span> and suggest new ideas</span>
+          </li>
+          
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can provide <span className="highlight-on-scroll">headless CMS training</span> to clients</span>
           </li>
