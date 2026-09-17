@@ -8,6 +8,7 @@ import slowDaysThumb from "@/app/assets/projects/slow-days.jpg";
 import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/multidevice.jpg";
+import { Highlight } from "@/app/components/highlight/highlight";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -37,15 +38,15 @@ export default function Home() {
             <li>complex UI with dense functionality</li>
             <li>configurable dashboards: resizable, draggable, lazy-loading</li>
             <li>multi-step flows with branching logic (reversible wizard)</li>
-            <li>dynamic grids with reorderable columns, persistent filtering and <span className="highlight-on-scroll">endless scroll</span></li>
+            <li>dynamic grids with reorderable columns, persistent filtering and <Highlight>endless scroll</Highlight></li>
             <li>live updates over SignalR for long-running tasks</li>
             <li>occasional keyboard focused flows</li>
 
             <li className="small-heading">Contributions</li>
             <li>difficult to evolve inherited code: ad-hoc implementations, inconsistent patterns, un-documented logic, significant scale</li>
-            <li>implement <span className="highlight-on-scroll">refactoring</span> strategies with version control, eventually covering all UI</li>
+            <li>implement <Highlight>refactoring</Highlight> strategies with version control, eventually covering all UI</li>
             <li>enforce consistency and constraints</li>
-            <li>large data sets require optimizing for <span className="highlight-on-scroll">performance</span>: async dropdowns, segmented with endless-scroll, server-side filtering</li>
+            <li>large data sets require optimizing for <Highlight>performance</Highlight>: async dropdowns, segmented with endless-scroll, server-side filtering</li>
             <li>bridge design intent and technical implementation</li>
             <li>push back when UX is technically flawed and propose alternatives that scale</li>
           </>
@@ -93,11 +94,11 @@ export default function Home() {
         role="Design & build"
         stack="Next.js, Sanity"
         href="https://photography-prototype.vercel.app"
-        summary={<>Portfolio concept for a photography studio — <span className="highlight-on-scroll">minimal, restrained</span>, and fully editable by the studio.</>}
+        summary={<>Portfolio concept for a photography studio — <Highlight>minimal, restrained</Highlight>, and fully editable by the studio.</>}
         points={
           <>
             <li>Minimal, restrained design that puts the photography first</li>
-            <li><span className="highlight-on-scroll">Availability calendar</span> and contact form</li>
+            <li><Highlight>Availability calendar</Highlight> and contact form</li>
             <li>Full content flexibility — the studio controls every page</li>
           </>
         }
@@ -114,12 +115,12 @@ export default function Home() {
         role="Design & build"
         stack="react, next.js, zustand, sanity, github copilot, chat gpt, vscode"
         href="https://clasa-zero.vercel.app/game"
-        summary={<>A STEM game for pre-school kids — <span className="highlight-on-scroll">randomly generated puzzles</span>, tested on car trips with a six year old.</>}
+        summary={<>A STEM game for pre-school kids — <Highlight>randomly generated puzzles</Highlight>, tested on car trips with a six year old.</>}
         points={
           <>
-            <li>Randomly generated puzzles and answer sets, <span className="highlight-on-scroll">10+ types</span>: sequences, matching, counting, simple reading</li>
+            <li>Randomly generated puzzles and answer sets, <Highlight>10+ types</Highlight>: sequences, matching, counting, simple reading</li>
             <li>Settings persist to local storage; custom puzzles can be added in Sanity</li>
-            <li>Next puzzle <span className="highlight-on-scroll">preloads</span> so transitions never wait on the network</li>
+            <li>Next puzzle <Highlight>preloads</Highlight> so transitions never wait on the network</li>
             <li>Slide back to review previous puzzles and answers</li>
             <li>AI-generated graphics; in progress, still under user testing</li>
           </>
@@ -133,12 +134,12 @@ export default function Home() {
         year="2015"
         role="Concept & design, Mi-Pay"
         stack="Design concept"
-        summary={<>Design concept for a micro-payment product, standardising the product structure <span className="highlight-on-scroll">across devices and clients</span>.</>}
+        summary={<>Design concept for a micro-payment product, standardising the product structure <Highlight>across devices and clients</Highlight>.</>}
         points={
           <>
             <li>One structure spanning devices and client brands</li>
-            <li>Client branding carried by <span className="highlight-on-scroll">background media</span> rather than by layout changes</li>
-            <li>Notable clients: <span className="highlight-on-scroll">O2 Germany, Tesco, 3Roi, FooCall UK</span></li>
+            <li>Client branding carried by <Highlight>background media</Highlight> rather than by layout changes</li>
+            <li>Notable clients: <Highlight>O2 Germany, Tesco, 3Roi, FooCall UK</Highlight></li>
           </>
         }
       />
@@ -154,10 +155,10 @@ export default function Home() {
         role="Design & build"
         stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, vscode"
         href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
-        summary={<>A map-based site for the centre of Sibiu, highlighting <span className="highlight-on-scroll">notable architecture</span> and telling its story.</>}
+        summary={<>A map-based site for the centre of Sibiu, highlighting <Highlight>notable architecture</Highlight> and telling its story.</>}
         points={
           <>
-            <li>Vector .pmtiles self-hosted as a <span className="highlight-on-scroll">single static file</span>, mounted with MapLibre</li>
+            <li>Vector .pmtiles self-hosted as a <Highlight>single static file</Highlight>, mounted with MapLibre</li>
             <li>Content managed in Sanity; geolocation with boundary awareness</li>
             <li>Feature flags via query string — this stripped-down build omits unfinished work</li>
             <li>Draft concept, shown here embedded</li>
@@ -176,11 +177,11 @@ export default function Home() {
         role="Concept & build"
         stack="vue, nuxt, vercel, git, github copilot, vscode"
         href="https://vue-playground-mauve.vercel.app/zoom"
-        summary={<>Zoom-based navigation for a presentation website, <span className="highlight-on-scroll">built on CSS transforms</span>.</>}
+        summary={<>Zoom-based navigation for a presentation website, <Highlight>built on CSS transforms</Highlight>.</>}
         points={
           <>
             <li>Navigation by CSS transform rather than by route change</li>
-            <li><span className="highlight-on-scroll">Iframe to parent-page messaging</span>, so the embed can drive its host</li>
+            <li><Highlight>Iframe to parent-page messaging</Highlight>, so the embed can drive its host</li>
             <li>Draft concept, shown here embedded</li>
           </>
         }
@@ -193,7 +194,7 @@ export default function Home() {
         title="Paint"
         role="Canvas, UI"
         href="https://experiments-five-bice.vercel.app/paint-concept/"
-        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <span className="highlight-on-scroll">nothing but CSS borders</span>.</>}
+        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <Highlight>nothing but CSS borders</Highlight>.</>}
       />
 
       {/* Temporarily out of the list.
@@ -206,11 +207,11 @@ export default function Home() {
         role="Design & build"
         stack="Next.js, Sanity"
         href="https://slow-days-outside.vercel.app/"
-        summary={<>A platform for kids activities — <span className="highlight-on-scroll">educators post events</span> and manage signups and group communication.</>}
+        summary={<>A platform for kids activities — <Highlight>educators post events</Highlight> and manage signups and group communication.</>}
         points={
           <>
             <li>Educators publish events and own their own listings</li>
-            <li>Signup management per event, with <span className="highlight-on-scroll">group communication</span> built in</li>
+            <li>Signup management per event, with <Highlight>group communication</Highlight> built in</li>
             <li>Custom signup forms rather than one fixed shape</li>
           </>
         }
@@ -285,7 +286,7 @@ export default function Home() {
         role="Typography"
         stack="Google Fonts"
         href="https://experiments-five-bice.vercel.app/font-experiments/"
-        summary={<>A type-pairing playground: editable heading, subheading and body over a background image, with <span className="highlight-on-scroll">~40 fonts swapped live</span>.</>}
+        summary={<>A type-pairing playground: editable heading, subheading and body over a background image, with <Highlight>~40 fonts swapped live</Highlight>.</>}
       />
 
       <LinearProject
@@ -295,7 +296,7 @@ export default function Home() {
         title="Background Experiments"
         role="SVG, CSS"
         href="https://experiments-five-bice.vercel.app/background-experiments/"
-        summary={<>A browser for <span className="highlight-on-scroll">86 tileable SVG patterns</span>, with live controls for scale, opacity, colour tint and blend mode.</>}
+        summary={<>A browser for <Highlight>86 tileable SVG patterns</Highlight>, with live controls for scale, opacity, colour tint and blend mode.</>}
       />
 
       <LinearProject
@@ -306,7 +307,7 @@ export default function Home() {
         role="WebGL"
         stack="three.js, GLSL"
         href="https://experiments-five-bice.vercel.app/effect/"
-        summary={<>A shader that <span className="highlight-on-scroll">smears an image toward the cursor</span> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
+        summary={<>A shader that <Highlight>smears an image toward the cursor</Highlight> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
       />
 
       <LinearProject
@@ -316,7 +317,7 @@ export default function Home() {
         title="Static background"
         role="Canvas, Motion"
         href="https://experiments-five-bice.vercel.app/static-background/"
-        summary={<>The animated film-grain overlay that fades in behind navigation menus. Canvas 2D, no dependencies, <span className="highlight-on-scroll">about 5 KB</span>.</>}
+        summary={<>The animated film-grain overlay that fades in behind navigation menus. Canvas 2D, no dependencies, <Highlight>about 5 KB</Highlight>.</>}
       />
     </ShowcaseLinear>
   );

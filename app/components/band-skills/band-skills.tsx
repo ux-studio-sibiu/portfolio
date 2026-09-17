@@ -1,4 +1,5 @@
 import "./band-skills.scss";
+import { Highlight } from "@/app/components/highlight/highlight";
 
 // The CAN stack is commented out for now — see the block in the JSX below. Its
 // styles are still in band-skills.scss, so bringing it back is uncommenting the
@@ -30,17 +31,17 @@ export function BandSkills() {
 
       <div className="band-content">
         <h2 className="band-heading band-title-large">Skills</h2>
-        {/* <p className="skills-lede">Able to <span className="highlight-on-scroll">challenge procedures</span> and suggest new ideas</p> */}
+        {/* <p className="skills-lede">Able to <Highlight>challenge procedures</Highlight> and suggest new ideas</p> */}
 
         <ol className="spec-list">
           <li className="spec-row">
             <span className="spec-name spec-name-small">Fast learner, team player, good communication skills</span>
           </li>
           <li className="spec-row">
-            <span className="spec-name spec-name-small">High attention to detail, can work to <span className="highlight-on-scroll">tight deadlines</span></span>
+            <span className="spec-name spec-name-small">High attention to detail, can work to <Highlight>tight deadlines</Highlight></span>
           </li>
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can take <span className="highlight-on-scroll">ownership and accountability</span></span>
+            <span className="spec-name spec-name-small">Can take <Highlight>ownership and accountability</Highlight></span>
           </li>
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can work effectively with internal animation, design, content teams</span>
@@ -55,20 +56,20 @@ export function BandSkills() {
           </li>
 
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can <span className="highlight-on-scroll">challenge procedures</span> and suggest new ideas</span>
+            <span className="spec-name spec-name-small">Can <Highlight>challenge procedures</Highlight> and suggest new ideas</span>
           </li>
           
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can provide <span className="highlight-on-scroll">headless CMS training</span> to clients</span>
+            <span className="spec-name spec-name-small">Can provide <Highlight>headless CMS training</Highlight> to clients</span>
           </li>
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Experience of <span className="highlight-on-scroll">mentoring</span> (peer QA and feedback)</span>
+            <span className="spec-name spec-name-small">Experience of <Highlight>mentoring</Highlight> (peer QA and feedback)</span>
           </li>
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can manage scope and delivery across multiple projects</span>
           </li>
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can create tools to improve <span className="highlight-on-scroll">client, design and dev teams workflows</span></span>
+            <span className="spec-name spec-name-small">Can create tools to improve <Highlight>client, design and dev teams workflows</Highlight></span>
           </li>
         </ol>
       </div>

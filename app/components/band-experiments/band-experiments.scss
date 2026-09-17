@@ -55,6 +55,26 @@
     }
   }
 
+  // The frames arrive from under the right column, and this is what makes that
+  // possible: the animation pushes them right, and everything past this column's
+  // right edge is cut away. That edge IS the divider — the band's first grid
+  // track is --col-media wide and the whole band is inset by --col-fixed, so the
+  // two land on the same line at 50vw — which is why a frame reads as coming out
+  // from under the line rather than out of nowhere.
+  //
+  // A polygon rather than `overflow: hidden`: overflow cannot clip one axis on
+  // its own, and the thumbnails' drop shadow lives below the box. This closes
+  // the right side and leaves the other three wide open.
+  //
+  // Only from tablet up, because only there are there two columns to arrive
+  // between — and see the band component, which holds the animation to the same
+  // width.
+  .entry-visual {
+    @include respond-to("tablet") {
+      clip-path: polygon(-100% -100%, 100% -100%, 100% 200%, -100% 200%);
+    }
+  }
+
   // Everything this looks like is the shared .entry-thumb in globals.scss —
   // same 2px edge, same shadow, same colour-on-hover. What is added here is the
   // alignment, and what a LIVE frame needs that a picture does not.
@@ -105,8 +125,13 @@
     .frame-grid {
       --tool-row: clamp(4rem, 6vw, 6rem);
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.25rem;
+      // Narrow stack first, wide one second: the feature sits against the
+      // divider, which is the edge everything in this column is aligned to and
+      // the side the frames arrive from.
+      grid-template-columns: 1fr 2fr;
+      // Tight: four frames that read as one object rather than four thumbnails
+      // that happen to be near each other.
+      gap: 0.6rem;
       margin: 0;
       padding: 0;
       list-style: none;
@@ -117,13 +142,16 @@
       min-width: 0;
     }
 
+    // Document order still leads with the feature — it is what the component
+    // writes first and what arrives first — so the columns are assigned rather
+    // than left to auto-placement.
     .frame-cell:first-child {
-      grid-column: 1;
+      grid-column: 2;
       grid-row: 1 / -1;
     }
 
     .frame-cell:not(:first-child) {
-      grid-column: 2;
+      grid-column: 1;
     }
 
     // These fill their cell rather than taking the row's --thumb width, and the

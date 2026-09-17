@@ -81,16 +81,31 @@ a {
 }
 
 // Sweeps a black band across a phrase like a manual selection, then leaves the
-// text inverted. Drop the class on any inline span; ScrollHighlights adds
-// .is-lit once it comes into view and never takes it off.
-// Sweeps a black band across a phrase like a manual selection, then leaves the
-// text inverted. Drop the class on any inline span.
+// text inverted. Drop the class on any inline span — or write <Highlight>, which
+// is the same thing with the inner box below written for you.
 //
 // Progress is a single custom property, --lit (0 to 1), so the same declarations
 // serve all three ways it can be driven:
-//   1. natively, off the element’s own view() timeline where supported
+//   1. natively, off the element's own view() timeline where supported
 //   2. scrubbed by ScrollHighlights, tied to scroll position
 //   3. pinned at 1 for reduced motion, print and forced colours
+//
+// TWO boxes, not one. The band and the inverted glyphs cannot share an element:
+// they want different values of `background-clip` on different layers of the
+// same background, and Firefox does not do that — give any layer `text` and it
+// clips the whole background to the glyphs, so the band never paints and the
+// phrase turns white on white. Chromium honours the list, which is why this only
+// showed up there. So each box carries layers that agree: the outer one paints
+// the band, the inner one paints the glyphs, and both read the same --lit.
+//
+// Registered so the native path can animate it, which is also what lets one
+// animation on the outer box drive the inner one — it inherits the value.
+@property --lit {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 .highlight-on-scroll {
   --lit: 0;
 
@@ -102,56 +117,35 @@ a {
   background-size: calc(var(--lit) * 100%) 100%;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  // Breathing room for the band. Re-enable the negative margin to cancel it, so
-  // a highlighted phrase occupies exactly the same width as plain text.
-  padding: 0.06em 0.16em;
-  // margin: 0 -0.16em;
 
-  // Fallback path only: without text-clipped layers the glyphs cannot invert
-  // per pixel, so they flip in one step once the band is past halfway.
-  &.is-lit {
-    color: var(--color-bg);
+  // Fallback path only, and scoped to it: without text-clipped layers the
+  // glyphs cannot invert per pixel, so they flip in one step once the band is
+  // past halfway.
+  //
+  // The scope is the whole point. .highlight-ink paints the glyphs the band has
+  // NOT reached with `currentColor`, which it inherits from here — so flipping
+  // this to paper white where that box is doing its job paints the rest of the
+  // phrase white on white. It is ScrollHighlights that adds .is-lit, so this
+  // only ever bit in browsers running the scrubbed path: Firefox saw it, and
+  // Chromium, which runs the native one and never sets the class, did not.
+  @supports not (background-clip: text) {
+    &.is-lit {
+      color: var(--color-bg);
+    }
   }
 
-  // Pixel-perfect variant. The glyphs are painted by two text-clipped layers
-  // instead of by `color`: an inverted layer that grows with the band, over a
-  // layer in the inherited colour. Both share the band’s size, so the inversion
-  // tracks the band edge per pixel with no colour step at all.
-  @supports (-webkit-background-clip: text) or (background-clip: text) {
-    // `color` stays put so currentColor below still resolves to the real ink;
-    // the glyphs themselves are painted by the clipped layers.
-    -webkit-text-fill-color: transparent;
-    background-image:
-      linear-gradient(var(--color-bg), var(--color-bg)),
-      linear-gradient(currentColor, currentColor),
-      linear-gradient(var(--color-ink), var(--color-ink));
-    -webkit-background-clip: text, text, border-box;
-    background-clip: text, text, border-box;
-    background-position: left center, left center, left center;
-    background-size:
-      calc(var(--lit) * 100%) 100%,
-      100% 100%,
-      calc(var(--lit) * 100%) 100%;
-
-    &.is-lit {
-      // The step belongs to the fallback; here the layers do the work, and
-      // flipping colour would erase the glyphs the band has not reached yet.
-      color: inherit;
-    }
-
-    // Native scroll-driven path. Same sweep, run by the browser off the
-    // element’s own view() timeline — no JS, no scroll handler, and it stays
-    // off the main thread. ScrollHighlights detects this and stands down.
-    @supports (animation-timeline: view()) {
-      animation: highlight-sweep linear both;
-      animation-timeline: view();
-      // Runs while the phrase travels from the bottom edge to the middle of
-      // the screen, so it is sweeping as you arrive at it. The whole `entry`
-      // phase is only the span’s own height of scrolling — about 30px for a
-      // line of text — so an entry-only range finishes at the bottom edge,
-      // well before the phrase is anywhere near readable.
-      animation-range: entry 100% cover 50%;
-    }
+  // Native scroll-driven path. Same sweep, run by the browser off the element's
+  // own view() timeline — no JS, no scroll handler, and it stays off the main
+  // thread. ScrollHighlights detects this and stands down.
+  @supports (animation-timeline: view()) {
+    animation: highlight-sweep linear both;
+    animation-timeline: view();
+    // Runs while the phrase travels from the bottom edge to the middle of the
+    // screen, so it is sweeping as you arrive at it. The whole `entry` phase is
+    // only the span's own height of scrolling — about 30px for a line of text —
+    // so an entry-only range finishes at the bottom edge, well before the
+    // phrase is anywhere near readable.
+    animation-range: entry 100% cover 50%;
   }
 
   // Pinned variant, for a phrase that does not travel with the scroll — the
@@ -184,11 +178,49 @@ a {
     --lit: 1;
     animation: none;
   }
+}
 
-  // Backgrounds are dropped when printing and under forced colours, which would
-  // leave the glyphs transparent and the phrase blank. Paint the text normally
-  // in both, and drop the band with it.
-  @media print, (forced-colors: active) {
+// The glyphs, inside the band. The padding is HERE rather than on the box that
+// paints the band: it is what holds the band clear of the letters, and with it
+// on the inner box the two boxes are exactly the same size, so a band at 50% and
+// an inversion at 50% fall on the same pixel.
+.highlight-ink {
+  padding: 0.06em 0.16em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+
+  // Pixel-perfect variant. The glyphs are painted by two text-clipped layers
+  // instead of by `color`: an inverted layer that grows with the band, over a
+  // layer in the inherited colour. Both share the band's size, so the inversion
+  // tracks the band edge per pixel with no colour step at all.
+  //
+  // Unprefixed only: Safari has not needed -webkit-background-clip since 14, and
+  // testing for the prefix would let a browser in here that the declarations
+  // below cannot serve. Where the test fails nothing here applies, the glyphs are
+  // painted by `color` as usual, and the step in .is-lit takes over.
+  @supports (background-clip: text) {
+    // `color` stays put so currentColor below still resolves to the real ink;
+    // the glyphs themselves are painted by the clipped layers.
+    -webkit-text-fill-color: transparent;
+    background-image:
+      linear-gradient(var(--color-bg), var(--color-bg)),
+      linear-gradient(currentColor, currentColor);
+    background-clip: text, text;
+    background-repeat: no-repeat;
+    background-position: left center, left center;
+    background-size:
+      calc(var(--lit) * 100%) 100%,
+      100% 100%;
+  }
+}
+
+// Backgrounds are dropped when printing and under forced colours. Both boxes are
+// backgrounds — one is the band, the other IS the glyphs — so the phrase would
+// print as a blank gap. Paint the text normally in both and drop the band with
+// it. One rule rather than one per box: they want the same thing said.
+@media print, (forced-colors: active) {
+  .highlight-on-scroll,
+  .highlight-ink {
     -webkit-text-fill-color: currentColor;
     background-image: none;
     animation: none;
@@ -196,9 +228,10 @@ a {
   }
 }
 
+// One property, inherited by the inner box, so a single animation sweeps both.
 @keyframes highlight-sweep {
-  from { background-size: 0% 100%, 100% 100%, 0% 100%; }
-  to { background-size: 100% 100%, 100% 100%, 100% 100%; }
+  from { --lit: 0; }
+  to { --lit: 1; }
 }
 
 // Numbered list. A shared device rather than a per-section style: Core

@@ -21,7 +21,9 @@ export function Highlight({ children, pinned, delay }: { children: React.ReactNo
       className={`highlight-on-scroll${pinned ? " pinned" : ""}`}
       style={delay ? ({ "--sweep-delay": delay } as React.CSSProperties) : undefined}
     >
-      {children}
+      {/* The inner box paints the glyphs; the outer one paints the band. See
+          .highlight-on-scroll in globals.scss for why they cannot be one. */}
+      <span className="highlight-ink">{children}</span>
     </span>
   );
 }

@@ -1,22 +1,43 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-experiments.scss";
 
-// Experiments. A row each: the frame in column 2 against the divider, the copy
-// in column 3, and either one opening it into the detail pane with the track
-// sliding right. It is `.scroll-entry-secondary` rather than `.scroll-entry` so
-// the two can be told apart and pulled further apart later.
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+// Where a frame starts and finishes its arrival, as positions of the ROW against
+// the scroller: from its top reaching the bottom of the screen to its top a bit
+// over halfway up, written as the percentages ScrollTrigger reads. Scrubbed, so
+// these are scroll positions and not durations — the frame is wherever between
+// them the scroll says it is, and it goes back the way it came.
+const ARRIVE_FROM = 95;
+const ARRIVE_TO = 55;
+// A row of several frames — only the tools row — arrives over its own, much
+// longer window, because the four of them come in one after another.
 //
-// An entry with a `thumb` shows the picture, at whatever proportion the picture
-// has; one without shows the site itself, running, in a frame with a ratio of
-// its own — an iframe has no intrinsic size to take one from. The live frame
-// takes no pointer events, which leaves the click to the button around it and
-// stops it swallowing the pane's scroll.
+// The LAST frame's run is given outright, and it sets the pace for the rest:
+// every other frame takes whatever run its own distance needs to cross at that
+// same speed. They overlap as a result — one is still coming in as the next
+// sets off — which is what lets each of them cross slowly while the whole row
+// still settles inside the stretch of scroll it is on screen for.
 //
-// `tools` is a group of small things that do not each warrant a row. They share
-// the first one, laid out as a grid of frames in the visual column, and every
-// frame opens its own detail — the row has no View button because there is no
-// single thing for it to open.
+// The waits between them setting off, both deliberately shorter than a frame's
+// run: they are staggered, not queued, so two or three are always crossing at
+// once. Where the first one sets off falls out of these — a fifth tool simply
+// starts a delay earlier.
+//
+// Two numbers rather than one because the last frame is the feature: the stack
+// comes in as a flurry, and then it follows on a beat of its own.
+const GROUP_LAST_FROM = 35;
+const GROUP_LAST_TO = 0;
+const GROUP_DELAY = 12;
+const GROUP_LAST_DELAY = 20;
+
 export function BandExperiments({
   items,
   tools = [],
@@ -26,8 +47,132 @@ export function BandExperiments({
   tools?: React.ReactElement<ProjectProps>[];
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
+  const root = useRef<HTMLElement>(null);
+
+  // Each frame slides in from under the right column. The clip that hides it on
+  // the way is in the stylesheet — see .entry-visual there; this only says how
+  // far out it starts and ties that to the scroll.
+  //
+  // GSAP rather than a view() timeline for once: this wants to work in Firefox,
+  // which has no scroll-driven animations, and a frame that never arrives there
+  // is a hole in the column rather than a missing flourish.
+  useGSAP(() => {
+    const el = root.current;
+    // From tablet up this is the element that scrolls; below it the pane does,
+    // and the media query below means we never get here anyway.
+    const scroller = el?.closest<HTMLElement>(".pane-scroll");
+    if (!el || !scroller) return;
+
+    const mm = gsap.matchMedia();
+
+    // The same 768px the stylesheet splits the row into two columns at: with one
+    // column there is nothing to the right to come from.
+    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+      el.querySelectorAll<HTMLElement>(".entry-visual").forEach((visual) => {
+        const row = visual.closest<HTMLElement>(".scroll-entry-secondary");
+        if (!row) return;
+
+        // What moves: the frames themselves, never the column — that carries the
+        // clip, and a clip that travels with its contents hides nothing.
+        //
+        // The tools row has a grid of them, each arriving on its own; every other
+        // row has a single frame, which is the same code with nothing to stagger
+        // against.
+        const cells = visual.querySelectorAll<HTMLElement>(".frame-cell");
+        const frames = cells.length ? Array.from(cells) : ([visual.firstElementChild].filter(Boolean) as HTMLElement[]);
+
+        // The right edge of the column, which is where the clip cuts.
+        const edge = () => visual.offsetLeft + visual.offsetWidth;
+
+        const alone = frames.length === 1;
+
+        // Alone, a frame crosses the whole window. In company they share it, one
+        // after another with no overlap, on two rules:
+        //
+        //   ORDER   by where a frame sits, not where it is written: the left
+        //           column first and top to bottom, then the column after it. So
+        //           the stack lands first and the wide one settles against the
+        //           divider last, and if the two columns ever swap back the
+        //           sequence follows the layout without being told.
+        //   SHARE   by distance, not in equal slices, so they all travel at the
+        //           same speed. The wide one against the divider has barely any
+        //           ground to cover next to the stack crossing the whole column;
+        //           on equal slices the small ones snapped across while the big
+        //           one drifted.
+        //
+        // They overlap, and deliberately: the pace comes from the last frame's
+        // stated run, the starts keep the order readable, and how long each one
+        // is in motion falls out of the two.
+        //
+        // A function, not a value: the column is fluid, so the schedule is re-cut
+        // from the measured positions every time ScrollTrigger refreshes.
+        const schedule = () => {
+          const distances = frames.map((f) => edge() - f.offsetLeft);
+          const order = frames
+            .map((_, i) => i)
+            .sort((a, b) => frames[a].offsetLeft - frames[b].offsetLeft || frames[a].offsetTop - frames[b].offsetTop);
+
+          // Percent of screen per pixel of travel, taken from the one frame whose
+          // run is stated rather than derived. Everything else moves at this rate,
+          // which is what keeps the small ones from outrunning the wide one.
+          const last = order[order.length - 1];
+          const pace = (GROUP_LAST_FROM - GROUP_LAST_TO) / (distances[last] || 1);
+          const runOf = (i: number) => distances[i] * pace;
+
+          // Counted back from the last frame's start: one longer wait to clear it,
+          // then a shorter one between each of the rest.
+          const spans: { from: number; to: number }[] = [];
+          order.forEach((i, place) => {
+            const back = order.length - 2 - place;
+            const from = back < 0 ? GROUP_LAST_FROM : GROUP_LAST_FROM + GROUP_LAST_DELAY + back * GROUP_DELAY;
+            spans[i] = { from, to: from - runOf(i) };
+          });
+          return spans;
+        };
+
+        frames.forEach((frame, i) => {
+          // A trigger each rather than one tween with a stagger: a staggered
+          // target sits at its FINAL position until its turn comes and then jumps
+          // out to the edge to begin, which is a flash of the frame in place
+          // before it arrives. Given its own trigger, a frame holds at the edge
+          // until its own scroll position comes round.
+
+          gsap.fromTo(
+            frame,
+            {
+              // Pushed far enough right that its own left edge sits on the cut —
+              // exactly out of sight and not a pixel further. Per frame, so the
+              // ones in the narrow column travel the shorter distance they
+              // actually need. Measured off the layout box rather than a rect,
+              // because a rect would already have this transform in it and every
+              // refresh would compound.
+              x: () => edge() - frame.offsetLeft,
+            },
+            {
+              x: 0,
+              // Linear: the scroll is the easing.
+              ease: "none",
+              scrollTrigger: {
+                trigger: row,
+                scroller,
+                start: () => `top ${alone ? ARRIVE_FROM : schedule()[i].from}%`,
+                end: () => `top ${alone ? ARRIVE_TO : schedule()[i].to}%`,
+                scrub: true,
+                // Thumbnails are pictures and the column is fluid, so the
+                // distance is only right until something reflows.
+                invalidateOnRefresh: true,
+              },
+            },
+          );
+        });
+      });
+    });
+
+    return () => mm.revert();
+  }, { scope: root });
+
   return (
-    <section className="band nsc-band-experiments" data-section="Experiments">
+    <section className="band nsc-band-experiments" data-section="Experiments" ref={root}>
       <div className="band-content is-full">
         <h2 className="band-heading">Experiments</h2>
 
