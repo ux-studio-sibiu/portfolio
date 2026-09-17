@@ -54,20 +54,28 @@
   }
 
   // Rotated out of the right edge, the way the old portfolio dated each screen.
+  // Hung off the right edge of the frame, a fixed share of the way down it:
+  // both are proportions rather than lengths, so the tag keeps its place
+  // whatever size the column gives the frame. 13% is where the old portfolio
+  // put it — 45px down a 335px screen.
   .year-tag {
     position: absolute;
-    top: 2.5rem;
-    right: 0;
-    transform: translateX(100%) rotate(90deg);
+    top: 13%;
+    left: 100%;
+    // Turned about its own top-left corner and then pushed back by its own
+    // height, which is what leaves the turned box to the RIGHT of that corner
+    // rather than lying over the screen it is labelling. Transforms read right
+    // to left, so the translate happens first.
+    transform: rotate(90deg) translateY(-100%);
     transform-origin: left top;
     padding: 0.2rem 0.45rem;
     background: var(--color-ink);
     color: var(--color-bg);
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    // The page's own face rather than the mono one. Four digits read sideways
+    // at label size is work enough without the letterforms making it harder.
+    font-size: 0.8125rem;
     line-height: 1.1;
     font-weight: 700;
-    letter-spacing: 0.06em;
     white-space: nowrap;
   }
 
@@ -146,9 +154,11 @@
       pointer-events: none;
     }
 
+    // Against the screen cut-out's right edge rather than the mask's — 111 + 391
+    // of a 700-wide frame — so it labels the screen and not the plastic round it.
     .year-tag {
-      top: 4rem;
-      right: 1.5rem;
+      top: 13%;
+      left: 71.7%;
     }
   }
 }

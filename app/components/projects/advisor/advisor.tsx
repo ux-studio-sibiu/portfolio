@@ -43,44 +43,74 @@ export default function Advisor() {
   return (
     <div className="nsc-project-advisor">
       <div className="project-columns">
+        {/* The copy scrolls on its own; the screens beside it never move. */}
         <div className="project-copy">
-          <p className="lede">Accounting office management studio, sold as SaaS to Nordic accounting firms and their clients.</p>
+          <section>
+            <h2 className="project-title"><code>Accounting Office Management Studio</code></h2>
+            <p>
+              Saas for nordic accounting firms and their clients. (8k firms - 40k active users)<br />
+              My role involved long-standing contribution to the product development, with focus on advancing the UI system.
+              Close collaboration with ux teams to bridge design intent and technical implementation.
+            </p>
+          </section>
 
-          <dl className="scale">
-            <div className="figure">
-              <dt>8,000</dt>
-              <dd>accounting firms</dd>
-            </div>
-            <div className="figure">
-              <dt>40,000</dt>
-              <dd>active users</dd>
-            </div>
-            <div className="figure">
-              <dt>2018 —</dt>
-              <dd>continuous delivery</dd>
-            </div>
-          </dl>
+          <section>
+            <p>
+              <strong><code>UI system</code> : </strong>
+              <code>KendoUI</code> + <code>.NET MVC</code> + <code>custom SPA</code> + <code>VUD</code>
+            </p>
+            <ul>
+              <li><strong><code>KendoUI</code> : </strong>base components are styled using the VUD design system and extended with significant custom behavior.</li>
+              <li><strong><code>VUD</code> : </strong> Visma Unified Design, token based, frequent updates.</li>
+              <li>
+                <strong><code>custom SPA framework</code></strong> over <code>.NET MVC</code> and <code>KendoUI</code> also integrating <code>VUD</code> design system.
+                Only possible after a full refactor of UI code
+              </li>
+            </ul>
+          </section>
 
-          <h3 className="heading">The UI system</h3>
-          <p>KendoUI over .NET MVC, with a custom SPA framework and the Visma Unified Design token set on top. Base components are styled to VUD and then extended well past it.</p>
+          <section>
+            <strong><code>Notable features</code> : </strong>
+            <ul>
+              <li>8000+ accounting firms - 40k active users</li>
+              <li>complex UI with dense functionality</li>
+              <li>multi-step flows with branching logic (reversible wizard)</li>
+              <li>configurable <code>dashboards</code> (resizable, draggable, lazy-loading)</li>
+              <li><code>dynamic grids</code> (configurable columns, resize, reorder, persistent filtering, endless scroll, expandable rows)</li>
+              <li>intricate <code>combobox</code> inputs: persistent states, chained async loading, segmented with infinite scroll, inline add, multi-select, auto-filled values</li>
+              <li>long running tasks send live updates via <code>signalR</code></li>
+              <li>rigorous <code>validation</code> : client + server</li>
+              <li>occasional <code>keyboard</code> focused flows</li>
+            </ul>
+          </section>
 
-          <ul className="specs">
-            <li><span className="spec-key">Wizards</span>Multi-step flows with branching, reversible logic</li>
-            <li><span className="spec-key">Grids</span>Configurable columns, reorder, persistent filtering, endless scroll, expandable rows</li>
-            <li><span className="spec-key">Comboboxes</span>Chained async loading, segmented infinite scroll, inline add, multi-select</li>
-            <li><span className="spec-key">Dashboards</span>Resizable, draggable, lazy-loading</li>
-            <li><span className="spec-key">Live updates</span>Long-running tasks reporting over SignalR</li>
-            <li><span className="spec-key">Validation</span>Client and server, with keyboard-driven flows where it matters</li>
-          </ul>
+          <section>
+            <strong><code>Challenges</code> : </strong>
+            <ul>
+              <li>difficult to evolve inherited code: ad-hoc implementations, inconsistent patterns, un-documented logic, significant scale</li>
+              <li>implement <code>refactoring</code> strategies with version control, eventually covering all UI</li>
+              <li>enforce consistency and constraints</li>
+              <li>large data sets require optimizing for <code>performance</code> : async dropdowns, segmented with endless-scroll, server-side filtering</li>
+              <li>bridge design intent and technical implementation</li>
+              <li>push back when UX is technically flawed and propose alternatives that scale</li>
+            </ul>
+          </section>
 
-          <h3 className="heading">What made it hard</h3>
-          <p>Mostly archaeology. Inherited code with ad-hoc implementations, inconsistent patterns and undocumented logic, at a scale where nothing could be rewritten in one go — so refactoring ran incrementally under version control until it covered the UI.</p>
-          <p>Large data sets forced async dropdowns, segmented endless scroll and server-side filtering. A steady part of the job was bridging design intent and technical reality, and pushing back when a proposed flow would not scale.</p>
+          <section className="stack-section">
+            <strong><code>Stack</code> : </strong>
+            <code>git</code>
+            <code>.NET</code>
+            <code>vscode</code>
+            <code>jQuery</code>
+            <code>kendo ui</code>
+            <code>figma</code>
+            <code>snowplow</code>
+            <code>cypress</code>
+            <code>signalR</code>
+          </section>
         </div>
 
         <div className="project-screens">
-          <p className="screens-note">Click a screen for the next one, right-click for the previous.</p>
-
           <ScreenCarousel year="2026" label="Advisor in 2026" shots={SHOTS_2026} />
           <ScreenCarousel year="2025" label="Advisor, the new case workflow" shots={SHOTS_NCW} />
           <ScreenCarousel year="2023" label="Advisor in 2023" shots={SHOTS_CLASSIC} start={9} />
