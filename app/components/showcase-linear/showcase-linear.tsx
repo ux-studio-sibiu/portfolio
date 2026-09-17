@@ -10,7 +10,7 @@ import { DetailPane } from "@/app/components/detail-pane/detail-pane";
 import { useEmbedPreload } from "@/app/components/embed-preload/embed-preload";
 import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { SideMenu } from "@/app/components/side-menu/side-menu";
-import { MenuButton } from "@/app/components/menu-button/menu-button";
+import { SectionRail } from "@/app/components/section-rail/section-rail";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
 import { BandExperiments } from "@/app/components/band-experiments/band-experiments";
@@ -108,7 +108,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     const el = scroller.current;
     const targets = [
       pane.current?.querySelector<HTMLElement>(".pane-fixed"),
-      root.current?.querySelector<HTMLElement>(".nsc-menu-button"),
+      root.current?.querySelector<HTMLElement>(".nsc-rail-button"),
     ].filter(Boolean) as HTMLElement[];
     if (!el || !targets.length) return;
 
@@ -124,8 +124,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
 
     targets.forEach((node) => node.addEventListener("wheel", onWheel, { passive: false }));
     return () => targets.forEach((node) => node.removeEventListener("wheel", onWheel));
-    // Re-bound when the button comes and goes with the detail view.
-  }, [isDetail]);
+  }, []);
 
   useEffect(() => {
     const onPop = () => setActiveIndex(null);
@@ -329,7 +328,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             rule between 2 and 3 is the same line the project thumbnails sit
             against: both are placed off --col-media, so they cannot drift. */}
         <section className="showcase-pane index-pane" ref={pane} inert={isDetail}>
-          <FixedColumn sections={sections} active={section} />
+          <FixedColumn />
 
           {/* Columns 2 + 3 — scrolling. */}
           <div className="pane-scroll" ref={scroller}>
@@ -360,10 +359,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
 
       </div>
 
-      {/* Outside the panes, fixed to the viewport: the one control that is
-          there on every screen of the scroll, including the last one where the
-          column behind it has faded away. */}
-      {!isDetail && <MenuButton inverted={!!section && railLit} onClick={() => setMenuOpen(true)} />}
+      {/* Outside the track, fixed to the viewport: the rail and the one control
+          on the page stay exactly where they are while the detail pane comes
+          over the top of everything else. */}
+      <SectionRail sections={sections} active={section} lit={railLit} isDetail={isDetail} onOpenMenu={() => setMenuOpen(true)} onClose={closeItem} />
 
       {/* Portalled to <body> from here, so it is outside the shell entirely —
           it only needs the section list and the open state. */}

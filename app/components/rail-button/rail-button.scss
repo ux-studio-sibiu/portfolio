@@ -1,14 +1,16 @@
 @use "@/app/styles/breakpoints" as *;
 
-.nsc-menu-button {
-  // Fixed to the viewport, not to the column it used to sit in — see the
-  // component for why. Above the panes and the divider, below the side menu it
-  // opens (that is portalled to <body> and paints over everything).
-  position: fixed;
-  z-index: 6;
+.nsc-rail-button {
+  // Placed in the rail that carries it, which is the box fixed to the viewport
+  // — see SectionRail. Centred on that box rather than on half of --rail, so it
+  // cannot drift off the bar it sits on.
+  position: absolute;
+  z-index: 1;
   top: 1.75rem;
-  left: calc(var(--rail) / 2);
+  left: 50%;
   transform: translateX(-50%);
+  // The rail takes no pointer events; this is the one thing in it that does.
+  pointer-events: auto;
   display: grid;
   place-items: center;
   width: 2.75rem;
@@ -42,6 +44,18 @@
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+
+  // The arrow is drawn rather than set as a glyph, so it shares the button's
+  // colour through currentColor and inverts with it.
+  .back-arrow {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .menu-bars {

@@ -69,6 +69,13 @@
 
     &.is-detail {
       transform: translateX(-50%);
+
+      // Far enough to bring the detail pane's left edge up to the RAIL rather
+      // than to the screen edge: from tablet up that pane is --rail narrower
+      // than the screen, so it has exactly that much less to travel.
+      @include respond-to("tablet") {
+        transform: translateX(calc(var(--rail) - 100vw));
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -80,6 +87,19 @@
     flex: 0 0 50%;
     height: 100%;
     min-width: 0;
+  }
+
+  // The detail pane stops where the rail starts instead of running under it.
+  // The rail is fixed over everything now and no longer slides away, so a pane
+  // the full width of the screen would have that strip of its left edge covered
+  // for as long as it is open. Here rather than in the pane's own stylesheet:
+  // it is the same measurement as the slide above and the two have to agree.
+  //
+  // Below tablet the rail is not drawn, and 80px off a phone is a fifth of it.
+  .nsc-detail-pane {
+    @include respond-to("tablet") {
+      flex-basis: calc(100vw - var(--rail));
+    }
   }
 
   // --- Index pane: three columns --------------------------------------------

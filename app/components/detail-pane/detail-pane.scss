@@ -31,6 +31,10 @@
 
   // Floats over whatever the project renders, including a third-party iframe —
   // hence the white ring, so it stays legible on any background it lands on.
+  // Below tablet only. From there up the section rail is beside this pane with
+  // the same job in its own button, and two ways back a few pixels apart is one
+  // too many; below tablet the rail is not drawn at all, so this is the only
+  // one there is.
   .detail-back {
     position: absolute;
     top: 1.25rem;
@@ -57,6 +61,12 @@
       background: var(--color-bg);
       color: var(--color-ink);
       box-shadow: 0 0 0 2px var(--color-ink), 0 6px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    // AFTER the display above, which would otherwise win on source order: a
+    // media query adds no specificity of its own.
+    @include respond-to("tablet") {
+      display: none;
     }
 
     &:hover .back-arrow,

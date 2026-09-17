@@ -4,25 +4,15 @@ import { RunLine, RunWord } from "@/app/components/run-line/run-line";
 import { Highlight } from "@/app/components/highlight/highlight";
 import "./fixed-column.scss";
 
-// Column 1 of the index pane: fixed, never scrolls, and carries two things that
-// hand over to each other.
+// Column 1 of the index pane: fixed, never scrolls, and carries the identity —
+// label, name, blurb and facts — faded as ONE unit by --identity-fade, which the
+// showcase writes on scroll.
 //
-//   .fixed-identity   label, name, blurb and facts — faded as ONE unit by
-//                     --identity-fade, which the showcase writes on scroll
-//   .fixed-sections   the black rail down the left edge, carrying the section
-//                     titles rotated on their side, stacked and all transparent
-//                     until one takes over — deliberately OUTSIDE
-//                     .fixed-identity so it outlasts that fade. The rail itself
-//                     is lit by `active`, on the same transition as a title, so
-//                     the black and the first word fade in together
-//
-// The section-menu button used to be the third thing here. It is its own
-// element now — see MenuButton — because it has to outlive this column, which
-// fades out again at the bottom of the scroll.
-//
-// `sections` comes from the showcase, which reads it off the `data-section`
-// attributes in the DOM. Nothing here needs updating when a band is added.
-export function FixedColumn({ sections, active }: { sections: string[]; active: string | null }) {
+// It used to carry the section rail and the menu button too. Both are their own
+// fixed elements now, laid over this one rather than inside it, because they
+// have to outlive both this column's fade and the track's slide; what is left
+// here of them is the left padding that clears the rail.
+export function FixedColumn() {
   return (
     <aside className="pane-fixed nsc-fixed-column">
       <div className="fixed-identity">
@@ -57,14 +47,6 @@ export function FixedColumn({ sections, active }: { sections: string[]; active: 
         </dl>
       </div>
 
-      {/* Decorative: the rotated titles say what the scroll already says. */}
-      <div className={`fixed-sections${active ? " is-active" : ""}`} aria-hidden="true">
-        <div className="section-stack">
-          {sections.map((label) => (
-            <span className={`fixed-section${active === label ? " is-active" : ""}`} key={label}>{label}</span>
-          ))}
-        </div>
-      </div>
 
     </aside>
   );

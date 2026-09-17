@@ -1,6 +1,14 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-projects.scss";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const num = (idx: number) => String(idx + 1).padStart(2, "0");
 
@@ -47,8 +55,63 @@ export function BandProjects({
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
   children?: React.ReactNode;
 }) {
+  const root = useRef<HTMLElement>(null);
+
+  // A pinned thumbnail holds at full strength for as long as it is pinned, and
+  // fades once it is let go. The window is read off the page rather than guessed:
+  // it begins where the entry's bottom catches up with the bottom of the pinned
+  // box — the moment the pin ends and the thumbnail starts travelling with the
+  // page again — and runs for the thumbnail's own height of scroll after that, so
+  // it is gone by the time it has moved its own length and never simply slides
+  // off the top still visible.
+  //
+  // Scrubbed, so it is scroll position and not a duration: scroll back up and the
+  // thumbnail comes back.
+  useGSAP(() => {
+    const el = root.current;
+    // From tablet up this is the element that scrolls, and it is also the only
+    // width at which the thumbnails pin at all.
+    const scroller = el?.closest<HTMLElement>(".pane-scroll");
+    if (!el || !scroller) return;
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+      el.querySelectorAll<HTMLElement>(".scroll-entry").forEach((entry) => {
+        const visual = entry.querySelector<HTMLElement>(".visual-sticky");
+        // The last entry's visual is static — there is nothing after it to push
+        // the pin off, so it never sticks and has nothing to fade through.
+        if (!visual || getComputedStyle(visual).position !== "sticky") return;
+
+        // Read at refresh rather than held: the offset is a rem value that changes
+        // at the breakpoint, and the height is a picture's.
+        const offset = () => parseFloat(getComputedStyle(visual).top) || 0;
+
+        gsap.to(visual, {
+          // autoAlpha, not opacity: it takes visibility with it at zero, so a
+          // thumbnail faded to nothing stops swallowing the clicks meant for
+          // whatever is under it. It is a button, and it is pinned across the
+          // top of the screen.
+          autoAlpha: 0,
+          // Linear: the scroll is the easing.
+          ease: "none",
+          scrollTrigger: {
+            trigger: entry,
+            scroller,
+            start: () => `bottom top+=${offset() + visual.offsetHeight}`,
+            end: () => `bottom top+=${offset()}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        });
+      });
+    });
+
+    return () => mm.revert();
+  }, { scope: root });
+
   return (
-    <section className="band nsc-band-projects" data-section="Projects">
+    <section className="band nsc-band-projects" data-section="Projects" ref={root}>
       <div className="band-content is-full">
         <h2 className="band-heading band-title-large">Projects</h2>
 

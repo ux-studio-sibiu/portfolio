@@ -26,16 +26,26 @@ const ARRIVE_TO = 55;
 // sets off — which is what lets each of them cross slowly while the whole row
 // still settles inside the stretch of scroll it is on screen for.
 //
+// Where the whole group has finished arriving, as the position of the row's own
+// MIDDLE on the screen: everything is home by the time the group reaches half
+// way up. Worked back to a row-top percentage at measure time, because how far
+// the middle is from the top depends on how tall the row is and how tall the
+// screen is, and neither is known from here.
+const GROUP_END = 50;
+// How long the last frame is in motion. It is the only run stated outright, and
+// it sets the pace every other frame travels at.
+const GROUP_LAST_RUN = 35;
 // The waits between them setting off, both deliberately shorter than a frame's
-// run: they are staggered, not queued, so two or three are always crossing at
-// once. Where the first one sets off falls out of these — a fifth tool simply
-// starts a delay earlier.
+// run: they are staggered, not queued, so three or four are always crossing at
+// once and the stack reads as one thing arriving rather than three. Where the
+// first one sets off falls out of these — a fifth tool simply starts a delay
+// earlier.
 //
 // Two numbers rather than one because the last frame is the feature: the stack
-// comes in as a flurry, and then it follows on a beat of its own.
-const GROUP_LAST_FROM = 35;
-const GROUP_LAST_TO = 0;
-const GROUP_DELAY = 12;
+// comes in as a flurry, and then it follows on a beat of its own. That beat has
+// to be longer than the difference in their runs, or the short trip from the
+// divider would land it before the stack it is supposed to follow.
+const GROUP_DELAY = 5;
 const GROUP_LAST_DELAY = 20;
 
 export function BandExperiments({
@@ -116,15 +126,21 @@ export function BandExperiments({
           // run is stated rather than derived. Everything else moves at this rate,
           // which is what keeps the small ones from outrunning the wide one.
           const last = order[order.length - 1];
-          const pace = (GROUP_LAST_FROM - GROUP_LAST_TO) / (distances[last] || 1);
+          const pace = GROUP_LAST_RUN / (distances[last] || 1);
           const runOf = (i: number) => distances[i] * pace;
+
+          // GROUP_END is where the row's middle should be when the last frame
+          // lands; ScrollTrigger measures the row's top, so half the row's height
+          // comes off it. In percent of the screen, like everything else here.
+          const halfRow = (row.offsetHeight / (scroller.clientHeight || 1)) * 50;
+          const lastFrom = GROUP_END - halfRow + GROUP_LAST_RUN;
 
           // Counted back from the last frame's start: one longer wait to clear it,
           // then a shorter one between each of the rest.
           const spans: { from: number; to: number }[] = [];
           order.forEach((i, place) => {
             const back = order.length - 2 - place;
-            const from = back < 0 ? GROUP_LAST_FROM : GROUP_LAST_FROM + GROUP_LAST_DELAY + back * GROUP_DELAY;
+            const from = back < 0 ? lastFrom : lastFrom + GROUP_LAST_DELAY + back * GROUP_DELAY;
             spans[i] = { from, to: from - runOf(i) };
           });
           return spans;
