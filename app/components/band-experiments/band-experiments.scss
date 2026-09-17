@@ -113,33 +113,63 @@
     }
   }
 
-  // The Tools row. Its visual column is a grid of frames instead of one: the
-  // FIRST tool takes the wide column and the full height of the row, and the
-  // rest stack in the narrow one beside it. Which tool is the big one is
-  // therefore document order — reorder them in page.tsx to change it.
+  // A row whose visual column is a grid of frames rather than one. Everything
+  // the two such rows share lives here; what differs is the shape of the grid,
+  // below.
+  .frame-grid {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 1rem;
+  }
+
+  .frame-cell {
+    display: flex;
+    min-width: 0;
+  }
+
+  // These fill their cell rather than taking the row's --thumb width, and the
+  // proportion comes from the grid rather than from the picture, so the shared
+  // rules do not apply.
+  .frame-grid .entry-thumb {
+    width: 100%;
+    height: 100%;
+
+    @include respond-to("tablet") {
+      width: 100%;
+    }
+
+    &:has(iframe) {
+      aspect-ratio: auto;
+    }
+
+    // A still has to fill the cell the same way a live frame does, so it is
+    // cropped to it rather than letterboxed inside it.
+    .frame-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  // The Tools row: the FIRST tool takes the wide column and the full height of
+  // the row, and the rest stack in the narrow one beside it. Which tool is the
+  // big one is therefore document order — reorder them in page.tsx to change it.
   //
   // The row count is written inline by the component, because only it knows how
   // many tools there are, and `grid-row: 1 / -1` needs the rows to be explicit
   // for -1 to mean anything.
   .tools-entry {
     .frame-grid {
-      --tool-row: clamp(4rem, 6vw, 6rem);
-      display: grid;
+      // Three of these plus the gaps is the height of the whole grid, which is
+      // also the height of the wide frame spanning it — so this is the number
+      // that decides how square that frame is, not anything on the frame itself.
+      --tool-row: clamp(4.5rem, 7vw, 7rem);
       // Narrow stack first, wide one second: the feature sits against the
       // divider, which is the edge everything in this column is aligned to and
       // the side the frames arrive from.
       grid-template-columns: 1fr 2fr;
-      // Tight: four frames that read as one object rather than four thumbnails
-      // that happen to be near each other.
-      gap: 0.6rem;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .frame-cell {
-      display: flex;
-      min-width: 0;
     }
 
     // Document order still leads with the feature — it is what the component
@@ -153,20 +183,25 @@
     .frame-cell:not(:first-child) {
       grid-column: 1;
     }
+  }
 
-    // These fill their cell rather than taking the row's --thumb width, and the
-    // ratio comes from the grid above, so the shared rules do not apply.
-    .entry-thumb {
-      width: 100%;
-      height: 100%;
+  // The Various row: four of equal weight, two by two and square. No feature and
+  // no spanning, so the cells carry their own proportion rather than taking it
+  // from a row height — and a square says none of the four is the shape the set
+  // is about.
+  .various-entry {
+    .frame-grid {
+      // A stated size rather than a share of the column: these are four of a
+      // kind and small, and letting them grow with the column would make them
+      // the largest thing in the band.
+      grid-template-columns: repeat(2, 160px);
+      // Packed to the right, like every other frame in this column, so their
+      // edge is the divider's edge.
+      justify-content: end;
+    }
 
-      @include respond-to("tablet") {
-        width: 100%;
-      }
-
-      &:has(iframe) {
-        aspect-ratio: auto;
-      }
+    .frame-cell {
+      aspect-ratio: 1 / 1;
     }
   }
 

@@ -1,6 +1,6 @@
 import { ShowcaseLinear, LinearProject } from "@/app/components/showcase-linear/showcase-linear";
 import advisorThumb from "@/app/assets/projects/advisor.jpg";
-import clasaZeroThumb from "@/app/assets/projects/clasa-zero.jpg";
+import clasaZeroThumb from "@/app/assets/projects/clasa-zero-2.jpg";
 import mapThumb from "@/app/assets/projects/map.jpg";
 import zoomThumb from "@/app/assets/projects/zoom.jpg";
 import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
@@ -107,7 +107,7 @@ export default function Home() {
       <LinearProject
         group="experiments"
         slug="clasa-zero"
-        className="small"
+        className=""
         thumb={clasaZeroThumb}
         embed
         title="Clasa Zero"
@@ -167,7 +167,7 @@ export default function Home() {
       />
 
       <LinearProject
-        group="experiments"
+        group="various"
         slug="zoom"
         className="small"
         thumb={zoomThumb}
@@ -188,13 +188,40 @@ export default function Home() {
       />
 
       <LinearProject
-        group="experiments"
+        group="various"
         embed
         slug="paint"
         title="Paint"
         role="Canvas, UI"
         href="https://experiments-five-bice.vercel.app/paint-concept/"
         summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <Highlight>nothing but CSS borders</Highlight>.</>}
+      />
+
+      {/* The two oldest things here, both still running off the same static
+          files they shipped with — served from the playground repo, which is
+          where the portfolio they were built for now lives. */}
+      <LinearProject
+        group="various"
+        embed
+        slug="optimize-studio"
+        title="Optimize Studio"
+        year="2016"
+        role="Interactions & effects"
+        stack=".NET MVC, jQuery, Photoshop"
+        href="https://ux-studio-sibiu.github.io/playground/projects/old-portfolio/index.html"
+        summary={<>A collage of interaction, effect and technique studies from an earlier portfolio — modular, responsive, and <Highlight>obsessed with optimisation</Highlight>.</>}
+      />
+
+      <LinearProject
+        group="various"
+        embed
+        slug="radio"
+        title="Radio"
+        year="2015"
+        role="Audio & visuals"
+        stack="jQuery, Bootstrap"
+        href="https://ux-studio-sibiu.github.io/playground/projects/radio-prototype/index.html?curated"
+        summary={<>Random audio paired with random visuals — <Highlight>instant party</Highlight>. Space toggles fullscreen, the red button opens the playlist.</>}
       />
 
       {/* Temporarily out of the list.

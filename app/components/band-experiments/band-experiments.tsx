@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-experiments.scss";
 
@@ -47,14 +48,22 @@ const GROUP_LAST_RUN = 35;
 // divider would land it before the stack it is supposed to follow.
 const GROUP_DELAY = 5;
 const GROUP_LAST_DELAY = 20;
+// Daylight between two frames that share a band, on top of the distance that
+// merely keeps them from overlapping. Without it they arrive on the same frame:
+// same speed, and a head start of exactly the ground between them means the one
+// in front finishes exactly as the one behind does, which reads as a pair moving
+// as one rather than as two things arriving.
+const GROUP_CLEAR = 9;
 
 export function BandExperiments({
   items,
   tools = [],
+  various = [],
   onOpen,
 }: {
   items: React.ReactElement<ProjectProps>[];
   tools?: React.ReactElement<ProjectProps>[];
+  various?: React.ReactElement<ProjectProps>[];
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
   const root = useRef<HTMLElement>(null);
@@ -137,12 +146,40 @@ export function BandExperiments({
 
           // Counted back from the last frame's start: one longer wait to clear it,
           // then a shorter one between each of the rest.
+          // Do two frames share any of the same horizontal band? Ranges rather
+          // than equal tops, because a frame can span several rows — the feature
+          // in the tools grid does.
+          const sameBand = (a: HTMLElement, b: HTMLElement) =>
+            a.offsetTop < b.offsetTop + b.offsetHeight && b.offsetTop < a.offsetTop + a.offsetHeight;
+
+          // Counted back from the last frame's start, one wait at a time.
           const spans: { from: number; to: number }[] = [];
-          order.forEach((i, place) => {
-            const back = order.length - 2 - place;
-            const from = back < 0 ? lastFrom : lastFrom + GROUP_LAST_DELAY + back * GROUP_DELAY;
-            spans[i] = { from, to: from - runOf(i) };
-          });
+          let from = lastFrom;
+
+          for (let place = order.length - 1; place >= 0; place--) {
+            spans[order[place]] = { from, to: from - runOf(order[place]) };
+            if (place === 0) break;
+
+            const prev = frames[order[place - 1]];
+            let next = from + (place === order.length - 1 ? GROUP_LAST_DELAY : GROUP_DELAY);
+
+            // The waits above are a rhythm, not a guarantee. Two frames that
+            // share a band all set off from the same edge at the same speed, so
+            // the wait between their starts IS the space between them — and a
+            // wait shorter than the ground between their resting places has the
+            // one behind laid over the one in front the whole way in. So each
+            // frame also waits out its distance from every frame already
+            // scheduled in its band, plus GROUP_CLEAR so the two are not still
+            // level with each other when they land.
+            for (let later = place; later < order.length; later++) {
+              const other = frames[order[later]];
+              if (!sameBand(prev, other)) continue;
+              next = Math.max(next, spans[order[later]].from + Math.abs(prev.offsetLeft - other.offsetLeft) * pace + GROUP_CLEAR);
+            }
+
+            from = next;
+          }
+
           return spans;
         };
 
@@ -193,30 +230,14 @@ export function BandExperiments({
         <h2 className="band-heading">Experiments</h2>
 
         <ul className="experiment-list">
-          {tools.length > 0 && (
-            <li className="scroll-entry-secondary tools-entry">
-              <div className="entry-visual">
-                {/* One explicit row per tool that is NOT the feature, so the wide
-                    one can span them all. Only this component knows the count. */}
-                <ul className="frame-grid" style={{ gridTemplateRows: `repeat(${Math.max(1, tools.length - 1)}, var(--tool-row))` }}>
-                  {tools.map((tool) => (
-                    <li className="frame-cell" key={tool.props.title} data-preload={tool.props.href}>
-                      <button type="button" className="entry-thumb" onClick={() => onOpen(tool)} aria-label={`Open ${tool.props.title}`}>
-                        {tool.props.href && <iframe src={tool.props.href} title={`${tool.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="entry-body reveal">
-                <div className="entry-text">
-                  <h3 className="entry-title">Tools</h3>
-                  <p className="entry-blurb">Small things built to answer one question each, then kept around because they turned out to be useful. Open any frame to see it full size.</p>
-                </div>
-              </div>
-            </li>
-          )}
+          <FrameRow
+            items={tools}
+            className="tools-entry"
+            rows={Math.max(1, tools.length - 1)}
+            title="Tools"
+            blurb="Small things built to answer one question each, then kept around because they turned out to be useful. Open any frame to see it full size."
+            onOpen={onOpen}
+          />
 
           {items.map((child) => (
             <li className={`scroll-entry-secondary${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-preload={child.props.href}>
@@ -252,8 +273,102 @@ export function BandExperiments({
               </div>
             </li>
           ))}
+
+          {/* Last, and deliberately: it is the odds and ends, so it reads as what
+              is left rather than as one more thing in the sequence. */}
+          <FrameRow
+            items={various}
+            className="various-entry"
+            title="Various"
+            blurb="Concepts and prototypes, the oldest of them a decade back and still running off the files they shipped with. Open any frame to see it full size."
+            onOpen={onOpen}
+          />
         </ul>
       </div>
     </section>
+  );
+}
+
+// A row whose visual column is a grid of frames rather than one, sharing a single
+// block of copy. Two of them: the tools, where one feature spans the height and
+// the rest stack beside it, and the various, four equal squares two by two. Which
+// shape a row takes is its `className` and lives in the stylesheet; what is the
+// same — the cells, the hover card, and the arrival the band animates off
+// .frame-cell — is here.
+//
+// `rows` is only for the tools grid, which needs its row count written out for
+// `grid-row: 1 / -1` to mean anything. Only this component knows the count.
+function FrameRow({
+  items,
+  className,
+  title,
+  blurb,
+  rows,
+  onOpen,
+}: {
+  items: React.ReactElement<ProjectProps>[];
+  className: string;
+  title: string;
+  blurb: string;
+  rows?: number;
+  onOpen: (item: React.ReactElement<ProjectProps>) => void;
+}) {
+  // Which frame the pointer is over, if any. These are frames without captions —
+  // the row has one block of copy for the whole set — so this is where each one
+  // gets to say what it is. Per row, because only one row can be hovered at a
+  // time and a row's card is nobody else's business.
+  const [hovered, setHovered] = useState<CursorCardItem | null>(null);
+
+  if (!items.length) return null;
+
+  const describe = (item: React.ReactElement<ProjectProps>, e: React.PointerEvent) => ({
+    title: item.props.title,
+    role: item.props.role,
+    summary: item.props.summary,
+    x: e.clientX,
+    y: e.clientY,
+  });
+
+  return (
+    <li className={`scroll-entry-secondary ${className}`}>
+      <div className="entry-visual">
+        <ul className="frame-grid" style={rows ? { gridTemplateRows: `repeat(${rows}, var(--tool-row))` } : undefined}>
+          {items.map((item) => (
+            <li
+              className="frame-cell"
+              key={item.props.title}
+              data-preload={item.props.href}
+              // Mouse only: on a touch screen the card would come up under the
+              // finger that just tapped the frame open.
+              onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(describe(item, e))}
+              // Brings it back after a scroll has closed it, which is otherwise
+              // impossible without leaving the frame and coming back: the pointer
+              // is already inside, so there is no second enter to wait for.
+              onPointerMove={(e) => { if (!hovered && e.pointerType === "mouse") setHovered(describe(item, e)); }}
+              onPointerLeave={() => setHovered(null)}
+              // Opening the detail slides the track out from under the pointer
+              // without it ever leaving this cell, so there is no pointerleave to
+              // take the card down.
+              onPointerDown={() => setHovered(null)}
+            >
+              <button type="button" className="entry-thumb" onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
+                {item.props.thumb
+                  ? <Image src={item.props.thumb} alt="" sizes="(min-width: 768px) 20vw, 50vw" placeholder="blur" className="frame-img" />
+                  : item.props.href && <iframe src={item.props.href} title={`${item.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <CursorCard item={hovered} onDismiss={() => setHovered(null)} />
+
+      <div className="entry-body reveal">
+        <div className="entry-text">
+          <h3 className="entry-title">{title}</h3>
+          <p className="entry-blurb">{blurb}</p>
+        </div>
+      </div>
+    </li>
   );
 }

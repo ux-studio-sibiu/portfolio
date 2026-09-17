@@ -22,7 +22,7 @@ export type ProjectProps = {
   // Which band this belongs to. Everything is one list with one detail pane
   // behind it — the groups differ in how an entry is laid out, not in what
   // happens when it is opened. No group means the projects band.
-  group?: "experiments" | "tools";
+  group?: "experiments" | "tools" | "various";
   // Put on the entry's root, next to .scroll-entry. "large" and "small" are the
   // off-size thumbnails in band-projects.scss; anything else you add there is
   // reachable the same way.

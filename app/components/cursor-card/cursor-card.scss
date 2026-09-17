@@ -1,0 +1,74 @@
+@use "@/app/styles/breakpoints" as *;
+
+// Placed by a transform on top/left 0 rather than by setting top and left: the
+// card moves with every pointermove, and a transform is the one way to do that
+// without asking for layout each time.
+//
+// Above the section rail, below the side menu — it should never be over an open
+// menu, and it is always over the page.
+.nsc-cursor-card {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  // It follows the pointer, so it must never be under it: a card that takes
+  // events would put itself between the pointer and the thing being hovered and
+  // flicker itself in and out.
+  pointer-events: none;
+  width: min(20rem, 70vw);
+  padding: 0.9rem 1.1rem 1rem;
+  background: var(--color-bg);
+  border: 2px solid var(--color-ink);
+  // The same offset shadow the thumbnails and buttons carry.
+  box-shadow: 3px 5px #00000033;
+  animation: cursor-card-in 0.12s ease both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  .card-role {
+    margin: 0.3rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .card-summary {
+    margin: 0.7rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  // The summaries are written with .highlight-on-scroll in them, which is a
+  // scroll-driven band and has nothing to be driven by in here. The emphasis is
+  // kept as weight instead, and the band is painted out — including the layer
+  // that paints the glyphs themselves, or the phrase would come out blank.
+  .highlight-on-scroll,
+  .highlight-ink {
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+    color: inherit;
+    animation: none;
+  }
+
+  .highlight-ink {
+    padding: 0;
+    font-weight: 700;
+  }
+}
+
+@keyframes cursor-card-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

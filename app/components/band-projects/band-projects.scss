@@ -58,7 +58,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
-    gap: 1rem;
+    // Only an entry with two thumbnails ever sees this — the photography one —
+    // where the pair wants reading as two pictures, not one split down the middle.
+    gap: 1.75rem;
 
     @include respond-to("tablet") {
       top: 2.5rem;

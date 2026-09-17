@@ -62,6 +62,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const projects = items.filter((child) => !child.props.group);
   const experiments = items.filter((child) => child.props.group === "experiments");
   const tools = items.filter((child) => child.props.group === "tools");
+  const various = items.filter((child) => child.props.group === "various");
   const detail = openIndex === null ? undefined : items[openIndex]?.props;
   const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
@@ -339,7 +340,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               {/* Two shapes for the same kind of entry: a row each with its own
                   copy, or a wall of frames with one block of copy for the set.
                   Which group takes which is the `group` prop in page.tsx. */}
-              <BandExperiments items={experiments} tools={tools} onOpen={openItem} />
+              <BandExperiments items={experiments} tools={tools} various={various} onOpen={openItem} />
               <BandSkills />
               <BandContact />
             </div>
