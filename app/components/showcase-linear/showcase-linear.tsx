@@ -160,6 +160,22 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     const shell = root.current;
     if (!el || !shell) return;
 
+    // The two boxes the scroll properties below are written ON, rather than the
+    // shell they used to be written on. They are inherited custom properties, so
+    // every write re-resolves computed style for the whole subtree under the
+    // element that carries them: from the shell that is 338 nodes and 2.4ms of
+    // style recalc on every scroll event, against 0.3ms for these two, which
+    // hold between them every rule that actually reads one.
+    //
+    //   the column   --identity-fade, and the --sweep-* pair that the pinned
+    //                highlights in its blurb are swept by
+    //   both         --column-fade: the column fades with the rail, and the
+    //                rail is not inside it — it is fixed to the viewport,
+    //                outside the sliding track
+    const column = pane.current?.querySelector<HTMLElement>(".pane-fixed");
+    const rail = shell.querySelector<HTMLElement>(".nsc-section-rail");
+    if (!column || !rail) return;
+
     const TRIGGER = 0.5;
     const FADE_OVER = 0.45;
     // How far the pane scrolls before a pinned highlight is fully swept, as a
@@ -221,21 +237,24 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     const onScroll = () => {
       const span = fadeEnd - fadeStart;
       const t = span > 0 ? Math.min(1, Math.max(0, (el.scrollTop - fadeStart) / span)) : 0;
-      shell.style.setProperty("--identity-fade", String(1 - t));
+      column.style.setProperty("--identity-fade", String(1 - t));
       // Published for .highlight-on-scroll.pinned, which cannot time itself off a
       // box that never moves. Two numbers rather than the finished fraction, so a
       // phrase can subtract its own delay from the pixels before dividing.
       const sweepOver = el.clientHeight * SWEEP_OVER;
-      shell.style.setProperty("--sweep-px", String(el.scrollTop));
-      shell.style.setProperty("--sweep-over", String(sweepOver > 0 ? sweepOver : 1));
-      // Fully invisible: stop it swallowing clicks on the email link.
+      column.style.setProperty("--sweep-px", String(el.scrollTop));
+      column.style.setProperty("--sweep-over", String(sweepOver > 0 ? sweepOver : 1));
+      // Fully invisible: stop it swallowing clicks on the email link. A class on
+      // the shell is fine where a property is not — it changes at a threshold
+      // rather than on every frame, and toggling one that is already set does
+      // not touch the DOM at all.
       shell.classList.toggle("is-identity-hidden", t === 1);
 
-      // And the column itself on the way out. Nothing else reads this, so it
-      // is one property on the shell like the other two.
+      // And the column itself on the way out, on both boxes that fade with it.
       const outroSpan = outroEnd - outroStart;
       const o = outroSpan > 0 ? Math.min(1, Math.max(0, (el.scrollTop - outroStart) / outroSpan)) : 0;
-      shell.style.setProperty("--column-fade", String(1 - o));
+      column.style.setProperty("--column-fade", String(1 - o));
+      rail.style.setProperty("--column-fade", String(1 - o));
       // Gone rather than merely transparent, so the hamburger is not still
       // there to be pressed over the contact band.
       shell.classList.toggle("is-column-hidden", o === 1);
