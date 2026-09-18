@@ -1,18 +1,25 @@
 @use "@/app/styles/breakpoints" as *;
 
-// This body fills the pane rather than flowing down it: the copy scrolls in its
-// own column and the screens beside it never move at all. The frame it sits in
-// is built for prose — min-height and a generous gutter — so it is asked, from
-// here, to hand the whole surface over. The pane's own comment says the body
-// owns the surface; this is a body taking it.
+// One scroller, not three. The pane already has a scroller of its own, so this
+// body gives the copy back to it as ordinary page content and holds the screens
+// still with `position: sticky` instead. The wheel then works from anywhere over
+// the pane, with the browser's own scrolling — inertia, smoothing, rubber-band
+// and all — and nothing has to be forwarded by hand.
 //
-// Only from desktop up. Below that there are no columns to divide, and a pane
-// you cannot scroll out of is worse than a long page.
-@include respond-to("desktop") {
-  .detail-frame:has(.nsc-project-advisor) {
-    height: 100%;
-    min-height: 0;
-    padding: 0;
+// The frame gives up its gutter either way; it is built for prose, and this is
+// two columns to the edges.
+.detail-frame:has(.nsc-project-advisor) {
+  padding: 0;
+}
+
+// The bar belongs to the pane now rather than to a column, and it would sit on
+// the outer edge of the whole body. Hidden, as it was when the column owned it.
+.pane-scroll:has(.nsc-project-advisor) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -29,35 +36,39 @@
       // The proportion the old portfolio had: a fixed panel of copy against the
       // screens filling everything left over.
       grid-template-columns: minmax(20rem, 34%) 1fr;
-      height: 100%;
-      min-height: 0;
+      // Not stretched: a grid item that fills its row cannot stick inside it.
+      align-items: start;
     }
   }
 
   // --- Column 1: the copy -----------------------------------------------------
 
   .project-copy {
-    padding: 2.5rem var(--gutter) 3rem;
+    // A deep head and foot: the column scrolls, so the copy starts below the fold
+    // of its own box and ends well before the bottom of it, which is what keeps
+    // the text off the edges of a panel that has no other chrome.
+    padding: 7.5rem var(--gutter) 8rem;
 
-    @include respond-to("desktop") {
-      height: 100%;
-      min-height: 0;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      // No bar. The column is plainly a column of text and the screens beside it
-      // do not move, so a bar would be the only thing in the pane advertising
-      // that anything scrolls — and it would sit on the divide between the two.
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
   }
 
   section {
     margin: 0 0 2rem;
+  }
+
+  // A rule between one section and the next, the same weight as the one under
+  // the head: the panel is a long column of lists and they run together without
+  // something to say where one subject ends.
+  section + section {
+    padding-top: 1.75rem;
+    border-top: 2px solid var(--color-ink);
+  }
+
+  // Except the first one after the head, which already has a rule of its own a
+  // paragraph above it — two lines that close to each other would read as a
+  // mistake rather than as structure.
+  .intro + section {
+    padding-top: 0;
+    border-top: 0;
   }
 
   p {
@@ -89,20 +100,52 @@
     white-space: nowrap;
   }
 
-  .project-title {
-    margin: 0 0 1.25rem;
-    font-size: 1rem;
-    font-weight: 400;
+  // The head of the panel, set the way an entry in the index is set: the title
+  // in the page's own face at its own weight, the line under it in the mono
+  // label, and then the figures. The code chips start below the rule, where the
+  // detail starts.
+  .intro {
+    margin-bottom: 2.25rem;
+  }
 
-    code {
-      display: inline-block;
-      padding: 0.5rem 0.8rem;
-      border: 1px solid var(--color-ink);
-      border-radius: 0;
-      font-size: 1rem;
+  .project-title {
+    margin: 0;
+    font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .project-role {
+    margin: 0.65rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  // How big the thing is, in three figures. Bold rather than set out in a table
+  // of their own: the panel is a column of prose and this is the one line in it
+  // that should be readable at a glance.
+  .project-scale {
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+
+    strong {
       font-weight: 700;
-      white-space: normal;
+      color: var(--color-ink);
     }
+  }
+
+  // The line the old layout had under its lede, kept: it is what separates what
+  // the product IS from what the work on it was.
+  .intro-rule {
+    margin: 1.25rem 0;
+    border: 0;
+    border-top: 2px solid var(--color-ink);
   }
 
   // The stack is a row of chips rather than a sentence, so it wraps as one.
@@ -135,12 +178,13 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    // Fixed: this column is the reason the frame gave up its scroll. Anything
-    // taller than the pane is cropped rather than scrolled to, which is the
-    // trade the layout is making.
+    // Held still while the copy goes by: sticky against the pane's scroller, a
+    // screen tall, and cropping anything that does not fit rather than scrolling
+    // to it. That crop is the trade the layout makes.
     @include respond-to("desktop") {
-      height: 100%;
-      min-height: 0;
+      position: sticky;
+      top: 0;
+      height: 100svh;
       overflow: hidden;
     }
   }

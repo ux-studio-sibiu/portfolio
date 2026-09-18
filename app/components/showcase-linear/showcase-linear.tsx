@@ -12,6 +12,7 @@ import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { SideMenu } from "@/app/components/side-menu/side-menu";
 import { SectionRail } from "@/app/components/section-rail/section-rail";
 import { BandCoreTechnologies } from "@/app/components/band-core-technologies/band-core-technologies";
+import { BandWorkHistory } from "@/app/components/band-work-history/band-work-history";
 import { BandProjects } from "@/app/components/band-projects/band-projects";
 import { BandExperiments } from "@/app/components/band-experiments/band-experiments";
 import { BandSkills } from "@/app/components/band-skills/band-skills";
@@ -197,6 +198,9 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     // column starts and finishes fading back OUT as the last band comes up.
     let outroEnd = 0;
     let outroStart = 0;
+    // Where the rail takes over from the identity — see `data-identity-handover`
+    // in measure(). Bands before it are read over the cover and light no title.
+    let handoverIdx = 0;
 
     // Scroll offsets are only valid until something reflows, so this is redone
     // on resize and whenever the content changes height.
@@ -215,7 +219,19 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
         setSections(next);
       }
 
-      const first = anchors[0];
+      // Which band the identity gives way to. NOT simply the first one: bands
+      // can sit above it that the cover is meant to stay up through — Work
+      // history is read over the name, so the name has to still be there. A
+      // band claims the handover with `data-identity-handover`, the same way it
+      // claims a rail title with `data-section`, and the first band is the
+      // fallback if none does.
+      //
+      // It is one moment, not two: the identity going and the rail arriving are
+      // the same handover, so this index also gates which bands may light the
+      // rail at all — see onScroll.
+      const handover = bands.findIndex((node) => node.dataset.identityHandover !== undefined);
+      handoverIdx = handover < 0 ? 0 : handover;
+      const first = anchors[handoverIdx];
       if (!first) return;
       const paneTop = el.getBoundingClientRect().top;
       const offset = first.getBoundingClientRect().top - paneTop + el.scrollTop;
@@ -274,10 +290,16 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       // Not "the band covering the line": the final section starts below the
       // furthest that line can ever reach, so a containment test would never
       // light Contact at all.
+      //
+      // The count starts at the handover band, not at zero: the bands above it
+      // are read over the identity, and the rail is what the identity gives way
+      // TO — both of them up at once would be two answers to the same question.
+      // They keep their `data-section`, so they are still in the section menu
+      // and still somewhere you can be sent; they just light nothing.
       const paneTop = el.getBoundingClientRect().top;
       const line = el.clientHeight * TRIGGER;
       let owner: string | null = null;
-      for (let i = 0; i < bands.length; i++) {
+      for (let i = handoverIdx; i < bands.length; i++) {
         if (anchors[i].getBoundingClientRect().top - paneTop > line) break;
         owner = bands[i].dataset.section ?? null;
       }
@@ -292,6 +314,32 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       setSection(owner);
     };
 
+    // Every scroll-bound animation on the page is declared against its own
+    // element — "start when this row's top is 95% down the screen" — which reads
+    // as though it cannot care what is above or below it. It does: ScrollTrigger
+    // resolves that sentence into an absolute scrollTop ONCE, when it refreshes,
+    // and from then on it is a number, not a relationship. Anything that changes
+    // the height of the content above a trigger afterwards — a band added or
+    // removed, fonts swapping in, a picture decoding, one of the Work history
+    // entries opening — slides its element without telling ScrollTrigger, and
+    // every one of those numbers is then wrong by exactly that shift.
+    //
+    // ScrollTrigger refreshes itself on window resize and on load, neither of
+    // which covers content changing height inside a scroller of our own. So the
+    // observer below, which is already watching for exactly that, refreshes it.
+    //
+    // Coalesced to one per frame: a refresh recomputes every trigger on the page,
+    // and a ResizeObserver can fire several times for one reflow.
+    let refreshQueued = false;
+    const refreshTriggers = () => {
+      if (refreshQueued) return;
+      refreshQueued = true;
+      requestAnimationFrame(() => {
+        refreshQueued = false;
+        ScrollTrigger.refresh();
+      });
+    };
+
     const remeasure = () => {
       measure();
       onScroll();
@@ -302,8 +350,12 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     window.addEventListener("resize", remeasure);
 
     // Fonts loading, images decoding and the detail pane mounting all move the
-    // bands; the offsets have to be taken again when they do.
-    const ro = new ResizeObserver(remeasure);
+    // bands; the offsets have to be taken again when they do — ours here, and
+    // ScrollTrigger's own, which are stale in exactly the same way.
+    const ro = new ResizeObserver(() => {
+      remeasure();
+      refreshTriggers();
+    });
     ro.observe(el);
     if (el.firstElementChild) ro.observe(el.firstElementChild);
 
@@ -355,6 +407,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             <div className="scroll-inner">
               <BandCoreTechnologies />
 
+              <BandWorkHistory />
               <BandProjects items={projects} onOpen={openItem} />
               {/* Two shapes for the same kind of entry: a row each with its own
                   copy, or a wall of frames with one block of copy for the set.

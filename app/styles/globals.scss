@@ -247,7 +247,7 @@ a {
 // the left, and there is no longer anything to align against.
 .spec-row {
   padding: 1.5rem 0;
-  border-bottom: 1px solid var(--color-faint);
+  border-bottom: 1px solid var(--color-ink);
 }
 
 .spec-name {
@@ -273,7 +273,7 @@ a {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: lowercase;
-  color: var(--color-muted);
+  color: var(--color-ink);
 }
 
 // Micro-label: uppercase mono, used for every meta / eyebrow line in the site.

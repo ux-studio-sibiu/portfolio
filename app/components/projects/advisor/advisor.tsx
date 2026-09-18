@@ -45,10 +45,20 @@ export default function Advisor() {
       <div className="project-columns">
         {/* The copy scrolls on its own; the screens beside it never move. */}
         <div className="project-copy">
-          <section>
-            <h2 className="project-title"><code>Accounting Office Management Studio</code></h2>
+          {/* Set like an entry in the index rather than like the sections under
+              it: a title, the line of what it is, and the three figures that say
+              the size of it — then a rule, and the detail begins. */}
+          <section className="intro">
+            <h2 className="project-title">Accounting platform</h2>
+            <p className="project-role">Saas for nordic accounting firms and their clients</p>
+
+            <p className="project-scale">
+              <strong>8k firms</strong> · <strong>40k active users</strong> · <strong>continuous delivery since 2018</strong>
+            </p>
+
+            <hr className="intro-rule" />
+
             <p>
-              Saas for nordic accounting firms and their clients. (8k firms - 40k active users)<br />
               My role involved long-standing contribution to the product development, with focus on advancing the UI system.
               Close collaboration with ux teams to bridge design intent and technical implementation.
             </p>

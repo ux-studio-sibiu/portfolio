@@ -4,10 +4,9 @@ import clasaZeroThumb from "@/app/assets/projects/clasa-zero-2.jpg";
 import mapThumb from "@/app/assets/projects/map.jpg";
 import zoomThumb from "@/app/assets/projects/zoom.jpg";
 import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
-import slowDaysThumb from "@/app/assets/projects/slow-days.jpg";
 import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
-import fourInOneThumb from "@/app/assets/projects/multidevice.jpg";
+import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
@@ -31,9 +30,9 @@ export default function Home() {
         summary={<></>}
         points={
           <>
-            <li>long-standing contribution to the product</li>
+            <li><Highlight>long-standing contribution</Highlight> to the product</li>
             <li>styled components (KendoUI), inhouse design system, custom behaviour</li>
-            <li>custom SPA framework, .NET MVC</li>
+            <li><Highlight>custom SPA framework</Highlight>, .NET MVC</li>
 
             <li>complex UI with dense functionality</li>
             <li>configurable dashboards: resizable, draggable, lazy-loading</li>
@@ -47,7 +46,7 @@ export default function Home() {
             <li>implement <Highlight>refactoring</Highlight> strategies with version control, eventually covering all UI</li>
             <li>enforce consistency and constraints</li>
             <li>large data sets require optimizing for <Highlight>performance</Highlight>: async dropdowns, segmented with endless-scroll, server-side filtering</li>
-            <li>bridge design intent and technical implementation</li>
+            <li>bridge <Highlight>design intent and technical implementation</Highlight></li>
             <li>push back when UX is technically flawed and propose alternatives that scale</li>
           </>
         }
@@ -62,7 +61,7 @@ export default function Home() {
         role="Design & build"
         stack="react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel"
         href="https://www.casedeschise.ro"
-        summary={<>website for annual 'open house' event, in collaboration with local architects guild 'OAR'</>}
+        summary={<>website for annual 'open house' event, in collaboration with <Highlight>local architects guild 'OAR'</Highlight></>}
         points={
           <>
             <li>twin events in cities Sibiu and Valcea</li>
@@ -70,13 +69,13 @@ export default function Home() {
             <li className="small-heading">Stack</li>
             <li>react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel</li>
 
-            <li>registration for each location : build-in form + email QR (Resend) + built-in QR validator</li>
+            <li>registration for each location : build-in form + email QR (Resend) + <Highlight>built-in QR validator</Highlight></li>
             <li>reports via dashbord in Sanity</li>
-            <li>organizers handle content in Sanity</li>
+            <li><Highlight>organizers handle content</Highlight> in Sanity</li>
             <li>heavy media content: architectural photography</li>
             <li>focus on performance and optimization (uses sanity free plan)</li>
             <li>strenuous usage for 1-2 month around the event date</li>
-            <li>aggresive caching sanity queries - webhooks, revalidate, next cache</li>
+            <li><Highlight>aggresive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
             <li>analytics tracked via Umami</li>
             <li>map views with google maps api</li>
           </>
@@ -129,6 +128,7 @@ export default function Home() {
 
       <LinearProject
         slug="four-in-one"
+        className="large"
         thumb={fourInOneThumb}
         title="4-in-1"
         year="2015"
@@ -227,7 +227,6 @@ export default function Home() {
       {/* Temporarily out of the list.
       <LinearProject
         slug="slow-days"
-        thumb={slowDaysThumb}
         embed
         title="Slow Days Outside"
         year="2026"

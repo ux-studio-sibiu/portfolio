@@ -56,6 +56,12 @@
   // wide, so 50vw is its middle.
   --col-fixed: calc(50vw - var(--col-media));
 
+  // The size the Work history years are set at. Here rather than in that band
+  // because two components have to agree on it: the band sets the years, and
+  // the identity in column 1 has to stay narrow enough for them to scroll past
+  // without collision — see .fixed-name. Declared once so the two cannot drift.
+  --year-size: clamp(1.75rem, 3.4vw, 2.5rem);
+
   --rule: 1px solid var(--color-ink);
   --rule-hair: 1px solid var(--color-faint);
 
@@ -168,6 +174,22 @@
       inset: 0;
       background: var(--color-bg);
       opacity: var(--identity-fade, 1);
+
+      // From tablet up this column is laid OVER the scroller, so this sheet is
+      // opaque white on top of whatever is scrolling past in the same half. It
+      // fades with the identity, which means anything under it is invisible
+      // until the identity goes — at the full 50vw it covered the Work history
+      // years outright, and they read as fading IN as the cover faded OUT.
+      //
+      // It stops where the identity's own content stops instead. The measure is
+      // --identity-measure in fixed-column.scss, which the name and the blurb
+      // are held to as well, plus the column's left padding, which that measure
+      // has already taken off. Full width below tablet, where the column is in
+      // the flow and there is nothing behind it to hide.
+      @include respond-to("tablet") {
+        right: auto;
+        width: calc(var(--identity-measure) + var(--rail, 5rem) + 0.25rem);
+      }
     }
   }
 

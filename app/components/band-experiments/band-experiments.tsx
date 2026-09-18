@@ -87,6 +87,10 @@ export function BandExperiments({
     // The same 768px the stylesheet splits the row into two columns at: with one
     // column there is nothing to the right to come from.
     mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+      // One per row, emptied when a refresh begins — see the cache by each
+      // row's schedule() below.
+      const invalidators: (() => void)[] = [];
+
       el.querySelectorAll<HTMLElement>(".entry-visual").forEach((visual) => {
         const row = visual.closest<HTMLElement>(".scroll-entry-secondary");
         if (!row) return;
@@ -183,6 +187,21 @@ export function BandExperiments({
           return spans;
         };
 
+        // schedule() re-measures the whole row and does O(n^2) work against it,
+        // and it was read fresh by every frame's start AND its end — 2n runs per
+        // refresh, each one a fistful of forced layout reads for an answer that
+        // cannot change within a refresh. Computed once and held instead.
+        //
+        // Dropped when the NEXT refresh begins rather than kept for good,
+        // because what it is cut from moves: the column is fluid, and refreshes
+        // now happen on any change to the page's height rather than only on
+        // resize — see the ResizeObserver in showcase-linear.tsx. That is also
+        // what makes this worth doing: opening one Work history entry refreshes
+        // every trigger on the page.
+        let cached: ReturnType<typeof schedule> | null = null;
+        const spansNow = () => (cached ??= schedule());
+        invalidators.push(() => { cached = null; });
+
         frames.forEach((frame, i) => {
           // A trigger each rather than one tween with a stagger: a staggered
           // target sits at its FINAL position until its turn comes and then jumps
@@ -208,8 +227,8 @@ export function BandExperiments({
               scrollTrigger: {
                 trigger: row,
                 scroller,
-                start: () => `top ${alone ? ARRIVE_FROM : schedule()[i].from}%`,
-                end: () => `top ${alone ? ARRIVE_TO : schedule()[i].to}%`,
+                start: () => `top ${alone ? ARRIVE_FROM : spansNow()[i].from}%`,
+                end: () => `top ${alone ? ARRIVE_TO : spansNow()[i].to}%`,
                 scrub: true,
                 // Thumbnails are pictures and the column is fluid, so the
                 // distance is only right until something reflows.
@@ -219,6 +238,12 @@ export function BandExperiments({
           );
         });
       });
+
+      // refreshInit fires before positions are recomputed, so every row's cache
+      // is empty by the time the first start() of that refresh asks for it.
+      const dropCaches = () => invalidators.forEach((invalidate) => invalidate());
+      ScrollTrigger.addEventListener("refreshInit", dropCaches);
+      return () => ScrollTrigger.removeEventListener("refreshInit", dropCaches);
     });
 
     return () => mm.revert();

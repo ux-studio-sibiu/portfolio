@@ -11,13 +11,9 @@ export const DETAILS: Record<string, React.ComponentType> = {
   advisor: dynamic(() => import("./advisor/advisor")),
   "clasa-zero": dynamic(() => import("./clasa-zero/clasa-zero")),
   zoom: dynamic(() => import("./zoom/zoom")),
-  "slow-days": dynamic(() => import("./slow-days/slow-days")),
   photography: dynamic(() => import("./photography/photography")),
   map: dynamic(() => import("./map/map")),
   casedeschise: dynamic(() => import("./casedeschise/casedeschise")),
-  "mipay-admin": dynamic(() => import("./mipay-admin/mipay-admin")),
-  multidevice: dynamic(() => import("./multidevice/multidevice")),
-  "white-label": dynamic(() => import("./white-label/white-label")),
   "four-in-one": dynamic(() => import("./four-in-one/four-in-one")),
 
   // Experiments. Same registry, same lazy chunk per entry — they open into the

@@ -110,8 +110,12 @@ export function BandProjects({
     return () => mm.revert();
   }, { scope: root });
 
+  // `data-identity-handover` is what makes the cover in the fixed column fade
+  // out as THIS band arrives rather than as the first band does — the bands
+  // above it are read over the name, so the name has to still be up. See the
+  // sequence in showcase-linear.tsx.
   return (
-    <section className="band nsc-band-projects" data-section="Projects" ref={root}>
+    <section className="band nsc-band-projects" data-section="Projects" data-identity-handover="" ref={root}>
       <div className="band-content is-full">
         <h2 className="band-heading band-title-large">Projects</h2>
 

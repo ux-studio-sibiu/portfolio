@@ -4,6 +4,57 @@
 // Everything is expressed as a ratio or a percentage of those, which is what
 // lets the whole thing scale with the column it lands in.
 .nsc-screen-carousel {
+  // The frame with the arrows laid over it. Positioned so they have something
+  // to centre against that is the screen and not the bullets under it.
+  .screen-stage {
+    position: relative;
+  }
+
+  // Navigation the way the photography gallery does it: not a button you can
+  // see, but a strip down each side of the screen where the POINTER becomes the
+  // arrow. The button is still a real button underneath — it is what keyboards
+  // and screen readers get — it simply has nothing to draw.
+  //
+  // The chevron is that gallery's own, at 64px against its 60-unit box, but
+  // solid black — fill and edge both — where theirs is white-filled to carry
+  // over a photograph. These sit on screenshots, which are mostly pale. The
+  // hotspot is its middle, and `pointer` is the fallback for anywhere the image
+  // is refused.
+  .screen-nav {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    width: 20%;
+    height: 100%;
+    padding: 0;
+    background: none;
+    border: 0;
+
+    &.prev {
+      left: 0;
+      cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 60 60' fill='black' stroke='black' stroke-width='1' stroke-linejoin='round'><path d='M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z'/></svg>") 32 32, pointer;
+    }
+
+    &.next {
+      right: 0;
+      // The same path turned over, the way the gallery it comes from does it.
+      cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 60 60' fill='black' stroke='black' stroke-width='1' stroke-linejoin='round'><g transform='translate(60,0) scale(-1,1)'><path d='M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z'/></g></svg>") 32 32, pointer;
+    }
+
+    // Nothing to see: the cursor is the whole of it. Kept in the markup rather
+    // than deleted so the shape lives in one place — the stylesheet draws the
+    // cursor from the same path.
+    svg {
+      display: none;
+    }
+
+    // Except to a keyboard, which cannot hover and needs to know where it is.
+    &:focus-visible {
+      outline: 2px solid var(--color-ink);
+      outline-offset: -2px;
+    }
+  }
+
   .screen-frame {
     position: relative;
     display: block;

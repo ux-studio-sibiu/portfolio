@@ -8,10 +8,15 @@ import "./screen-carousel.scss";
 // default, or the vintage laptop when `laptop` is set — the mask is a PNG with
 // the screen cut out of it, and the shot sits behind it in the cut.
 //
-// Same behaviour as the old portfolio's screens, which is what people are used
-// to here: LEFT CLICK anywhere on the frame steps forward, RIGHT CLICK steps
-// back, and the bullets under it jump straight to one. Arrow keys do the same
-// as the two clicks, since the frame is a real button.
+// Same behaviour as the old portfolio's screens: LEFT CLICK anywhere on the
+// frame steps forward, RIGHT CLICK steps back, and the bullets under it jump
+// straight to one. Arrow keys do the same as the two clicks, since the frame is
+// a real button.
+//
+// None of which is visible, which is why there are arrows over the frame as
+// well. The chevron is the one the photography portfolio's gallery navigates
+// with — there it is a custom cursor rather than a button, so the shape is
+// borrowed and the affordance is not: these are ordinary buttons you can see.
 //
 // Only the current shot and the one after it are in the DOM. The next one is
 // mounted hidden, so a click paints immediately instead of waiting on a fetch,
@@ -35,6 +40,9 @@ export function ScreenCarousel({
 
   return (
     <div className={`nsc-screen-carousel${laptop ? " laptop" : ""}`}>
+      {/* The frame and the two arrows over it share a box, so the arrows centre
+          on the screen itself rather than on the screen plus its bullets. */}
+      <div className="screen-stage">
       <button
         type="button"
         className="screen-frame"
@@ -66,6 +74,19 @@ export function ScreenCarousel({
 
         <span className="year-tag" aria-hidden="true">{year}</span>
       </button>
+
+      {/* Siblings of the frame, not children: a button cannot hold buttons, and
+          being siblings is also what stops a click on an arrow counting as a
+          click on the frame behind it. */}
+      <button type="button" className="screen-nav prev" onClick={() => step(-1)} aria-label={`${label}, previous screen`}>
+        <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z" /></svg>
+      </button>
+
+      <button type="button" className="screen-nav next" onClick={() => step(1)} aria-label={`${label}, next screen`}>
+        {/* The same path, turned over — the way the gallery it comes from does it. */}
+        <svg viewBox="0 0 60 60" aria-hidden="true"><g transform="translate(60,0) scale(-1,1)"><path d="M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z" /></g></svg>
+      </button>
+      </div>
 
       {/* Outside the frame: a button cannot hold buttons, and these are the one
           part of the control that is not "advance". */}
