@@ -79,7 +79,12 @@
     align-items: baseline;
     gap: 0.6rem;
     margin: 0;
-    font-family: var(--font-mono);
+    // Both halves are set in the page's own face now, so it is declared once
+    // here and inherited rather than stated on each. It was the mono, which is
+    // what every other small label on the site is set in — but a date is not a
+    // label, it is the other half of the year above it, and the two reading as
+    // one thing matters more than the house rule for labels.
+    font-family: var(--font-sans);
     letter-spacing: 0.04em;
 
     @include respond-to("tablet") {
@@ -96,6 +101,11 @@
   // The year the post started, set large enough to be the thing you read when
   // you scan the column.
   .when-from {
+    // Face comes from .when-mark above — the page's own, not the mono every
+    // other small label is set in. A year is read at a glance from across the
+    // column, and JetBrains Mono at this size is a typewriter doing a
+    // headline's job: the figures are even but they are not clear.
+    //
     // Declared on the shell, because the identity in column 1 has to reserve
     // room for it — see --year-size there.
     font-size: var(--year-size);
@@ -106,21 +116,16 @@
 
   // And where it ended, quiet under it — with the dash drawn rather than typed,
   // so it stays on the number's side of the gap when the pair stacks.
+  // The end of the run, quiet under the year it belongs to. No rule before it:
+  // the two sit one above the other in the same face, which already reads as one
+  // date — a drawn dash was a third mark joining things that were not apart.
+  //
+  // The flex box went with it; it existed to lay the dash out beside the text.
   .when-to {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
     font-size: 0.75rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-ink);
-
-    &::before {
-      content: "";
-      width: 1.25rem;
-      height: 1px;
-      background: var(--color-ink);
-    }
   }
 
   .entry-body {
@@ -133,11 +138,13 @@
   }
 
   // .entry-text is here for the same reason the projects and experiments bands
-  // have one — it is the copy half of an entry — but it carries no rule: a
-  // plain block in a plain block is already full width, and full width is what
-  // it has to be. The hairline under each row is drawn on the disclosure inside
-  // it, so a measure here would stop every rule short of the divider. The
-  // measure belongs to the running text, and sits on .entry-points instead.
+  // have one — it is the copy half of an entry. What it carries is the SHARED
+  // measure, because the hairline under each row is drawn on the disclosure
+  // inside this box: without it the rules ran the whole of column 2 and grew
+  // with the viewport. The narrower text measure sits on .entry-points.
+  .entry-text {
+    max-width: var(--measure);
+  }
 
   // The same type as .spec-name in globals, which is what Core technologies
   // sets its row titles in. Restated rather than shared because the class is
@@ -209,16 +216,6 @@
   // pushing the caret off the end of the row.
   .toggle-text {
     min-width: 0;
-  }
-
-  // The hover signal, on both halves at once: the title underlines and the
-  // chevron leans the way it is about to travel. Two signs rather than one,
-  // because either alone is easy to miss in a column of black type.
-  .detail-toggle:hover .entry-place,
-  .detail-toggle:focus-visible .entry-place {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.14em;
   }
 
   // A chevron: the shape a dropdown has everywhere, so it needs no explaining,

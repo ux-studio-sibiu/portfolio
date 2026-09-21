@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
+import { Highlight } from "@/app/components/highlight/highlight";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-experiments.scss";
 
@@ -55,6 +56,13 @@ const GROUP_LAST_DELAY = 20;
 // as one rather than as two things arriving.
 const GROUP_CLEAR = 9;
 
+// What a tool's name in the copy promises. The frames say "there is something
+// behind this" with a card at the pointer, so a name that opens the same thing
+// says it the same way rather than inventing a second vocabulary for it. The
+// card is deliberately just the label: the sentence around the name is already
+// the description, which is what a frame's card has to supply and this does not.
+const LINK_LABEL = "View details";
+
 export function BandExperiments({
   items,
   tools = [],
@@ -67,6 +75,51 @@ export function BandExperiments({
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
   const root = useRef<HTMLElement>(null);
+  // Whether the pointer is over a tool's name in the copy, and where it was when
+  // it arrived. One card for the band — only one name can be under the pointer,
+  // and the frames' own cards are a row's business, held in FrameRow.
+  const [linked, setLinked] = useState<CursorCardItem | null>(null);
+
+  // Every entry the band was handed, in one list: a name in the copy is matched
+  // back to its entry by slug, which is the only name a sentence can be expected
+  // to know. Same lookup whichever row the name happens to sit in.
+  const all = [...items, ...tools, ...various];
+
+  const linkHover = {
+    // Mouse only, like the frames: on a touch screen the card would come up
+    // under the finger that just tapped the name open.
+    onPointerEnter: (e: React.PointerEvent) => {
+      if (e.pointerType === "mouse") setLinked({ title: LINK_LABEL, x: e.clientX, y: e.clientY });
+    },
+    // Brings it back after a scroll has closed it, without having to leave the
+    // name and come back.
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!linked && e.pointerType === "mouse") setLinked({ title: LINK_LABEL, x: e.clientX, y: e.clientY });
+    },
+    onPointerLeave: () => setLinked(null),
+    // Opening the detail slides the track out from under the pointer without it
+    // ever leaving the name, so there is no pointerleave to take the card down.
+    onPointerDown: () => setLinked(null),
+  };
+
+  // A tool's name inside a sentence, opening exactly what its frame opens. A
+  // button, not an anchor: it is a pane sliding over the page, not a navigation
+  // to a URL of its own. .inline-link is the shared style — see globals. Falls
+  // back to plain text when no entry carries that slug, so page.tsx can drop a
+  // tool without this going looking for it.
+  //
+  // A function returning an element, NOT a component declared in this body. A
+  // component defined inside a render is a fresh TYPE on every render, so React
+  // discards its <button> and builds another whenever the card opens or closes —
+  // including on the pointerdown that takes the card down, which IS the press
+  // being made. The node the press started on is gone before the click can
+  // land, so the name looked live and opened nothing. Called rather than
+  // rendered, the same button survives the re-render.
+  const toolLink = (slug: string, label: string) => {
+    const item = all.find((child) => child.props.slug === slug);
+    if (!item) return label;
+    return <button type="button" className="inline-link" onClick={() => onOpen(item)} {...linkHover}>{label}</button>;
+  };
 
   // Each frame slides in from under the right column. The clip that hides it on
   // the way is in the stylesheet — see .entry-visual there; this only says how
@@ -260,7 +313,15 @@ export function BandExperiments({
             className="tools-entry"
             rows={Math.max(1, tools.length - 1)}
             title="Tools"
-            blurb="Small things built to answer one question each, then kept around because they turned out to be useful. Open any frame to see it full size."
+            stack="claude code, .skills, html, css, js, webgl, dev-design tooling"
+            points={
+              <>
+                <li>simple tools for experimenting with design elements such as <Highlight>font, colour, image and texture</Highlight>. Intentionally lightweight, usable stand alone or as a complement to <Highlight>.skills</Highlight>. Applied to an existing project to enable direct design edits in-browser.</li>
+                <li>{toolLink("randomize-studio", "Randomize Studio")} pairs type over <Highlight>~40 Google Fonts</Highlight>, loaded on demand with the right weight and italic axes</li>
+                <li>{toolLink("background-experiments", "Background Experiments")} browses <Highlight>86 tileable SVG patterns</Highlight>, two layers deep, with scale, rotation, tint and blend mode</li>
+                <li>with {toolLink("fluid-hover", "webGL effect")} it is possible to experiment on images and simple clickable elements — it pauses when hidden and honours reduced motion</li>
+              </>
+            }
             onOpen={onOpen}
           />
 
@@ -290,6 +351,12 @@ export function BandExperiments({
                       ))}
                     </ul>
                   )}
+
+                  {/* Same list the projects band carries, and written the same
+                      way in page.tsx. An experiment had nowhere to say what it
+                      actually does before this — the props were being set and
+                      then rendered by nobody. */}
+                  {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
                 </div>
 
                 <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
@@ -305,11 +372,24 @@ export function BandExperiments({
             items={various}
             className="various-entry"
             title="Various"
-            blurb="Concepts and prototypes, the oldest of them a decade back and still running off the files they shipped with. Open any frame to see it full size."
+            stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, github copilot"
+            points={
+              <>
+                <li>concepts and prototypes, the oldest of them <Highlight>a decade back</Highlight> and still running off the files they shipped with — nothing rebuilt, nothing re-bundled</li>
+                <li>{toolLink("zoom", "Zoom")} navigates a presentation site by <Highlight>css transform rather than scroll</Highlight>, the iframe messaging its state back to the page around it so the background can crossfade behind</li>
+                <li>{toolLink("paint", "Paint")} is MS Paint in a single file — Windows 95 chrome, bevels and all, out of <Highlight>nothing but CSS borders</Highlight></li>
+                <li>{toolLink("optimize-studio", "Optimize Studio")} collects interaction and effect studies behind the jQuery stack of the day — zoomooz, sly, modernizr, enquire — with <Highlight>optimisation as the whole point</Highlight></li>
+                <li>{toolLink("radio", "Radio")} pairs 58 tracks with <Highlight>145 looping GIFs</Highlight> at random, each held for its own duration; space toggles fullscreen and the red button opens the playlist</li>
+              </>
+            }
             onOpen={onOpen}
           />
         </ul>
       </div>
+
+      {/* Portalled to <body> from in here, the same as a row's own — it has to
+          outlive this subtree's clipping and stacking. */}
+      <CursorCard item={linked} onDismiss={() => setLinked(null)} />
     </section>
   );
 }
@@ -328,13 +408,17 @@ function FrameRow({
   className,
   title,
   blurb,
+  stack,
+  points,
   rows,
   onOpen,
 }: {
   items: React.ReactElement<ProjectProps>[];
   className: string;
   title: string;
-  blurb: string;
+  blurb?: string;
+  stack?: string;
+  points?: React.ReactNode;
   rows?: number;
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
@@ -391,7 +475,19 @@ function FrameRow({
       <div className="entry-body reveal">
         <div className="entry-text">
           <h3 className="entry-title">{title}</h3>
-          <p className="entry-blurb">{blurb}</p>
+          {blurb && <p className="entry-blurb">{blurb}</p>}
+
+          {/* Same pills and same list a single entry above carries, so a row of
+              frames reads as the same kind of entry as a row with one. */}
+          {stack && (
+            <ul className="entry-tech-stack">
+              {stack.split(",").map((tech) => tech.trim()).filter(Boolean).map((tech) => (
+                <li className="pill" key={tech}>{tech}</li>
+              ))}
+            </ul>
+          )}
+
+          {points && <ul className="entry-points">{points}</ul>}
         </div>
       </div>
     </li>

@@ -7,6 +7,7 @@ import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
 import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
+import randomizeStudioThumb from "@/app/assets/projects/randomize-studio.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
@@ -65,10 +66,6 @@ export default function Home() {
         points={
           <>
             <li>twin events in cities Sibiu and Valcea</li>
-
-            <li className="small-heading">Stack</li>
-            <li>react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel</li>
-
             <li>registration for each location : build-in form + email QR (Resend) + <Highlight>built-in QR validator</Highlight></li>
             <li>reports via dashbord in Sanity</li>
             <li><Highlight>organizers handle content</Highlight> in Sanity</li>
@@ -91,14 +88,17 @@ export default function Home() {
         title="Photography Portfolio"
         year="2026"
         role="Design & build"
-        stack="Next.js, Sanity"
+        stack="Next.js, React, TypeScript, Sanity, SCSS, Swiper"
         href="https://photography-prototype.vercel.app"
         summary={<>Portfolio concept for a photography studio — <Highlight>minimal, restrained</Highlight>, and fully editable by the studio.</>}
         points={
           <>
-            <li>Minimal, restrained design that puts the photography first</li>
-            <li><Highlight>Availability calendar</Highlight> and contact form</li>
-            <li>Full content flexibility — the studio controls every page</li>
+            <li>minimal, restrained design highlights photography</li>
+
+            <li>high content flexibility, individaul gallery <Highlight>layouts are composed in Sanity Studio</Highlight> width weighted columns and relative widths keeps it responsive</li>
+            
+            <li>separate desktop and touch galleries — the desktop one zooms a card open with an in-card slideshow whose controls are portalled outside the transform so they stay crisp</li>
+            <li>features <Highlight>availability calendar</Highlight> contact form, generate .pdf contracts from templates</li>
           </>
         }
       />
@@ -111,7 +111,7 @@ export default function Home() {
         embed
         title="Clasa Zero"
         year="2026 —"
-        role="Design & build"
+        role=""
         stack="react, next.js, zustand, sanity, github copilot, chat gpt, vscode"
         href="https://clasa-zero.vercel.app/game"
         summary={<>A STEM game for pre-school kids — <Highlight>randomly generated puzzles</Highlight>, tested on car trips with a six year old.</>}
@@ -150,18 +150,19 @@ export default function Home() {
         className="large"
         thumb={mapThumb}
         embed
-        title="Map"
+        title="Map based web app"
         year="2026"
-        role="Design & build"
-        stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, vscode"
+        role=""
+        stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, claude code"
         href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
-        summary={<>A map-based site for the centre of Sibiu, highlighting <Highlight>notable architecture</Highlight> and telling its story.</>}
+        summary={<>Sibiu, Romania, city centre — highlight <Highlight>notable architecture</Highlight> and tell their story.</>}
         points={
           <>
-            <li>Vector .pmtiles self-hosted as a <Highlight>single static file</Highlight>, mounted with MapLibre</li>
-            <li>Content managed in Sanity; geolocation with boundary awareness</li>
-            <li>Feature flags via query string — this stripped-down build omits unfinished work</li>
-            <li>Draft concept, shown here embedded</li>
+            <li>Sibiu, Romania, city centre: <Highlight>highlights notable architecture and tell their story</Highlight></li>
+            <li>content via sanity cms</li>
+            <li>vector .pmtiles are self-hosted as a single static file, via MapLibre (open-source)</li>
+            <li>geolocation with boundary awareness - when used on mobile</li>
+            <li>draft concept, presented here in iframe</li>
           </>
         }
       />
@@ -177,12 +178,13 @@ export default function Home() {
         role="Concept & build"
         stack="vue, nuxt, vercel, git, github copilot, vscode"
         href="https://vue-playground-mauve.vercel.app/zoom"
-        summary={<>Zoom-based navigation for a presentation website, <Highlight>built on CSS transforms</Highlight>.</>}
+        summary={<><Highlight>zoom based navigation</Highlight> for presentation website</>}
         points={
           <>
-            <li>Navigation by CSS transform rather than by route change</li>
-            <li><Highlight>Iframe to parent-page messaging</Highlight>, so the embed can drive its host</li>
-            <li>Draft concept, shown here embedded</li>
+            <li>css-transform navigation using Zoomooz.js</li>
+            <li>draft concept, presented here in iframe</li>
+            <li><Highlight>iframe to parent page messaging</Highlight></li>
+            <li>AI-assisted (github copilot), reviewed and refined</li>
           </>
         }
       />
@@ -224,90 +226,11 @@ export default function Home() {
         summary={<>Random audio paired with random visuals — <Highlight>instant party</Highlight>. Space toggles fullscreen, the red button opens the playlist.</>}
       />
 
-      {/* Temporarily out of the list.
-      <LinearProject
-        slug="slow-days"
-        embed
-        title="Slow Days Outside"
-        year="2026"
-        role="Design & build"
-        stack="Next.js, Sanity"
-        href="https://slow-days-outside.vercel.app/"
-        summary={<>A platform for kids activities — <Highlight>educators post events</Highlight> and manage signups and group communication.</>}
-        points={
-          <>
-            <li>Educators publish events and own their own listings</li>
-            <li>Signup management per event, with <Highlight>group communication</Highlight> built in</li>
-            <li>Custom signup forms rather than one fixed shape</li>
-          </>
-        }
-      />
-      */}
-
-      {/* Temporarily out of the list — no live site to embed yet.
-      <LinearProject
-        slug="mipay-admin"
-        title="Mi-Pay Admin"
-        year="2017"
-        role="Frontend developer, Mi-Pay"
-        stack=".NET Core, Angular 2"
-        summary="Admin dashboard for fraud screening, tracking customers, orders and transactions."
-        points={
-          <>
-            <li>Live search and live filtering across database entries</li>
-            <li>Filter state persists in the query string, so a case can be shared by URL</li>
-            <li>Client-scoped access control for users</li>
-          </>
-        }
-      />
-      */}
-
-      {/* Temporarily out of the list — no live site to embed yet.
-      <LinearProject
-        slug="multidevice"
-        title="MultiDevice"
-        year="2016"
-        role="Frontend developer, Mi-Pay"
-        stack="jQuery, .NET MVC"
-        summary="Mobile-optimised payment service for O2 Germany, merging the desktop and mobile customer experiences into one."
-        points={
-          <>
-            <li>One implementation for both experiences, which also simplified dev and test</li>
-            <li>Supported IE7, as the client required</li>
-            <li>Localised for the German market</li>
-          </>
-        }
-      />
-      */}
-
-      {/* Temporarily out of the list — no live site to embed yet.
-      <LinearProject
-        slug="white-label"
-        title="White Label"
-        year="2016"
-        role="Frontend developer, Mi-Pay"
-        stack="jQuery, .NET MVC"
-        summary="White-label implementation of the micro-payment concept, one UI structure carrying each client's design guide."
-        points={
-          <>
-            <li>Custom SPA implementation with jQuery over .NET MVC</li>
-            <li>Standard UI structure plus a per-client design guide</li>
-            <li>Responsive, mobile-first, cross-browser</li>
-          </>
-        }
-      />
-      */}
-
-      {/* Experiments. Declared alongside the projects because they are the same
-          kind of thing to the shell — `experiment` is what sends them to the
-          other band, and `href` is both the frame in the index and the embed in
-          the detail pane. Each is a folder of plain HTML in the
-          effects-collection repo, served at /<folder>/. */}
-
       <LinearProject
         group="tools"
         embed
         slug="randomize-studio"
+        thumb={randomizeStudioThumb}
         title="Randomize Studio"
         role="Typography"
         stack="Google Fonts"

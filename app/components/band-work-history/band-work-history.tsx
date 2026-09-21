@@ -1,5 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import "./band-work-history.scss";
 import { Highlight } from "@/app/components/highlight/highlight";
+import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
+
+// What the phrase in the first bullet does. The same device the thumbnails use
+// — a card at the pointer — because the page already says "there is something
+// behind this" that way, and a second vocabulary for the same promise would be
+// one to learn for no reason.
+const JUMP_LABEL = "View in projects";
 
 // Work history. Deliberately NOT a `data-section` band: it is read over the
 // identity, which is still up while it passes, and a band only declares
@@ -15,9 +25,13 @@ import { Highlight } from "@/app/components/highlight/highlight";
 // An entry IS a disclosure: the <summary> is the place and the role, so the
 // title is the thing you press, and everything that is detail — the points and
 // the stack — is inside and closed. Native <details> rather than state in
-// React: it keeps this a server component, it works before hydration and with
-// JS off entirely, and the browser brings the keyboard and screen-reader
-// behaviour with it.
+// React: it works before hydration and with JS off entirely, and the browser
+// brings the keyboard and screen-reader behaviour with it.
+//
+// (An earlier note here claimed the <details> kept this a server component. It
+// never did — this module is imported by showcase-linear.tsx, which is
+// "use client", so it has always been part of the client bundle. The other
+// reasons stand on their own.)
 //
 // The role lines are <span>s, not <p>s, on purpose: a summary takes phrasing
 // and heading content, and a paragraph is neither. The stylesheet blocks them.
@@ -39,7 +53,28 @@ function ToggleMark() {
   );
 }
 
-export function BandWorkHistory() {
+export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (slug: string) => void }) {
+  // Whether the pointer is over the jump phrase, and where it was when it
+  // arrived. One card for the band; only one phrase can be under the pointer.
+  const [hovered, setHovered] = useState<CursorCardItem | null>(null);
+
+  const jumpHover = {
+    // Mouse only, like the thumbnails: on a touch screen the card would come up
+    // under the finger that just tapped.
+    onPointerEnter: (e: React.PointerEvent) => {
+      if (e.pointerType === "mouse") setHovered({ title: JUMP_LABEL, x: e.clientX, y: e.clientY });
+    },
+    // Brings it back after a scroll has closed it without having to leave the
+    // phrase and come back.
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!hovered && e.pointerType === "mouse") setHovered({ title: JUMP_LABEL, x: e.clientX, y: e.clientY });
+    },
+    onPointerLeave: () => setHovered(null),
+    // The page scrolls out from under the pointer on click, so there is no
+    // pointerleave coming to take the card down.
+    onPointerDown: () => setHovered(null),
+  };
+
   return (
     <section className="band nsc-band-work-history">
       <div className="band-content is-full">
@@ -61,11 +96,11 @@ export function BandWorkHistory() {
 
             <div className="entry-body">
               <div className="entry-text">
-                {/* The current post, open on arrival: it is the one an employer
-                    came to read, and leaving it shut asks for a click before
-                    the section says anything. The rest stay closed — `open` is
-                    the initial state only, so this one still shuts like any
-                    other once it is touched. */}
+                {/* The two posts are open on arrival: they are what an employer
+                    came to read, and leaving them shut asks for a click before
+                    the section says anything. The degree below stays closed —
+                    `open` is the initial state only, so any of them still shuts
+                    like the others once it is touched. */}
                 <details className="entry-detail" open>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
@@ -76,26 +111,46 @@ export function BandWorkHistory() {
                   </summary>
 
                   <ul className="entry-points">
-                    <li>long-standing contribution for a complex accounting product — SE, NL, DK, NO markets</li>
-                    <li><Highlight>own and maintain</Highlight> the ui-system structure and consistency, enforce constraints, push back on flawed UX and propose alternatives, code-reviews</li>
-                    <li><Highlight>large scale ui migration</Highlight> + refactor + ux update, handle frequent design system updates</li>
-                    <li>implemented a <Highlight>custom SPA library</Highlight> over <code>.net core</code> + <code>kendo ui</code></li>
+                    {/* The product this post is mostly about is also a project
+                        further down the page, so the phrase that names it is
+                        the way there. A button, not an anchor: it scrolls the
+                        pane, which is not a navigation to a URL of its own.
+                        .inline-link is the shared style — see globals. */}
+                    <li>
+                      <Highlight>long-standing</Highlight> contribution for{" "}
+                      {onScrollToProject ? (
+                        <button type="button" className="inline-link" onClick={() => onScrollToProject("advisor")} {...jumpHover}>
+                          accounting SaaS
+                        </button>
+                      ) : "accounting SaaS"}{" "}
+                      for nordic markets on product development and maintenance, knowledge sharing and documentation
+                    </li>
+
+                    {/* <li>contributed extensively to product development and maintenance, knowledge sharing and documentation</li> */}
+                    {/* <li>implemented new features, extended existing functionality, improved usability, performance, and accessibility</li> */}
+                    
+                    <li><Highlight>focused on frontend and UI</Highlight> to improve structure and consistency by refactoring, enforcing constraints and confirmed patterns, <Highlight>discuss design</Highlight>, push back on flawed UX and propose alternatives</li>
+                    <li>developed an in-house ajax library to modernize the existing application (.net core) into a <Highlight>custom SPA</Highlight></li>
+                    <li>led long-term ui <Highlight>modernization effort</Highlight> to refactor, remodel ux, and addopt <Highlight>design system</Highlight> by <Highlight>coordinating junior devs</Highlight>, knowledge sharing, code-reviews, effort estimation</li>
+                    <li>implemented refactoring and migration strategies with version control, drop unnecessary dependencies, centralize components, reduce complexity, <Highlight>improve dx</Highlight></li>
                     <li>proactive in reducing complexity, redundant dependencies, bugs and visual inconsistencies</li>
-                    <li>responsible use of AI tools, balance strengths/limitations: <code>gh copilot</code>, <code>claude</code>, <code>chat-gpt</code></li>
-                    <li>participated in UX research, user testing, interviews, and prototyping</li>
-                    <li>close collaboration with design-system owners to deliver polished, usable components</li>
-                    <li>improved usability, performance, and accessibility</li>
+
+                    <li>acted as a <Highlight>main contact with the UX team</Highlight>, participated in UX research, user testing, interviews and complemented the design effort with ui prototypes and technical feedback</li>
+                    
+                    <li>complemented AI development by setting up <Highlight>skills, .md instructions</Highlight> and documenting existing <Highlight>confirmed patterns</Highlight></li>
+                    
                   </ul>
 
-                  <ul className="entry-tech-stack">
+                  {/* <ul className="entry-tech-stack">
+                    <li className="pill">claude code</li>
                     <li className="pill">git</li>
                     <li className="pill">.net core</li>
                     <li className="pill">VS Code</li>
                     <li className="pill">Figma</li>
                     <li className="pill">SignalR</li>
                     <li className="pill">Snowplow</li>
-                    <li className="pill">Application Insights</li>
-                  </ul>
+                    <li className="pill">App Insights</li>
+                  </ul> */}
                 </details>
               </div>
             </div>
@@ -111,7 +166,7 @@ export function BandWorkHistory() {
 
             <div className="entry-body">
               <div className="entry-text">
-                <details className="entry-detail">
+                <details className="entry-detail" open>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
                       <h3 className="entry-place">Mi-Pay Sibiu</h3>
@@ -121,14 +176,22 @@ export function BandWorkHistory() {
                   </summary>
 
                   <ul className="entry-points">
-                    <li>frontend dev in <code>.NET MVC</code> for responsive micro-payment apps and dashboards</li>
-                    <li>Enhanced web applications by integrating new features and improving performance</li>
-                    <li>Refactored legacy code and fixed bugs to boost maintainability and reliability</li>
-                    <li><Highlight>Modernized front-end architecture</Highlight> by migrating components from <code>Backbone.js</code> to <code>React</code></li>
-                    <li>Improved responsive UI using <code>SCSS</code> and <code>Bootstrap</code>, following mobile-first best practices</li>
-                    <li>Increased test coverage and confidence with end-to-end testing via <code>Cypress</code></li>
-                    <li>Maintained and updated the company's <code>WordPress</code> (Elementor) site for consistent content delivery</li>
-                    <li>ui/ux focus <Highlight>from concept to production</Highlight></li>
+
+                    <li>enhanced web applications by integrating new features and improving performance</li>
+                    <li>improved responsives of products following mobile-first best practices</li>
+                    <li>
+                      <Highlight>proposed and implemented</Highlight> the design of a{" "}
+                      {onScrollToProject ? (
+                        <button type="button" className="inline-link" onClick={() => onScrollToProject("four-in-one")} {...jumpHover}>
+                          white-label product
+                        </button>
+                      ) : "white-label product"}{" "}
+                      to allow for convenient per-customer branding with <Highlight>ui/ux focus</Highlight> from concept to production
+                    </li>
+
+                    <li>modernized the same product by <Highlight>migrating to SPA</Highlight> using ajax libraries of the time</li>
+                    <li>migrated an internal customer-support tool to Angular 2</li>
+                    
                   </ul>
                 </details>
               </div>
@@ -159,10 +222,7 @@ export function BandWorkHistory() {
                   </summary>
 
                   <ul className="entry-points">
-                    <li>visual composition — proportion, hierarchy, rhythm and scale</li>
-                    <li>light, material and contrast used to direct attention</li>
-                    <li><Highlight>circulation is user flow</Highlight>: designing the path people take through a thing</li>
-                    <li>human scale and ergonomics — a building is only good if it is usable</li>
+                    <li> picked up elements of design theory like usability, visual composition, proportion, scale </li>
                   </ul>
                 </details>
               </div>
@@ -170,6 +230,10 @@ export function BandWorkHistory() {
           </li>
         </ol>
       </div>
+
+      {/* Portalled to <body> from in here, the same as the one in the projects
+          band — it has to outlive this subtree's clipping and stacking. */}
+      <CursorCard item={hovered} onDismiss={() => setHovered(null)} />
     </section>
   );
 }

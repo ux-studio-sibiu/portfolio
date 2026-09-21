@@ -83,6 +83,20 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     history.pushState({ project: idx }, "");
   };
   const closeItem = () => history.back();
+  // Takes you to a project in the list from somewhere that has no business
+  // holding a reference to one. Work history names the accounting product it is
+  // mostly about, and that product is a project further down the page; this is
+  // how the sentence gets to be a way there. By slug, because that is the only
+  // name a band that far from the list can be expected to know.
+  //
+  // scrollIntoView rather than a scrollTop sum, for the reason goToSection
+  // gives — which element actually scrolls changes with the breakpoint, and
+  // this walks up to whichever it is.
+  const scrollToSlug = (slug: string) => {
+    const entry = scroller.current?.querySelector<HTMLElement>(`[data-slug="${slug}"]`);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    entry?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  };
 
   // Menu entries are section LABELS, matched back to the band that declared
   // one. scrollIntoView rather than a scrollTop sum, because which element
@@ -407,7 +421,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
             <div className="scroll-inner">
               <BandCoreTechnologies />
 
-              <BandWorkHistory />
+              <BandWorkHistory onScrollToProject={scrollToSlug} />
               <BandProjects items={projects} onOpen={openItem} />
               {/* Two shapes for the same kind of entry: a row each with its own
                   copy, or a wall of frames with one block of copy for the set.

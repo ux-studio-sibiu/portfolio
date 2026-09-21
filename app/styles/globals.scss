@@ -140,12 +140,18 @@ a {
   @supports (animation-timeline: view()) {
     animation: highlight-sweep linear both;
     animation-timeline: view();
-    // Runs while the phrase travels from the bottom edge to the middle of the
-    // screen, so it is sweeping as you arrive at it. The whole `entry` phase is
-    // only the span's own height of scrolling — about 30px for a line of text —
-    // so an entry-only range finishes at the bottom edge, well before the
-    // phrase is anywhere near readable.
-    animation-range: entry 100% cover 50%;
+    // Runs while the phrase travels from the bottom edge up to 40% of the way
+    // up the screen, so it is finished by the time you are reading it. The whole
+    // `entry` phase is only the span's own height of scrolling — about 30px for
+    // a line of text — so an entry-only range finishes at the bottom edge, well
+    // before the phrase is anywhere near readable.
+    //
+    // `cover 40%` IS "40% up the page", near enough: the cover range is the
+    // viewport plus the element, and the element is one line tall, so the two
+    // differ by about a percent. The JS fallback states the same thing the
+    // other way round, as a fraction from the TOP — see END in
+    // scroll-highlights.tsx, which has to be 1 - this.
+    animation-range: entry 100% cover 40%;
   }
 
   // Pinned variant, for a phrase that does not travel with the scroll — the
@@ -185,7 +191,21 @@ a {
 // on the inner box the two boxes are exactly the same size, so a band at 50% and
 // an inversion at 50% fall on the same pixel.
 .highlight-ink {
-  padding: 0.06em 0.16em;
+  // Room to breathe. At 0.06em the band closed on the ascenders and descenders,
+  // which is most of what made a lit phrase hard to read: white letters with
+  // their tops and tails touching a black edge.
+  padding: 0.14em 0.18em;
+  // Half a step heavier than the copy it sits in, for two reasons that happen to
+  // agree. The glyphs below are painted as a CLIPPED BACKGROUND, not as text —
+  // that is what `background-clip: text` means — and a browser cannot subpixel-
+  // antialias a background, so a highlighted phrase is rendered greyscale where
+  // everything around it gets ClearType, and comes out visibly thinner. Weight
+  // puts back what the greyscale takes off. The second reason is simpler: this
+  // is the emphasised phrase, and it should carry a little more ink.
+  //
+  // A real weight, not a synthesised one: Archivo is loaded as a variable font
+  // in layout.tsx with no `weight` pinned, so 500 is a drawn instance.
+  font-weight: 500;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 
@@ -285,6 +305,46 @@ a {
   color: var(--color-muted);
 }
 
+// A phrase inside a sentence that goes somewhere. Shared, because the page has
+// more than one sentence that names something it also holds.
+//
+// `inherit` on font and colour: this is usually a <button>, which takes none of
+// the surrounding type by default, and the words have to read as the words they
+// sit among. Nothing but the rule under them marks them out.
+//
+// The rule is the whole of the interaction. Thin at rest so the sentence still
+// reads as a sentence, twice that under the pointer — enough to answer "is this
+// a thing?" without a fill, a colour change or anything else that would pull
+// the eye while you are only reading.
+.inline-link {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration-thickness: 2px;
+  }
+
+  // A keyboard user has no pointer, so a thicker rule on its own is not enough
+  // to say where they are.
+  &:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
 
 // The large title at the head of a band. One device for every section, so a
 // band reads as a band wherever it sits — it is the shape the Skills title had
@@ -320,16 +380,60 @@ a {
 //
 // Margins are deliberately NOT here: how much room a button needs is a property
 // of the band around it, and the two bands genuinely differ.
+// The shadow this page casts: an offset block of hatch, the way an elevation
+// drawing throws one, rather than a soft grey blur. Shared by the thumbnails and
+// the view-more button, because the same object should not look different
+// depending on which of them it is.
+//
+// The tile is patterns/diagonal-lines.svg, drawn in currentColor — read from CSS
+// there is no element for that to inherit from, so it resolves to black, which
+// is the ink this page is drawn in anyway.
+//
+// The box translated by the offset, exactly as a drop shadow is, so only an L of
+// it clears the plate on the right and underneath. The rest is covered by what
+// it sits behind, which is what keeps it reading as depth and not as a border —
+// so whatever this is given to has to be OPAQUE, or the hatch shows through the
+// middle and the thing looks hatched rather than raised.
+//
+// Bigger than the 3px/5px blur it replaces: at that size the tile had no room to
+// draw a single line, and a hatch shadow only says "hatch" if the hatching can
+// be seen.
+@mixin hatch-shadow($offset: 10px) {
+  // The knob, per element, so a small control can throw a shorter shadow than a
+  // large picture does.
+  --hatch-offset: #{$offset};
+
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: var(--hatch-offset) calc(var(--hatch-offset) * -1) calc(var(--hatch-offset) * -1) var(--hatch-offset);
+    background-image: url("/patterns/diagonal-lines.svg");
+    background-size: 4px 4px;
+    background-repeat: repeat;
+    pointer-events: none;
+  }
+}
+
 .view-more-button {
+  // Shorter than the thumbnails throw. This is a 40px-tall control, and at their
+  // 10px the shadow was a quarter of its height.
+  @include hatch-shadow(6px);
+
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
   align-self: flex-start;
   padding: 0.4rem 1.25rem;
-  background: transparent;
+  // Opaque, where this was `transparent`. The shadow sits behind the button and
+  // is meant to show only where it clears it; through a transparent face the
+  // hatch reads as a fill. The page behind is --color-bg in every band it
+  // appears in, so nothing changes to look at.
+  background: var(--color-bg);
   color: var(--color-ink);
   border: 4px solid var(--color-ink);
-  box-shadow: 3px 5px #00000033;
   font-family: var(--font-mono);
   font-size: 0.9rem;
   font-weight: 700;
@@ -400,16 +504,19 @@ a {
 // with nothing to measure says so — see .is-empty, and the :has(iframe) rule in
 // band-experiments, where a live frame has to be given one.
 .entry-thumb {
-  position: relative;
+  @include hatch-shadow(10px);
+
   display: block;
   width: 100%;
   padding: 0;
   background: var(--color-wash);
   border: 2px solid var(--color-ink);
-  box-shadow: 3px 5px #00000033;
   cursor: pointer;
-  // Clips whatever is inside back to the box.
-  overflow: hidden;
+  // NOT `overflow: hidden`, which is what this was. It clipped every pseudo-
+  // element to the box, and the shadow below has to sit outside one. What the
+  // clip was guarding is already handled: the picture is sized to the box, and
+  // the live frames are laid out oversized and scaled back to it, so what they
+  // PAINT fits either way — measured at zero spill on all fifteen of them.
   // Grey until pointed at — the colour arriving is what marks the one you are
   // on. Eased out and a little longer than the fill, so the image settles
   // rather than snapping.
@@ -432,8 +539,15 @@ a {
   // Keyboard gets the same thing the pointer does.
   &:hover,
   &:focus-visible {
-    background: var(--color-ink);
+    background-color: var(--color-ink);
     filter: grayscale(0);
+
+    // The hatch lifts with the grey. At rest a thumbnail is a hatched plate;
+    // pointed at, it is the photograph — one gesture, not two, which is why
+    // this runs on the same curve and duration as the grayscale above.
+    &::after {
+      opacity: 0;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

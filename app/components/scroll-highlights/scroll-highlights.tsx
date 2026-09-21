@@ -27,11 +27,16 @@ export function ScrollHighlights() {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Where the sweep starts and finishes, as fractions of viewport height
-    // measured against the phrase's own top edge. Matched to the native range:
-    // begins as the phrase clears the bottom edge, completes as it centres —
-    // finishing any earlier means it is already done by the time you reach it.
+    // measured against the phrase's own top edge. Matched to the native range in
+    // globals.scss: begins as the phrase clears the bottom edge, and is finished
+    // by the time it is 40% of the way up the page, so the band is never still
+    // moving while you are reading the words.
+    //
+    // Measured from the TOP, which is why 40% up the page is 0.6 here and
+    // `cover 40%` there. The two are the same line on the screen stated from
+    // opposite ends; change one and the other has to follow.
     const START = 1;
-    const END = 0.5;
+    const END = 0.6;
 
     const live = new Set<HTMLElement>();
     // A small random offset per phrase, so several in one paragraph do not

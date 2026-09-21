@@ -15,7 +15,14 @@
   // events would put itself between the pointer and the thing being hovered and
   // flicker itself in and out.
   pointer-events: none;
-  width: min(20rem, 70vw);
+  // A cap, not a width. Fixed-position boxes shrink to fit when their width is
+  // auto, so the card is as wide as what is in it and no wider — a two-word
+  // label gets a two-word box. It was a flat `width` before, which was fine
+  // while every card carried a title, a role and a summary, and looked like a
+  // mistake the moment one said only "View project".
+  //
+  // The cap is what a long summary wraps at, exactly as it did.
+  max-width: min(20rem, 70vw);
   padding: 0.9rem 1.1rem 1rem;
   background: var(--color-bg);
   border: 2px solid var(--color-ink);

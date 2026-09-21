@@ -43,7 +43,7 @@ export function BandCoreTechnologies() {
 
           <li className="spec-row">
             <h2 className="spec-name">Legacy</h2>
-            <p className="spec-note">.net, mvc, jquery, kendoUI, signalR </p>
+            <p className="spec-note">.net, mvc, jquery, ajax spa libraries, kendoUI, signalR </p>
           </li>
 
         </ul>

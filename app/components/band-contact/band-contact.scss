@@ -5,6 +5,16 @@
   // alike down the page.
   margin-top: 25rem;
 
+  // The card stops at the shared measure rather than running the whole of
+  // column 2 — the rule over the footer was the giveaway, drawn to the far edge
+  // of a wide screen under a block of type a third of that wide.
+  //
+  // The column inset is padding on this box and the box is border-box, so it
+  // has to be added back, the same way Skills does it.
+  .band-content {
+    max-width: calc(var(--measure) + 3rem + var(--gutter));
+  }
+
   // Set like the card: surname heavy, given name light, on one line.
   .contact-name {
     margin: 0 0 2.5rem;

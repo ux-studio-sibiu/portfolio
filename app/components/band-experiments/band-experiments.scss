@@ -1,4 +1,5 @@
 @use "@/app/styles/breakpoints" as *;
+@use "@/app/styles/devices" as *;
 
 // Experiments. Same geometry as the project entries in band-projects — the same
 // --col-media grid, the same sticky visual against the divider, the same order
@@ -223,6 +224,13 @@
   .entry-text {
     width: 100%;
     max-width: 38rem;
+  }
+
+  // Shared with the projects band — see the mixin in app/styles/_devices.scss.
+  // An experiment row used to be a title, a role and a row of pills; the points
+  // are what make it read as the same kind of entry a project is.
+  .entry-points {
+    @include entry-points;
   }
 
   // The one sentence the Tools row carries, where every other row has pills.

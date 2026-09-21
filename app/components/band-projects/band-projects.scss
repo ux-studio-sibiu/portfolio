@@ -1,4 +1,5 @@
 @use "@/app/styles/breakpoints" as *;
+@use "@/app/styles/devices" as *;
 
 // No rail of its own: the full-height .column-rule between columns 2 and 3,
 // owned by the showcase shell, is the line these entries sit against. Both are
@@ -42,6 +43,20 @@
       // sticky image nothing to hold through. Give each entry a real share of
       // the viewport so the pin has travel and reads as deliberate.
       min-height: 65svh;
+    }
+  }
+
+  // Closes the right side of the media column so a thumbnail can wait out of
+  // sight beyond the divider and slide in — the same device, and the same
+  // polygon, as the experiments band; see .entry-visual there.
+  //
+  // A polygon rather than `overflow: hidden` for the reason given there, and for
+  // one more that matters here: an overflow ancestor becomes the scrollport a
+  // sticky child is measured against, which would break the pin outright.
+  // clip-path makes a stacking context and nothing else, so the pin survives it.
+  .entry-visual {
+    @include respond-to("tablet") {
+      clip-path: polygon(-100% -100%, 100% -100%, 100% 200%, -100% 200%);
     }
   }
 
@@ -144,52 +159,9 @@
     color: var(--color-muted);
   }
 
+  // Shared with the experiments band — see the mixin in app/styles/_devices.scss.
   .entry-points {
-    margin: 1.5rem 0 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    // .entry-text carries the measure now.
-    max-width: none;
-
-    li {
-      position: relative;
-      padding-left: 1.5rem;
-      font-size: 0.9375rem;
-      line-height: 1.5;
-      color: var(--color-ink);
-
-      // Square bullet, in keeping with the rail markers.
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0.55em;
-        left: 0;
-        width: 6px;
-        height: 6px;
-        background: var(--color-ink);
-      }
-    }
-
-    // A group label inside the list rather than a point of its own: it takes no
-    // marker and no indent, and sits on the same small mono device every other
-    // label on the site uses. The space above is what makes it read as the head
-    // of the block under it rather than as a stray line in the one above.
-    li.small-heading {
-      margin-top: 1.5rem;
-      padding-left: 0;
-      font-family: var(--font-mono);
-      font-size: 0.6875rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--color-ink);
-
-      &::before {
-        content: none;
-      }
-    }
+    @include entry-points;
   }
 
   // Hollow with a heavy frame, filling black on hover. Outline against the
