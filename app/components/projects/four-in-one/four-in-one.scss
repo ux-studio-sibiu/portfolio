@@ -1,4 +1,5 @@
 @use "@/app/styles/breakpoints" as *;
+@use "@/app/styles/devices" as *;
 
 // One scroller, not two: the pane's own. The pictures are the tall half here,
 // so they are the half that flows, and the copy is held beside them with
@@ -50,38 +51,21 @@
     }
   }
 
-  .lede {
-    margin: 0;
-    font-size: clamp(1.375rem, 2.6vw, 2rem);
-    line-height: 1.25;
-    letter-spacing: -0.03em;
-    font-weight: 600;
+  // .label is the shared micro-label out of globals; this only says where it
+  // sits. It replaced a lede set at 2rem — the body carries its own meta now,
+  // and a display sentence above it was saying the same thing twice.
+  .project-meta {
+    margin: 0 0 1.5rem;
   }
 
-  p {
-    margin: 1.5rem 0 0;
-    font-size: 1.0625rem;
-    line-height: 1.6;
-  }
+  // The same square-marked list every entry in the index uses — see the mixin
+  // in app/styles/_devices.scss. The prose paragraphs and the four-cell client
+  // table that were here said the same things at more length; the clients are
+  // the last point now.
+  .project-points {
+    @include entry-points;
 
-  .clients {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    margin: 2.5rem 0 0;
-    padding: 0;
-    list-style: none;
-    border-top: 2px solid var(--color-ink);
-    width: 100%;
-
-    li {
-      flex: 1 1 10rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--color-faint);
-      font-size: clamp(1.125rem, 2.2vw, 1.5rem);
-      letter-spacing: -0.02em;
-      font-weight: 700;
-    }
+    max-width: 38rem;
   }
 
   // --- Column 2: the pictures -------------------------------------------------
@@ -103,7 +87,10 @@
   .shot {
     margin: 0;
 
-    img {
+    // The video at the foot of the column is framed exactly as the stills are,
+    // so the set reads as one sequence rather than as pictures and then a clip.
+    img,
+    video {
       display: block;
       width: 100%;
       height: auto;
@@ -116,8 +103,8 @@
       font-family: var(--font-mono);
       font-size: 0.6875rem;
       letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--color-muted);
+      text-transform: lowercase;
+      color: var(--color-ink);
     }
   }
 }

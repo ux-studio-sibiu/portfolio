@@ -93,7 +93,7 @@ export default function Home() {
         embed
         title="Photography Portfolio"
         year="2026"
-        role="Design & build"
+        role="concept, design, dev"
         stack="Next.js, React, TypeScript, Sanity, SCSS, Swiper"
         href="https://photography-prototype.vercel.app"
         summary={<>Portfolio concept for a photography studio — <Highlight>minimal, restrained</Highlight>, and fully editable by the studio.</>}
@@ -144,14 +144,20 @@ export default function Home() {
         thumb={fourInOneThumb}
         title="White-label product"
         year="2015"
-        role="Concept, design and dev"
-        stack="Design concept"
+        role="concept, design, dev, 2017"
+        stack="Design concept, .net, jquery, sammy.js , bootstrap, photoshop"
         summary={<>Design concept for a micro-payment product, standardising the product structure <Highlight>across devices and clients</Highlight>.</>}
         points={
           <>
-            <li>One structure spanning devices and client brands</li>
-            <li>Client branding carried by <Highlight>background media</Highlight> rather than by layout changes</li>
-            <li>Notable clients: <Highlight>O2 Germany, Tesco, 3Roi, FooCall UK</Highlight></li>
+
+            <li>the established micro-payment service used by multiple clients had accumulated fragmented designs, increasingly reflecting in the codebase. </li>
+            
+            <li>proposed design concept <Highlight>decouples client branding from the functional UI</Highlight></li>
+            <li>now client branding is carried by background media with a fixed UI structure</li>
+            <li>as a result the dev and support teams had <Highlight>shorter delivery cycles</Highlight> and lower operational overhead</li>
+
+            <li>several clients were migrated to this concept, and was a starting point for all new ones. Clients include: <Highlight>O2 Germany, Tesco, 3Roi, FooCall UK</Highlight></li>
+          
           </>
         }
       />

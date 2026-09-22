@@ -185,7 +185,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                         <button type="button" className="inline-link" onClick={() => onScrollToProject("four-in-one")} {...jumpHover}>
                           white-label product
                         </button>
-                      ) : "white-label product"}{" "}. Concept allows for convenient per-customer branding.
+                      ) : "white-label product"}{" "}. Concept allows for convenient per-customer branding
                     </li>
 
                     <li>modernized the same product by <Highlight>migrating to SPA</Highlight> using ajax libraries of the time (sammy.js)</li>
