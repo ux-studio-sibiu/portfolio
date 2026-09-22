@@ -1,0 +1,159 @@
+@use "@/app/styles/breakpoints" as *;
+
+.nsc-randomize-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  // The poster, filling the frame exactly as a plain .frame-img would.
+  .stage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // The panel, docked right the way it is in the tool. Sized off the WIDTH and
+  // left to find its own height, so it keeps its proportion at any frame size —
+  // 357 x 557 means 38% across comes to a hair under 60% down, which is a
+  // control panel with air above and below it rather than a second picture.
+  //
+  // Fixed rather than fading in: it is part of the picture now, up whether the
+  // frame is pointed at or not. Nothing here is conditional on hover any more.
+  //
+  // The 25px is ON TOP of the centring, which is why the offset is written into
+  // the transform rather than into `top`: top is a share of the frame and would
+  // drift with it, and the translate is already there to be added to.
+  .panel {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    // Over the grain. Both this and ::after are positioned, and a pseudo-element
+    // paints after its element's children, so without this the noise would be
+    // laid over the panel — the one thing it must not cover.
+    z-index: 1;
+    width: 30%;
+    height: auto;
+    // The reset in globals caps images at their box; this one is sized against
+    // the frame, not against itself.
+    max-width: none;
+    transform: translate(0, calc(-50% + 25px));
+    // It is scenery on a control that is already labelled — never a tab stop,
+    // and never in the way of the press.
+    pointer-events: none;
+  }
+
+  // Film grain over the picture, which is the thing the Static background
+  // experiment further down this row makes. That one is a canvas redrawing
+  // itself at 24fps; this is one tile of fractal noise cut to a fresh offset at
+  // about the same rate, which costs nothing to run.
+  //
+  // Generated rather than fetched: feTurbulence in a data URI is a few hundred
+  // bytes and there is no noise texture in /patterns to point at. stitchTiles
+  // is what lets it repeat without a seam showing at the tile edge.
+  //
+  // Three things past the turbulence itself, and they are what make it read
+  // rather than turn to mush:
+  //
+  //   saturate 0    feTurbulence runs each channel on its own, so raw it is
+  //                 COLOURED noise. The frame is greyscale until it is pointed
+  //                 at, and coloured confetti arriving with the hover was not
+  //                 the effect wanted.
+  //   slope 2.2     the transfer is what decides how hard multiply bites, and it
+  //   intercept-.35 is a narrow window. Multiply is base x grain, so every speck
+  //                 at white does NOTHING: bias the noise too light and there is
+  //                 no effect at all, bias it too dark and the frame just dims.
+  //
+  //                 Turbulence arrives bunched around 0.5. These two spread it to
+  //                 roughly 0.1 - 1.0 with the middle near 0.75, so about half of
+  //                 it clamps to white and passes the picture through untouched
+  //                 while the rest darkens, hard in places. That split IS the
+  //                 grain. At 1.4 / 0.2 the middle sat at 0.9 and most of it
+  //                 clamped white — a five percent dimming, which is why it
+  //                 disappeared.
+  //   alpha 1       forces the tile opaque, so how strong this is depends on the
+  //                 CSS opacity below and nothing else.
+  //
+  // GRAIN SIZE is two numbers pulling together: baseFrequency is how fine the
+  // noise is DRAWN, and background-size is how far the tile is stretched
+  // afterwards. Both were dialled up a notch for chunkier specks — 1.2 drawn 1:1
+  // at 120, now 1.0 laid down at 145, which is about half again the size.
+  //
+  // Most of that comes from the stretch, not the frequency: the tile rasterises
+  // at a fixed 120px, so dropping baseFrequency from 1.2 to 0.7 only moved the
+  // average speck from 3.14px to 3.31px. Worth knowing before reaching for it
+  // again. Don't go far past this — at 180 the specks read as blotches.
+  //
+  // What neither number touches is the TONE: mean luminance measured 0.868 at
+  // every frequency tried, so grain size and grain strength are independent
+  // dials. Strength is the transfer above.
+  //
+  // Fewer octaves too: octaves pile coarse noise on top of fine, and that coarse
+  // layer is clumping rather than grain.
+  @keyframes grain-cut {
+    0%   { background-position: 0 0; }
+    12.5%  { background-position: -37px 23px; }
+    25%  { background-position: 19px -47px; }
+    37.5%  { background-position: -53px -13px; }
+    50%  { background-position: 41px 31px; }
+    62.5%  { background-position: -17px 59px; }
+    75%  { background-position: 61px -29px; }
+    87.5%  { background-position: -43px -61px; }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.2' intercept='-0.35'/%3E%3CfeFuncG type='linear' slope='2.2' intercept='-0.35'/%3E%3CfeFuncB type='linear' slope='2.2' intercept='-0.35'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 145px 145px;
+    background-repeat: repeat;
+    // Multiply: the picture times the grain. White specks change nothing and
+    // darker ones dim what is under them, so the photograph keeps its own tones
+    // and the noise only ever takes light away — which is what grain on film
+    // does, and why this sits in the image where hard light sat on it.
+    //
+    // It does mean the frame darkens overall by however far the noise sits below
+    // white, which is what this opacity is really tuning — and why it is high: at
+    // 0.5 the effect was being halved toward no-change on top of a transfer that
+    // had already flattened it.
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    // Running from the start, because the grain is the RESTING state: the frame
+    // is a degraded old recording of the tool until you point at it, and then it
+    // settles. The flicker is the whole of what makes it read as a recording, so
+    // it cannot wait for the hover the way it used to.
+    animation: grain-cut 0.33s steps(1, end) infinite;
+  }
+}
+
+// The button is what is hovered, not the picture: the frame is the target, and
+// .entry-thumb is the button FrameRow renders. :focus-visible as well, so the
+// keyboard gets the same look at it that the pointer does. Only the grain
+// answers to this now — the panel is up either way.
+.entry-thumb {
+  &:hover,
+  &:focus-visible {
+    // Pointing at it CLEARS the grain — the picture resolves rather than
+    // degrading. The animation is stopped as well as faded out: an animation on
+    // a thing at opacity 0 is a repaint a frame for nothing.
+    .nsc-randomize-thumb::after {
+      opacity: 0;
+      animation: none;
+    }
+  }
+}
+
+// The grain still sits there, it just stops flickering — a still frame of it is
+// the same texture, and the flicker is the part that cannot be asked for. On the
+// resting state now rather than the hover one, which is where the animation went.
+@media (prefers-reduced-motion: reduce) {
+  .nsc-randomize-thumb::after {
+    transition: opacity 0.2s linear;
+    animation: none;
+  }
+}

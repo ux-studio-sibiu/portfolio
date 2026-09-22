@@ -21,10 +21,6 @@ export function BandCoreTechnologies() {
             <p className="spec-note">proficient with the fundamentals, Core Web Vitals optimization, performance profiling </p>
           </li>
 
-          <li className="spec-row">
-            <h2 className="spec-name">AI Development</h2>
-            <p className="spec-note">Responsible use of AI tools, balance strengths/limitations: claude code, github copilot, chatGPT</p>
-          </li>
 
           <li className="spec-row">
             <h2 className="spec-name">GSAP, Motion, Lenis</h2>
@@ -35,6 +31,10 @@ export function BandCoreTechnologies() {
             <p className="spec-note">Sanity, structured content, webhook-driven caching</p>
           </li>
 
+          <li className="spec-row">
+            <h2 className="spec-name">AI Development</h2>
+            <p className="spec-note">Responsible use of AI tools, balance strengths/limitations: claude code, github copilot, chatGPT</p>
+          </li>
 
           <li className="spec-row">
             <h2 className="spec-name">Workflow Tools</h2>

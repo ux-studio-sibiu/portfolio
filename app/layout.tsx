@@ -4,7 +4,11 @@ import { ScrollHighlights } from "@/app/components/scroll-highlights/scroll-high
 import "@/app/styles/globals.scss";
 
 const archivo = Archivo({
-  subsets: ["latin"],
+  // latin-ext as well as latin: the name in Contact is set with Romanian
+  // diacritics, and T-comma and a-breve are both outside the latin subset.
+  // Without it those two letters alone drop to a fallback face, which at
+  // display size is impossible to miss.
+  subsets: ["latin", "latin-ext"],
   variable: "--font-archivo",
   display: "swap",
 });

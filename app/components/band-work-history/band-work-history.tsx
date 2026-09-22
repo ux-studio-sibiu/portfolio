@@ -9,7 +9,7 @@ import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cu
 // — a card at the pointer — because the page already says "there is something
 // behind this" that way, and a second vocabulary for the same promise would be
 // one to learn for no reason.
-const JUMP_LABEL = "View in projects";
+const JUMP_LABEL = "view in projects";
 
 // Work history. Deliberately NOT a `data-section` band: it is read over the
 // identity, which is still up while it passes, and a band only declares
@@ -130,9 +130,9 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                     {/* <li>implemented new features, extended existing functionality, improved usability, performance, and accessibility</li> */}
                     
                     <li><Highlight>focused on frontend and UI</Highlight> to improve structure and consistency by refactoring, enforcing constraints and confirmed patterns, <Highlight>discuss design</Highlight>, push back on flawed UX and propose alternatives</li>
-                    <li>developed an in-house ajax library to modernize the existing application (.net core) into a <Highlight>custom SPA</Highlight></li>
+                    <li>developed an in-house ajax library to modernize the existing .net application into a <Highlight>custom SPA</Highlight></li>
                     <li>led long-term ui <Highlight>modernization effort</Highlight> to refactor, remodel ux, and addopt <Highlight>design system</Highlight> by <Highlight>coordinating junior devs</Highlight>, knowledge sharing, code-reviews, effort estimation</li>
-                    <li>implemented refactoring and migration strategies with version control, drop unnecessary dependencies, centralize components, reduce complexity, <Highlight>improve dx</Highlight></li>
+                    <li>implemented refactoring and migration strategies with version control to centralize components, reduce complexity, <Highlight>improve dx</Highlight></li>
                     <li>proactive in reducing complexity, redundant dependencies, bugs and visual inconsistencies</li>
 
                     <li>acted as a <Highlight>main contact with the UX team</Highlight>, participated in UX research, user testing, interviews and complemented the design effort with ui prototypes and technical feedback</li>
@@ -185,11 +185,10 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                         <button type="button" className="inline-link" onClick={() => onScrollToProject("four-in-one")} {...jumpHover}>
                           white-label product
                         </button>
-                      ) : "white-label product"}{" "}
-                      to allow for convenient per-customer branding with <Highlight>ui/ux focus</Highlight> from concept to production
+                      ) : "white-label product"}{" "}. Concept allows for convenient per-customer branding.
                     </li>
 
-                    <li>modernized the same product by <Highlight>migrating to SPA</Highlight> using ajax libraries of the time</li>
+                    <li>modernized the same product by <Highlight>migrating to SPA</Highlight> using ajax libraries of the time (sammy.js)</li>
                     <li>migrated an internal customer-support tool to Angular 2</li>
                     
                   </ul>

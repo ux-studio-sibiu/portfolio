@@ -95,7 +95,7 @@ $fade-step: 0.34;
 
     margin: 1.5rem 0 0;
     // Below tablet column 1 is the full pane width.
-    font-size: clamp(2.25rem, 12vw, 4.5rem);
+    font-size: clamp(2.475rem, 13.2vw, 4.95rem);
     line-height: 0.85;
     letter-spacing: -0.05em;
     font-weight: 800;
@@ -109,6 +109,8 @@ $fade-step: 0.34;
       //       Archivo 800 — measured at 4.92 — plus slack, and then a further
       //       tenth on top, which is what holds the name off the divider.
       //       Raising it is how the name comes down without the column moving.
+      //       Both divisors carry a tenth off their measured values, which is
+      //       the 10% the name was last taken up by.
       //
       // CLEAR the Work history years, which scroll straight past the name —
       //       --identity-measure above is the room left for it. Divided by
@@ -116,8 +118,8 @@ $fade-step: 0.34;
       //       limited is a width and what is being set is a size, and TURCANU
       //       is the longer of the two lines.
       font-size: min(
-        calc((50vw - 4rem) / 5.7),
-        calc(var(--identity-measure) / 4.845)
+        calc((50vw - 4rem) / 5.18),
+        calc(var(--identity-measure) / 4.4)
       );
     }
   }
@@ -144,7 +146,15 @@ $fade-step: 0.34;
     @include fade-order(0);
 
     margin: 2rem 0 0;
-    font-size: 1.125rem;
+    // The small-copy voice, the same one the entry points take — see the note
+    // in app/styles/_devices.scss. The name above it stays in Archivo, so the
+    // block reads as a title with a caption under it rather than as one lump.
+    //
+    // A step down from the 1.125rem it held in Archivo, but NOT all the way to
+    // the 0.8rem of the points: this is the lede, and matching them exactly
+    // would leave the two tiers indistinguishable.
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
     line-height: 1.5;
     color: var(--color-ink);
 
@@ -165,7 +175,7 @@ $fade-step: 0.34;
       // running past the backdrop would be the one thing in the column that is
       // not covered by it.
       max-width: min(calc((50vw - 4rem) * 0.72), var(--identity-measure));
-      font-size: 1.2rem;
+      font-size: 0.9rem;
     }
   }
 

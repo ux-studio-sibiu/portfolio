@@ -10,7 +10,9 @@
   --color-faint: #d4d4d4;
   --color-wash: #f4f4f2;
 
-  // Loaded via next/font in layout.tsx.
+  // Loaded via next/font in layout.tsx. Archivo sets the page; the mono is the
+  // small-copy and label face — see --font-mono's users, and the note on
+  // .entry-points in app/styles/_devices.scss.
   --font-sans: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -277,14 +279,6 @@ a {
   letter-spacing: -0.035em;
   font-weight: 700;
 
-  // Variant for sentence-length entries. Nested so it wins over the base
-  // font-size regardless of source order.
-  &.spec-name-small {
-    font-size: 1.25rem;
-    // The base tracks tight at display size; sentences that wrap need room.
-    line-height: 1.35;
-    letter-spacing: -0.02em;
-  }
 }
 
 .spec-note {

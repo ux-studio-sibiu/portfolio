@@ -16,6 +16,16 @@ export type ProjectProps = {
   // A second thumbnail, shown beside the first. For a project where one frame
   // does not say enough on its own; both open the same detail.
   thumbAlt?: StaticImageData;
+  // Prints the title over the thumbnail. For the frames that are a texture or a
+  // field of noise rather than a picture of a screen: there is nothing in them
+  // to recognise, so they say what they are. Opt-in, because a screenshot of a
+  // tool does not need a caption stamped on it.
+  thumbLabel?: boolean;
+  // A thumbnail that is built rather than photographed, for the entry where
+  // neither a still nor a live frame is the right answer — see RadioThumb,
+  // which assembles the prototype's own television out of two files instead of
+  // booting the page that draws one. Wins over `thumb` and over the iframe.
+  thumbNode?: React.ReactNode;
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;

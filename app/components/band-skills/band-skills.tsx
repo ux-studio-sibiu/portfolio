@@ -48,7 +48,7 @@ export function BandSkills() {
           </li>
 
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can complement vague or incomplete requirements constructively</span>
+            <span className="spec-name spec-name-small">Can constructively complement vague or incomplete requirements</span>
           </li>
 
           <li className="spec-row">

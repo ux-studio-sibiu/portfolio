@@ -11,8 +11,6 @@ import "./band-projects.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const num = (idx: number) => String(idx + 1).padStart(2, "0");
-
 // What the thumbnail does, said once. The button below the copy is written from
 // the same constant, so the card at the pointer and the control at the foot of
 // the entry cannot end up promising different things.

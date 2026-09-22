@@ -237,18 +237,11 @@
     transition: transform 0.3s ease;
   }
 
-  .detail-toggle:hover .toggle-mark {
-    transform: translateY(2px);
-  }
-
+  // Open is a half-turn and nothing else. There was a 2px nudge on hover as
+  // well — and a second rule to send it the other way once the chevron was
+  // upside down — but the turn already says everything the control has to say.
   .entry-detail[open] .toggle-mark {
     transform: rotate(180deg);
-  }
-
-  // Half-turned, so its own +Y now points up the screen — which is the right
-  // way for a control that is about to close.
-  .entry-detail[open] .detail-toggle:hover .toggle-mark {
-    transform: rotate(180deg) translateY(2px);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -278,7 +271,11 @@
     padding: 0;
     max-width: 38rem;
     list-style: none;
-    font-size: 1rem;
+    // Same small-copy voice as the shared device in _devices.scss, and the same
+    // size — this band states its own only because it wants different spacing
+    // and a smaller marker, not a different type.
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.5;
 
     // The marker is hung out of the text block rather than set in a track of

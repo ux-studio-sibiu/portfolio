@@ -118,16 +118,53 @@
   // the two such rows share lives here; what differs is the shape of the grid,
   // below.
   .frame-grid {
+    --frame-gap: 1rem;
+
     display: grid;
     margin: 0;
     padding: 0;
     list-style: none;
-    gap: 1rem;
+    gap: var(--frame-gap);
   }
 
   .frame-cell {
     display: flex;
     min-width: 0;
+  }
+
+  // The title printed on a frame that has nothing recognisable in it — a texture,
+  // a field of noise. Set in the small label device the whole site uses, so it
+  // reads as a caption rather than as part of the picture.
+  //
+  // White with a shadow under it rather than a plate behind it: these two frames
+  // are both dark and both busy, and a solid block would cover the very thing it
+  // is labelling. .entry-thumb is already positioned — the hatch-shadow mixin
+  // makes it so — which is what this hangs off.
+  .frame-label {
+    // Centred by the four zeros and the auto margin together: inset stretches
+    // the box to the whole frame, the min-content sizes below shrink it back to
+    // the text, and `margin: auto` then has slack on all four sides to share
+    // out. Flex centring would not do, because the text has to be allowed to
+    // wrap and a flex item sizes itself to max-content.
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    // min-content is the whole trick for a word to a line: it makes the box as
+    // narrow as the longest WORD, so every space becomes a break. No <br> in the
+    // markup, and a title of any length behaves the same way.
+    width: min-content;
+    height: min-content;
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
   }
 
   // These fill their cell rather than taking the row's --thumb width, and the
@@ -163,14 +200,41 @@
   // for -1 to mean anything.
   .tools-entry {
     .frame-grid {
-      // Three of these plus the gaps is the height of the whole grid, which is
-      // also the height of the wide frame spanning it — so this is the number
-      // that decides how square that frame is, not anything on the frame itself.
+      // A row of the narrow stack. Times the number of them, plus the gaps
+      // between, this is the height of the whole grid — and so the height of the
+      // feature spanning it.
       --tool-row: clamp(4.5rem, 7vw, 7rem);
       // Narrow stack first, wide one second: the feature sits against the
       // divider, which is the edge everything in this column is aligned to and
       // the side the frames arrive from.
-      grid-template-columns: 1fr 2fr;
+      //
+      // The feature's column is its own SPANNED HEIGHT written out, which is
+      // what makes it square — it was 2fr, and square only by accident of how
+      // the numbers happened to fall (245 against 248). The narrow stack takes
+      // whatever is left. --tool-rows is written beside the row template by the
+      // component, because the count is the one thing only it knows; the
+      // fallback is what the four tools currently come to.
+      grid-template-columns: 1fr calc(
+        var(--tool-row) * var(--tool-rows, 3) + (var(--tool-rows, 3) - 1) * var(--frame-gap)
+      );
+
+      // The feature is asked for at exactly 350px. Its width IS its spanned
+      // height, so the row is worked back from the 350 rather than the other way
+      // round: three rows and two gaps come to exactly that, and the frame stays
+      // square at 350 x 350.
+      //
+      // Held to wide and up, because 350 does not fit below it. The media column
+      // is min(742px, 50vw) less 128px of padding, so at 1024 there are 384px to
+      // share: 350 of them would leave the stack beside it 18px wide. At 1440
+      // there are 592, and the stack keeps 226. Between the two the row goes on
+      // sizing itself off 7vw as before.
+      // Off --tool-rows like everything else here, not off a hard 3: add a fifth
+      // tool and the stack grows a row, and the feature is still 350.
+      @include respond-to("wide") {
+        --tool-row: calc(
+          (350px - (var(--tool-rows, 3) - 1) * var(--frame-gap)) / var(--tool-rows, 3)
+        );
+      }
     }
 
     // Document order still leads with the feature — it is what the component
@@ -183,26 +247,113 @@
 
     .frame-cell:not(:first-child) {
       grid-column: 1;
+      // They no longer fill the track, so something has to say which edge they
+      // line up on. The right one: it is the feature's edge, and everything in
+      // this column is aligned to an edge on the right.
+      justify-self: end;
+      // One width for all three, so the stack is a column of equal frames again
+      // rather than a ragged one — no per-cell rules, and adding a fifth tool
+      // needs nothing here.
+      //
+      // min(_, 100%) is what keeps it honest at every width: 100% is the track,
+      // which is 1fr of whatever the feature leaves. Where the column is wide the
+      // stated 150 wins; where it is not, a frame clips to the track instead of
+      // overrunning it. At 1024 the track is 120px and all three come out 120 —
+      // the same as when they filled it.
+      width: min(150px, 100%);
     }
   }
 
-  // The Various row: four of equal weight, two by two and square. No feature and
-  // no spanning, so the cells carry their own proportion rather than taking it
-  // from a row height — and a square says none of the four is the shape the set
-  // is about.
+  // The Various row: four of equal weight, two by two. No feature and no
+  // spanning, so the cells carry their own proportion rather than taking it from
+  // a row height — which is what lets them differ. Two are square and two are
+  // landscape, on a diagonal, so neither shape reads as the set's own and
+  // neither row is the odd one.
   .various-entry {
+    // Flex, not the grid the other row uses, and for one reason: every frame
+    // here is the SAME HEIGHT and its own width, which is the opposite of what a
+    // grid does. Fixed columns would have had to take height off a landscape
+    // frame to keep it inside its track; here the height is stated once and each
+    // frame takes whatever width its proportion asks for.
+    //
+    // Both lines are one square-ish frame plus one landscape frame, so neither
+    // is much longer than the other, and packing right leaves the ragged edge on
+    // the left where the column is open anyway.
     .frame-grid {
-      // A stated size rather than a share of the column: these are four of a
-      // kind and small, and letting them grow with the column would make them
-      // the largest thing in the band.
-      grid-template-columns: repeat(2, 160px);
-      // Packed to the right, like every other frame in this column, so their
-      // edge is the divider's edge.
-      justify-content: end;
+      // 10rem is the size asked for, a quarter up on the 8rem this held. Still a
+      // stated size rather than a share of the column — these are four of a kind
+      // and letting them simply grow with it would make them the largest thing in
+      // the band — but CAPPED, because at 10rem the line is 410px and the column
+      // has only 384 to give below about 1100px wide.
+      //
+      // The cap is the column worked out rather than a breakpoint, so the row
+      // takes whatever it can have at every width instead of jumping at one:
+      // --col-media less the two paddings on .entry-visual (--rail on the left, a
+      // flat 3rem on the right — NOT --gutter, which is 2.75rem and would be 4px
+      // out), less the gap and the same 2px of slack the width below carries.
+      // Divided by the line's own multiple of the height.
+      //
+      // That lands 10rem from roughly 1100px up and eases down to about 9.3rem at
+      // 1024, where the old 8rem was leaving room it did not need.
+      --frame-h: min(
+        10rem,
+        calc((var(--col-media) - var(--rail) - 3rem - var(--frame-gap) - 2px) / 2.4498)
+      );
+
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--frame-gap);
+
+      // Exactly the LONGER of the two lines — the square and the television, which
+      // come to 2.45 heights between them — and no wider, which is what makes the
+      // four wrap two and two without being told to. The 2px is rounding slack:
+      // at a hair under, the second line breaks into three.
+      //
+      // It follows the ORDER of the entries in page.tsx, so reordering them or
+      // changing which one is .wide wants this number worked out again: it is
+      // the widths of whichever two share the last line, plus one gap.
+      width: calc(var(--frame-h) * 2.4498 + var(--frame-gap) + 2px);
+      // The box is now narrower than the column, so it is the box that has to be
+      // pushed against the divider rather than its contents.
+      margin-left: auto;
     }
 
+    // One height for all four — the ask — with the width following from the
+    // proportion. Stated rather than left to `aspect-ratio`, because a flex item
+    // sizes from its content first and a ratio alone leaves that a negotiation.
     .frame-cell {
-      aspect-ratio: 1 / 1;
+      flex: 0 0 auto;
+      height: var(--frame-h);
+      width: var(--frame-h);
+    }
+
+    // Landscape rather than square. Height is fixed now, so this adds WIDTH —
+    // they grow sideways instead of the square ones losing height. Set per entry
+    // with `className` in page.tsx, and scoped to this row so the names cannot
+    // reach the tools grid above it.
+    .frame-cell.wide {
+      width: calc(var(--frame-h) * 4 / 3);
+    }
+
+    // The television is its own proportion: 298 x 205 is the set's INK, not the
+    // png's canvas — see radio-thumb.scss, which blows the canvas up so the ink
+    // fills the cell exactly. That is what lets a picture with no frame line up
+    // with four that have one.
+    .frame-cell.tv {
+      width: calc(var(--frame-h) * 298 / 205);
+    }
+
+    // It IS the frame, so it is not given one: no rule, no wash behind it and no
+    // hatch under it. The other three are screenshots and want a frame to read
+    // as objects; this one is already an object.
+    .frame-cell.tv .entry-thumb {
+      background: none;
+      border: 0;
+
+      &::before {
+        content: none;
+      }
     }
   }
 
@@ -236,7 +387,10 @@
   // The one sentence the Tools row carries, where every other row has pills.
   .entry-blurb {
     margin: 1rem 0 0;
-    font-size: 0.9375rem;
+    // Sits directly beside .entry-points in the same block, so it takes the
+    // same small-copy face and size.
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.55;
   }
 

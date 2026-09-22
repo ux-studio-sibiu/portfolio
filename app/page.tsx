@@ -7,8 +7,13 @@ import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
 import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
-import randomizeStudioThumb from "@/app/assets/projects/randomize-studio.jpg";
+import optimizeThumb from "@/app/assets/projects/optimize.jpg";
+import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
+import { RadioThumb } from "@/app/components/radio-thumb/radio-thumb";
+import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb";
+import { StaticThumb } from "@/app/components/static-thumb/static-thumb";
+import { FluidThumb } from "@/app/components/fluid-thumb/fluid-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -26,29 +31,30 @@ export default function Home() {
         thumb={advisorThumb}
         title="Accounting platform"
         year="2018 —"
-        role="Enterprise SAAS for nordic markets, 8k firms and 40k active users"
-        stack="git, .NET, vscode, jQuery, kendo ui, figma, snowplow, cypress, signalR"
+        role=""
+        stack="git, .NET, jQuery, kendo ui, figma, snowplow, cypress, signalR"
         summary={<></>}
         points={
           <>
-            <li><Highlight>long-standing contribution</Highlight> to the product</li>
-            <li>styled components (KendoUI), inhouse design system, custom behaviour</li>
-            <li><Highlight>custom SPA framework</Highlight>, .NET MVC</li>
 
-            <li>complex UI with dense functionality</li>
+            <li className="small-heading">Notable project features:</li>
+
+            <li>accounting SaaS for nordic markets, 40k active users</li>
+            <li><Highlight>complex UI with dense functionality</Highlight>, occasional keyboard focused UI</li>
+            <li>styled components (KendoUI), in-house design system, custom behaviour</li>
             <li>configurable dashboards: resizable, draggable, lazy-loading</li>
             <li>multi-step flows with branching logic (reversible wizard)</li>
-            <li>dynamic grids with reorderable columns, persistent filtering and <Highlight>endless scroll</Highlight></li>
+            <li>dynamic grids: reorderable columns, persistent filtering, endless scroll</li>
             <li>live updates over SignalR for long-running tasks</li>
-            <li>occasional keyboard focused flows</li>
 
-            <li className="small-heading">Contributions</li>
-            <li>difficult to evolve inherited code: ad-hoc implementations, inconsistent patterns, un-documented logic, significant scale</li>
-            <li>implement <Highlight>refactoring</Highlight> strategies with version control, eventually covering all UI</li>
-            <li>enforce consistency and constraints</li>
-            <li>large data sets require optimizing for <Highlight>performance</Highlight>: async dropdowns, segmented with endless-scroll, server-side filtering</li>
-            <li>bridge <Highlight>design intent and technical implementation</Highlight></li>
-            <li>push back when UX is technically flawed and propose alternatives that scale</li>
+            <li className="small-heading">My contributions:</li>
+
+            <li><Highlight>long-standing contribution</Highlight> to product development and maintenance, knowledge sharing and documentation</li>
+            <li>implemented an in-house ajax library and modernized the existing .NET MVC into a <Highlight>custom SPA</Highlight></li>
+            <li><Highlight>led modernization effort</Highlight> on the UI to reduce complexity, remodel ux, addopt design system, centralize components, improve dx</li>
+            <li>complemented AI development by setting up <Highlight>skills, .md instructions</Highlight> and documenting existing <Highlight>confirmed patterns</Highlight></li>
+                    
+            
           </>
         }
       />
@@ -57,9 +63,9 @@ export default function Home() {
         slug="casedeschise"
         thumb={casedeschiseThumb}
         embed
-        title="Casedeschise"
+        title="casedeschise.ro"
         year="2025 — 2026"
-        role="Design & build"
+        role="Event website: design, dev, cms, analytics"
         stack="react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel"
         href="https://www.casedeschise.ro"
         summary={<>website for annual 'open house' event, in collaboration with <Highlight>local architects guild 'OAR'</Highlight></>}
@@ -105,23 +111,29 @@ export default function Home() {
 
       <LinearProject
         group="experiments"
+        embed
         slug="clasa-zero"
         className=""
         thumb={clasaZeroThumb}
-        embed
-        title="Clasa Zero"
+        title="Kids STEM puzzles"
         year="2026 —"
         role=""
-        stack="react, next.js, zustand, sanity, github copilot, chat gpt, vscode"
+        stack="react, next.js, zustand, sanity, github copilot, vscode"
         href="https://clasa-zero.vercel.app/game"
-        summary={<>A STEM game for pre-school kids — <Highlight>randomly generated puzzles</Highlight>, tested on car trips with a six year old.</>}
         points={
           <>
-            <li>Randomly generated puzzles and answer sets, <Highlight>10+ types</Highlight>: sequences, matching, counting, simple reading</li>
-            <li>Settings persist to local storage; custom puzzles can be added in Sanity</li>
-            <li>Next puzzle <Highlight>preloads</Highlight> so transitions never wait on the network</li>
-            <li>Slide back to review previous puzzles and answers</li>
-            <li>AI-generated graphics; in progress, still under user testing</li>
+            
+            <li>this iframe demo <Highlight>highlights the correct answer</Highlight></li>
+
+            <li>randomly generated puzzles and possible answers, ai generated graphics</li>
+            <li>10+ puzzle types: sequences, matching, counting, simple reading</li>
+            {/* <li>persist settings with <Highlight>local storage</Highlight></li> */}
+            <li>custom puzzles can be added on <Highlight>sanity</Highlight> cms</li>
+
+            <li>in progress — user testing with help from my 6 year old</li>
+            {/* <li><Highlight>next.js</Highlight> with <Highlight>zustand</Highlight> for state management</li> */}
+            {/* <li>focus on performance and optimization: smooth transitions, preload next puzzle</li> */}
+            <li>slide back to review previous puzzles and answers</li>
           </>
         }
       />
@@ -130,9 +142,9 @@ export default function Home() {
         slug="four-in-one"
         className="large"
         thumb={fourInOneThumb}
-        title="4-in-1"
+        title="White-label product"
         year="2015"
-        role="Concept & design, Mi-Pay"
+        role="Concept, design and dev"
         stack="Design concept"
         summary={<>Design concept for a micro-payment product, standardising the product structure <Highlight>across devices and clients</Highlight>.</>}
         points={
@@ -155,16 +167,28 @@ export default function Home() {
         role=""
         stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, claude code"
         href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
-        summary={<>Sibiu, Romania, city centre — highlight <Highlight>notable architecture</Highlight> and tell their story.</>}
+        summary={<></>}
         points={
           <>
-            <li>Sibiu, Romania, city centre: <Highlight>highlights notable architecture and tell their story</Highlight></li>
+            <li>Sibiu, ro, city centre: <Highlight>highlights notable architecture and tell their story</Highlight></li>
             <li>content via sanity cms</li>
-            <li>vector .pmtiles are self-hosted as a single static file, via MapLibre (open-source)</li>
+            <li>vector .pmtiles hosted as a static file, via MapLibre (open-source)</li>
             <li>geolocation with boundary awareness - when used on mobile</li>
             <li>draft concept, presented here in iframe</li>
           </>
         }
+      />
+
+      <LinearProject
+        group="various"
+        embed
+        slug="paint"
+        className="wide"
+        title="Paint"
+        year="2016"
+        role="click to view"
+        href="https://experiments-five-bice.vercel.app/paint-concept/"
+        summary={<>Win95  MS Paint rebuilt with claude and css</>}
       />
 
       <LinearProject
@@ -174,11 +198,11 @@ export default function Home() {
         thumb={zoomThumb}
         embed
         title="Zoom"
-        year="2026"
-        role="Concept & build"
-        stack="vue, nuxt, vercel, git, github copilot, vscode"
+        year="2015"
+        role="click to view"
+        stack=""
         href="https://vue-playground-mauve.vercel.app/zoom"
-        summary={<><Highlight>zoom based navigation</Highlight> for presentation website</>}
+        summary={<>Navigation concept for a presentation website</>}
         points={
           <>
             <li>css-transform navigation using Zoomooz.js</li>
@@ -189,15 +213,6 @@ export default function Home() {
         }
       />
 
-      <LinearProject
-        group="various"
-        embed
-        slug="paint"
-        title="Paint"
-        role="Canvas, UI"
-        href="https://experiments-five-bice.vercel.app/paint-concept/"
-        summary={<>MS Paint rebuilt in one file, bevels and all — a study in Windows 95 chrome with <Highlight>nothing but CSS borders</Highlight>.</>}
-      />
 
       {/* The two oldest things here, both still running off the same static
           files they shipped with — served from the playground repo, which is
@@ -206,67 +221,75 @@ export default function Home() {
         group="various"
         embed
         slug="optimize-studio"
+        thumb={optimizeThumb}
         title="Optimize Studio"
         year="2016"
-        role="Interactions & effects"
+        role="click to view"
         stack=".NET MVC, jQuery, Photoshop"
         href="https://ux-studio-sibiu.github.io/playground/projects/old-portfolio/index.html"
-        summary={<>A collage of interaction, effect and technique studies from an earlier portfolio — modular, responsive, and <Highlight>obsessed with optimisation</Highlight>.</>}
+        summary={<>Small collage of ui interactions, effects and techniques</>}
       />
 
       <LinearProject
         group="various"
         embed
         slug="radio"
-        title="Radio"
-        year="2015"
-        role="Audio & visuals"
+        className="tv"
+        thumbNode={<RadioThumb />}
+        title="Instant dance party"
+        year="2014"
+        role="click to view"
         stack="jQuery, Bootstrap"
         href="https://ux-studio-sibiu.github.io/playground/projects/radio-prototype/index.html?curated"
-        summary={<>Random audio paired with random visuals — <Highlight>instant party</Highlight>. Space toggles fullscreen, the red button opens the playlist.</>}
+        summary={<>Plays random music and visuals</>}
       />
 
       <LinearProject
         group="tools"
         embed
         slug="randomize-studio"
-        thumb={randomizeStudioThumb}
+        thumbNode={<RandomizeThumb />}
         title="Randomize Studio"
-        role="Typography"
+        role="click to view"
         stack="Google Fonts"
         href="https://experiments-five-bice.vercel.app/font-experiments/"
-        summary={<>A type-pairing playground: editable heading, subheading and body over a background image, with <Highlight>~40 fonts swapped live</Highlight>.</>}
+        summary={<>Generate random combinations of typography, color, layout and effects.</>}
       />
 
       <LinearProject
         group="tools"
         embed
-        slug="background-experiments"
-        title="Background Experiments"
-        role="SVG, CSS"
+        slug="texture-studio"
+        thumb={textureStudioThumb}
+        thumbLabel
+        title="Texture Studio"
+        role="click to view"
         href="https://experiments-five-bice.vercel.app/background-experiments/"
-        summary={<>A browser for <Highlight>86 tileable SVG patterns</Highlight>, with live controls for scale, opacity, colour tint and blend mode.</>}
+        summary={<>Try out svg overlays and blending modes over images</>}
       />
 
       <LinearProject
         group="tools"
         embed
         slug="fluid-hover"
+        thumbNode={<FluidThumb />}
         title="Fluid hover"
-        role="WebGL"
-        stack="three.js, GLSL"
+        role="click to view"
+        stack=""
         href="https://experiments-five-bice.vercel.app/effect/"
-        summary={<>A shader that <Highlight>smears an image toward the cursor</Highlight> — faster motion, stronger displacement, chromatic aberration on the edges.</>}
+        summary={<> Model a mouse driven visual effect using webGL </>}
       />
 
       <LinearProject
         group="tools"
         embed
         slug="static-background"
+        thumbNode={<StaticThumb />}
+        thumbLabel
         title="Static background"
-        role="Canvas, Motion"
+        role="click to view"
         href="https://experiments-five-bice.vercel.app/static-background/"
-        summary={<>The animated film-grain overlay that fades in behind navigation menus. Canvas 2D, no dependencies, <Highlight>about 5 KB</Highlight>.</>}
+        summary={<>Generate animated film-grain overlays</>}
       />
     </ShowcaseLinear>
   );

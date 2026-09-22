@@ -28,40 +28,83 @@ const ARRIVE_TO = 55;
 // sets off — which is what lets each of them cross slowly while the whole row
 // still settles inside the stretch of scroll it is on screen for.
 //
-// Where the whole group has finished arriving, as the position of the row's own
-// MIDDLE on the screen: everything is home by the time the group reaches half
-// way up. Worked back to a row-top percentage at measure time, because how far
-// the middle is from the top depends on how tall the row is and how tall the
-// screen is, and neither is known from here.
+// Where the whole group has finished arriving, as the position of the FRAMES'
+// middle on the screen: everything is home by the time they reach half way up.
+// Worked back to a row-top percentage at measure time, because how far that
+// middle is from the row's top depends on how tall the frames are and how tall
+// the screen is, and neither is known from here. The frames rather than the row:
+// see the sum in schedule(), and what taking half of the row instead cost.
 const GROUP_END = 50;
 // How long the last frame is in motion. It is the only run stated outright, and
-// it sets the pace every other frame travels at.
-const GROUP_LAST_RUN = 35;
-// The waits between them setting off, both deliberately shorter than a frame's
-// run: they are staggered, not queued, so three or four are always crossing at
-// once and the stack reads as one thing arriving rather than three. Where the
+// it sets the pace every other frame travels at — so it is also the knob that
+// decides whether a sequence FITS, and how much of one there is room for.
+//
+// It was 35, which put the longest run in Various at 57% of the screen. Four
+// frames each taking that long cannot also be spaced far enough apart to read
+// one at a time: the first would have had to set off at 126%, well below the
+// bottom of the screen, and would have been half way across before the row came
+// into view. Shortening it scales every run down in proportion — nothing here
+// travels further, it all just travels faster.
+//
+// 22, and it is the ONLY number here that moved from the original 35. That 35
+// was set against a Various row of four small squares; this one is half again as
+// tall with wider frames, so the same run carried the first frame's start to
+// 119% — below the bottom of the screen, arriving half crossed already. 22 is
+// about the largest that keeps every frame setting off on screen while leaving
+// the overlap where it was: 80% in the tools row, 96% in Various. At 24 that
+// second number was 101%, a hair below the fold.
+const GROUP_LAST_RUN = 22;
+// The waits between them setting off, both shorter than a frame's run: they are
+// staggered, not queued, so two or three are usually crossing at once. Where the
 // first one sets off falls out of these — a fifth tool simply starts a delay
 // earlier.
+//
+// Five is deliberately a small fraction of a run — about a seventh of one — so
+// three or four frames are always crossing at once and the stack reads as one
+// thing arriving rather than as a queue. That overlap is the effect, not a
+// side-effect of it.
+//
+// Worth knowing before reaching for this: it was tried at 12 and at 20. At 20
+// each frame all but lands before the next sets off, which is a clean cascade
+// and much too slow and separated to read as one movement. At either value the
+// runs also have to be cut hard to fit, which makes every frame snap across.
+// The overlap is what lets each one travel slowly.
 //
 // Two numbers rather than one because the last frame is the feature: the stack
 // comes in as a flurry, and then it follows on a beat of its own. That beat has
 // to be longer than the difference in their runs, or the short trip from the
 // divider would land it before the stack it is supposed to follow.
+//
+// GROUP_LAST_DELAY is a FLOOR, not the gap itself, and for most of its range it
+// is not even the binding one — see GROUP_CLEAR, which sets a floor of its own
+// and has been the larger of the two. Moving this from 20 down to 14 changed
+// nothing at all; the clearance was holding the feature 20 behind the stack on
+// its own. Both had to come down together.
 const GROUP_DELAY = 5;
-const GROUP_LAST_DELAY = 20;
+const GROUP_LAST_DELAY = 10;
 // Daylight between two frames that share a band, on top of the distance that
 // merely keeps them from overlapping. Without it they arrive on the same frame:
 // same speed, and a head start of exactly the ground between them means the one
 // in front finishes exactly as the one behind does, which reads as a pair moving
 // as one rather than as two things arriving.
-const GROUP_CLEAR = 9;
+//
+// It is also, in practice, what decides how far the feature trails the stack:
+// the feature shares a band with every frame beside it, so this lands on top of
+// their horizontal distance for each one. At 9 the big frame was still half out
+// past the divider when the stack had settled. 4 brings it in behind them and
+// still has it landing last, by 4% of the screen rather than 9.
+const GROUP_CLEAR = 4;
 
 // What a tool's name in the copy promises. The frames say "there is something
 // behind this" with a card at the pointer, so a name that opens the same thing
 // says it the same way rather than inventing a second vocabulary for it. The
 // card is deliberately just the label: the sentence around the name is already
 // the description, which is what a frame's card has to supply and this does not.
-const LINK_LABEL = "View details";
+const LINK_LABEL = "view details";
+// What a project frame promises, as against a tool's name in a sentence. The
+// rows built from single entries have no copy naming them, so the card is the
+// only thing that says the frame can be opened at all.
+const FRAME_LABEL = "view project";
 
 export function BandExperiments({
   items,
@@ -85,22 +128,25 @@ export function BandExperiments({
   // to know. Same lookup whichever row the name happens to sit in.
   const all = [...items, ...tools, ...various];
 
-  const linkHover = {
+  const hoverCard = (label: string) => ({
     // Mouse only, like the frames: on a touch screen the card would come up
     // under the finger that just tapped the name open.
     onPointerEnter: (e: React.PointerEvent) => {
-      if (e.pointerType === "mouse") setLinked({ title: LINK_LABEL, x: e.clientX, y: e.clientY });
+      if (e.pointerType === "mouse") setLinked({ title: label, x: e.clientX, y: e.clientY });
     },
     // Brings it back after a scroll has closed it, without having to leave the
     // name and come back.
     onPointerMove: (e: React.PointerEvent) => {
-      if (!linked && e.pointerType === "mouse") setLinked({ title: LINK_LABEL, x: e.clientX, y: e.clientY });
+      if (!linked && e.pointerType === "mouse") setLinked({ title: label, x: e.clientX, y: e.clientY });
     },
     onPointerLeave: () => setLinked(null),
     // Opening the detail slides the track out from under the pointer without it
     // ever leaving the name, so there is no pointerleave to take the card down.
     onPointerDown: () => setLinked(null),
-  };
+  });
+
+  const linkHover = hoverCard(LINK_LABEL);
+  const frameHover = hoverCard(FRAME_LABEL);
 
   // A tool's name inside a sentence, opening exactly what its frame opens. A
   // button, not an anchor: it is a pane sliding over the page, not a navigation
@@ -165,11 +211,18 @@ export function BandExperiments({
         // Alone, a frame crosses the whole window. In company they share it, one
         // after another with no overlap, on two rules:
         //
-        //   ORDER   by where a frame sits, not where it is written: the left
-        //           column first and top to bottom, then the column after it. So
-        //           the stack lands first and the wide one settles against the
-        //           divider last, and if the two columns ever swap back the
-        //           sequence follows the layout without being told.
+        //   ORDER   by where a frame sits, not where it is written: line by line
+        //           and left to right within a line, so they arrive in the order
+        //           they are read. A frame tall enough to span the others' lines
+        //           — the tools feature — is the one exception and goes LAST, so
+        //           the stack lands first and it settles against the divider
+        //           after them.
+        //
+        //           This was offsetLeft first, which is column-major: right for
+        //           the tools grid, where the stack IS a column, and wrong for
+        //           Various the moment that row became two wrapped lines of two.
+        //           There the left edges no longer track reading order, and it
+        //           was arriving bottom-left, top-left, bottom-right, top-right.
         //   SHARE   by distance, not in equal slices, so they all travel at the
         //           same speed. The wide one against the divider has barely any
         //           ground to cover next to the stack crossing the whole column;
@@ -184,9 +237,21 @@ export function BandExperiments({
         // from the measured positions every time ScrollTrigger refreshes.
         const schedule = () => {
           const distances = frames.map((f) => edge() - f.offsetLeft);
+          // Which frame, if any, is the feature: taller than half again the
+          // middle of the pack. Measured rather than declared, so the row that
+          // has no such frame simply has none and nothing is special-cased.
+          const heights = frames.map((f) => f.offsetHeight).sort((x, y) => x - y);
+          const median = heights[Math.floor(heights.length / 2)];
+          const isFeature = (f: HTMLElement) => f.offsetHeight > median * 1.5;
+
           const order = frames
             .map((_, i) => i)
-            .sort((a, b) => frames[a].offsetLeft - frames[b].offsetLeft || frames[a].offsetTop - frames[b].offsetTop);
+            .sort((a, b) => {
+              const fa = frames[a];
+              const fb = frames[b];
+              if (isFeature(fa) !== isFeature(fb)) return isFeature(fa) ? 1 : -1;
+              return fa.offsetTop - fb.offsetTop || fa.offsetLeft - fb.offsetLeft;
+            });
 
           // Percent of screen per pixel of travel, taken from the one frame whose
           // run is stated rather than derived. Everything else moves at this rate,
@@ -195,10 +260,24 @@ export function BandExperiments({
           const pace = GROUP_LAST_RUN / (distances[last] || 1);
           const runOf = (i: number) => distances[i] * pace;
 
-          // GROUP_END is where the row's middle should be when the last frame
-          // lands; ScrollTrigger measures the row's top, so half the row's height
+          // GROUP_END is where the FRAMES' middle should be when the last one
+          // lands; ScrollTrigger measures the row's top, so half their height
           // comes off it. In percent of the screen, like everything else here.
-          const halfRow = (row.offsetHeight / (scroller.clientHeight || 1)) * 50;
+          //
+          // Measured off the FRAMES, not off the row and not off the column they
+          // sit in. The row is the frames AND the copy beside them, and the copy
+          // is by far the taller of the two — 589px against 336px in Various
+          // once the frames grew. Taking half of 589 put the anchor at 34.9% of
+          // the screen, so the last frame did not begin to move until it was
+          // already well into view, leaving a hole where it should have been for
+          // most of a screen of scrolling.
+          //
+          // .entry-visual is no better: it is a grid item and stretches to the
+          // row's height, so it measured 525 of those 589. The frames' own
+          // extent is the only thing here that is actually the frames.
+          const top = Math.min(...frames.map((f) => f.offsetTop));
+          const bottom = Math.max(...frames.map((f) => f.offsetTop + f.offsetHeight));
+          const halfRow = ((bottom - top) / (scroller.clientHeight || 1)) * 50;
           const lastFrom = GROUP_END - halfRow + GROUP_LAST_RUN;
 
           // Counted back from the last frame's start: one longer wait to clear it,
@@ -312,14 +391,16 @@ export function BandExperiments({
             items={tools}
             className="tools-entry"
             rows={Math.max(1, tools.length - 1)}
-            title="Tools"
+            title="Design Tooling"
+            viewFeature
             stack="claude code, .skills, html, css, js, webgl, dev-design tooling"
+            blurb={<>Simple tools for experimenting with design elements such as <Highlight>font, colour, image and texture</Highlight>. Lightweight, can be used as <Highlight>.skills</Highlight> on existing projects, to enable design previews in-browser.</>}
             points={
               <>
-                <li>simple tools for experimenting with design elements such as <Highlight>font, colour, image and texture</Highlight>. Intentionally lightweight, usable stand alone or as a complement to <Highlight>.skills</Highlight>. Applied to an existing project to enable direct design edits in-browser.</li>
-                <li>{toolLink("randomize-studio", "Randomize Studio")} pairs type over <Highlight>~40 Google Fonts</Highlight>, loaded on demand with the right weight and italic axes</li>
-                <li>{toolLink("background-experiments", "Background Experiments")} browses <Highlight>86 tileable SVG patterns</Highlight>, two layers deep, with scale, rotation, tint and blend mode</li>
-                <li>with {toolLink("fluid-hover", "webGL effect")} it is possible to experiment on images and simple clickable elements — it pauses when hidden and honours reduced motion</li>
+                <li>{toolLink("randomize-studio", "Randomize Studio")} :  adobe-like ui, for experimenting with typography, layout, effects. Its modeled as a landing-page generator</li>
+                <li>{toolLink("texture-studio", "Texture Studio")} : handles svg overlays and blending modes over images</li>
+                <li>{toolLink("fluid-hover", "Fluid hover")} : models a mouse driven, webGL visual effect </li>
+                <li>{toolLink("static-background", "Static Background")} : generates animated film-grain overlays</li>
               </>
             }
             onOpen={onOpen}
@@ -330,10 +411,11 @@ export function BandExperiments({
               <div className="entry-visual">
                 {/* The frame opens the experiment too — same target as the View
                     button, so the obvious click works. */}
-                <button type="button" className="entry-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`}>
-                  {child.props.thumb
-                    ? <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />
-                    : child.props.href && <iframe src={child.props.href} title={`${child.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />}
+                <button type="button" className="entry-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...frameHover}>
+                  {child.props.thumbNode
+                    ?? (child.props.thumb
+                      ? <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />
+                      : child.props.href && <iframe src={child.props.href} title={`${child.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />)}
                 </button>
               </div>
 
@@ -371,15 +453,15 @@ export function BandExperiments({
           <FrameRow
             items={various}
             className="various-entry"
-            title="Various"
+            title="Archive"
             stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, github copilot"
+            blurb={<>Concepts, prototypes and <Highlight>relics from another age</Highlight></>}
             points={
               <>
-                <li>concepts and prototypes, the oldest of them <Highlight>a decade back</Highlight> and still running off the files they shipped with — nothing rebuilt, nothing re-bundled</li>
-                <li>{toolLink("zoom", "Zoom")} navigates a presentation site by <Highlight>css transform rather than scroll</Highlight>, the iframe messaging its state back to the page around it so the background can crossfade behind</li>
-                <li>{toolLink("paint", "Paint")} is MS Paint in a single file — Windows 95 chrome, bevels and all, out of <Highlight>nothing but CSS borders</Highlight></li>
-                <li>{toolLink("optimize-studio", "Optimize Studio")} collects interaction and effect studies behind the jQuery stack of the day — zoomooz, sly, modernizr, enquire — with <Highlight>optimisation as the whole point</Highlight></li>
-                <li>{toolLink("radio", "Radio")} pairs 58 tracks with <Highlight>145 looping GIFs</Highlight> at random, each held for its own duration; space toggles fullscreen and the red button opens the playlist</li>
+                <li>2016 - {toolLink("paint", "Paint")} : Win95 MS Paint rebuilt with claude and CSS</li>
+                <li>2016 - {toolLink("optimize-studio", "Optimize Studio")} : ui interactions, effects and techniques</li>
+                <li>2015 - {toolLink("zoom", "Zoom")} : navigation concept for a presentation website</li>
+                <li>2014 - <Highlight>{toolLink("radio", "Instant dance party")}</Highlight> plays random music and visuals</li>
               </>
             }
             onOpen={onOpen}
@@ -411,15 +493,21 @@ function FrameRow({
   stack,
   points,
   rows,
+  viewFeature,
   onOpen,
 }: {
   items: React.ReactElement<ProjectProps>[];
   className: string;
   title: string;
-  blurb?: string;
+  blurb?: React.ReactNode;
   stack?: string;
   points?: React.ReactNode;
   rows?: number;
+  // Gives the row the same View button a single entry has, opening the FIRST
+  // item — which in the tools grid is the feature, the frame that spans the row
+  // and the one the copy is mostly about. Opt-in, because a row of odds and ends
+  // has no one frame that stands for the set.
+  viewFeature?: boolean;
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
   // Which frame the pointer is over, if any. These are frames without captions —
@@ -441,10 +529,10 @@ function FrameRow({
   return (
     <li className={`scroll-entry-secondary ${className}`}>
       <div className="entry-visual">
-        <ul className="frame-grid" style={rows ? { gridTemplateRows: `repeat(${rows}, var(--tool-row))` } : undefined}>
+        <ul className="frame-grid" style={rows ? ({ gridTemplateRows: `repeat(${rows}, var(--tool-row))`, "--tool-rows": rows } as React.CSSProperties) : undefined}>
           {items.map((item) => (
             <li
-              className="frame-cell"
+              className={`frame-cell${item.props.className ? ` ${item.props.className}` : ""}`}
               key={item.props.title}
               data-preload={item.props.href}
               // Mouse only: on a touch screen the card would come up under the
@@ -461,9 +549,15 @@ function FrameRow({
               onPointerDown={() => setHovered(null)}
             >
               <button type="button" className="entry-thumb" onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
-                {item.props.thumb
-                  ? <Image src={item.props.thumb} alt="" sizes="(min-width: 768px) 20vw, 50vw" placeholder="blur" className="frame-img" />
-                  : item.props.href && <iframe src={item.props.href} title={`${item.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />}
+                {item.props.thumbNode
+                  ?? (item.props.thumb
+                    ? <Image src={item.props.thumb} alt="" sizes="(min-width: 768px) 20vw, 50vw" placeholder="blur" className="frame-img" />
+                    : item.props.href && <iframe src={item.props.href} title={`${item.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />)}
+
+                {/* aria-hidden: the button already carries the same words in its
+                    label, and a screen reader reading them twice is worse than
+                    not having them. This is for the eye. */}
+                {item.props.thumbLabel && <span className="frame-label" aria-hidden="true">{item.props.title}</span>}
               </button>
             </li>
           ))}
@@ -489,6 +583,15 @@ function FrameRow({
 
           {points && <ul className="entry-points">{points}</ul>}
         </div>
+
+        {/* Named rather than a bare "View": this row has four frames in it, so
+            the button has to say which one it opens. Same class, so it is the
+            same control as every other View on the page. */}
+        {viewFeature && (
+          <button type="button" className="view-more-button" onClick={() => onOpen(items[0])}>
+            View {items[0].props.title} <span className="row-arrow" aria-hidden="true">&rarr;</span>
+          </button>
+        )}
       </div>
     </li>
   );

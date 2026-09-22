@@ -24,10 +24,18 @@
   // .entry-text carries the measure.
   max-width: none;
 
+  // The mono, not the page face. It is the small-copy voice here: the label
+  // device has always used it, and running the points in it too makes the whole
+  // of an entry's detail read as one thing, set apart from the title above it.
+  // Titles and anything display-sized stay in Archivo.
+  //
+  // 0.8rem rather than the 0.9375 this held in Archivo — the mono is wider per
+  // character but shorter in the x-height, so it wants coming down a step.
   li {
     position: relative;
     padding-left: 1.5rem;
-    font-size: 0.9375rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.5;
     color: var(--color-ink);
 

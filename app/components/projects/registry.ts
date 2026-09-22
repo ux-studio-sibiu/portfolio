@@ -18,7 +18,7 @@ export const DETAILS: Record<string, React.ComponentType> = {
 
   // Experiments. Same registry, same lazy chunk per entry — they open into the
   // same detail pane as a project does, and only the index entry differs.
-  "background-experiments": dynamic(() => import("./experiments/background-experiments")),
+  "texture-studio": dynamic(() => import("./experiments/texture-studio")),
   "fluid-hover": dynamic(() => import("./experiments/fluid-hover")),
   "randomize-studio": dynamic(() => import("./experiments/randomize-studio")),
   paint: dynamic(() => import("./experiments/paint")),

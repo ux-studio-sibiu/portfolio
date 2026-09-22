@@ -151,6 +151,20 @@ $ghost-count: 5;
     color: var(--color-muted);
   }
 
+  // The rows are sentences, not names, so they take the small-copy voice the
+  // entry points and the identity blurb take — see app/styles/_devices.scss.
+  // Here rather than on .spec-name-small in globals.scss because this band is
+  // its only user, and the base .spec-name stays a display device for the bands
+  // that set titles with it.
+  //
+  // The tracking goes with the face: -0.02em was cut for Archivo at 1.25rem and
+  // closes the mono up badly at this size.
+  .spec-name-small {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    letter-spacing: normal;
+  }
+
   // Square bullet at the head of every row — this band only, which is why it is
   // here rather than on the shared .spec-name in globals.scss. Core
   // technologies uses the same device and keeps its rows unmarked.
