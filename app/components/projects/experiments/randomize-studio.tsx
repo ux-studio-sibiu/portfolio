@@ -6,7 +6,7 @@ import "./experiment.scss";
 export default function RandomizeStudio() {
   return (
     <div className="nsc-experiment-embed">
-      <iframe src="https://experiments-five-bice.vercel.app/font-experiments/" title="Randomize Studio, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+      <iframe src="https://experiments-five-bice.vercel.app/randomize-studio/" title="Randomize Studio, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
     </div>
   );
 }
