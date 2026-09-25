@@ -131,7 +131,8 @@ a {
   // only ever bit in browsers running the scrubbed path: Firefox saw it, and
   // Chromium, which runs the native one and never sets the class, did not.
   @supports not (background-clip: text) {
-    &.is-lit {
+    &.is-lit,
+    &.is-selected {
       color: var(--color-bg);
     }
   }
@@ -179,6 +180,13 @@ a {
     @media (prefers-reduced-motion: reduce) {
       --lit: 1;
     }
+  }
+
+  // Always lit, never swept — <Highlight alwaysSelected>. After .pinned so it
+  // wins on source order at the same specificity.
+  &.is-selected {
+    --lit: 1;
+    animation: none;
   }
 
   // Nothing to scrub: show the finished state.

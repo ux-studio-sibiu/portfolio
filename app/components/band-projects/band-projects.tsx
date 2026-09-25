@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
+import { Highlight } from "@/app/components/highlight/highlight";
 import type { ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-projects.scss";
 
@@ -288,7 +289,7 @@ export function BandProjects({
   return (
     <section className="band nsc-band-projects" data-section="Projects" data-identity-handover="" ref={root}>
       <div className="band-content is-full">
-        <h2 className="band-heading band-title-large">Projects</h2>
+        <h2 className="band-heading band-title-large">Projects <span className="heading-subtitle"><Highlight alwaysSelected>Case studies</Highlight></span></h2>
 
         {/* The FIRST entry is what the fixed column is timed off — see
             `data-section-anchor` in showcase-linear.tsx. Without it the band box
@@ -339,7 +340,7 @@ export function BandProjects({
               <hr className="entry-rule" />
 
               <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
-                {VIEW_LABEL} <span className="row-arrow" aria-hidden="true">&rarr;</span>
+                {child.props.viewLabel ?? VIEW_LABEL} <span className="row-arrow" aria-hidden="true">&rarr;</span>
               </button>
             </div>
           </article>

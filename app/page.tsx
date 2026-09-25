@@ -68,6 +68,7 @@ export default function Home() {
         role="Event website: design, dev, cms, analytics"
         stack="react, next.js, sanity, webhooks, google maps, resend, umami, vscode, github actions, vercel"
         href="https://www.casedeschise.ro"
+        viewLabel="View Live"
         summary={<>website for annual 'open house' event, in collaboration with <Highlight>local architects guild 'OAR'</Highlight></>}
         points={
           <>
@@ -85,7 +86,7 @@ export default function Home() {
         }
       />
 
-      <LinearProject
+      {/* <LinearProject
         slug="photography"
         className="medium"
         thumb={photographyThumb}
@@ -107,7 +108,7 @@ export default function Home() {
             <li>features <Highlight>availability calendar</Highlight> contact form, generate .pdf contracts from templates</li>
           </>
         }
-      />
+      /> */}
 
       <LinearProject
         group="experiments"

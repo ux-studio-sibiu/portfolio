@@ -29,6 +29,8 @@ export type ProjectProps = {
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;
+  // Replaces the "View project" wording on the entry's button.
+  viewLabel?: string;
   // Which band this belongs to. Everything is one list with one detail pane
   // behind it — the groups differ in how an entry is laid out, not in what
   // happens when it is opened. No group means the projects band.

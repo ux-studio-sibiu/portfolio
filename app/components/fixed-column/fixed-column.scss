@@ -175,7 +175,7 @@ $fade-step: 0.34;
       // running past the backdrop would be the one thing in the column that is
       // not covered by it.
       max-width: min(calc((50vw - 4rem) * 0.72), var(--identity-measure));
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
   }
 

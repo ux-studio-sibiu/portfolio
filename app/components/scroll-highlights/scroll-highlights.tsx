@@ -18,8 +18,8 @@ export function ScrollHighlights() {
   useEffect(() => {
     // Pinned phrases are excluded: they do not travel, so there is no rect to
     // measure. Their sweep comes off --sweep-px in CSS instead — see
-    // .highlight-on-scroll.pinned in globals.scss.
-    const SELECTOR = ".highlight-on-scroll:not(.pinned)";
+    // .highlight-on-scroll.pinned in globals.scss. Selected ones never sweep.
+    const SELECTOR = ".highlight-on-scroll:not(.pinned):not(.is-selected)";
 
     // The browser does it better; nothing for this component to do.
     if (CSS.supports("animation-timeline", "view()")) return;
