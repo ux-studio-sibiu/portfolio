@@ -259,7 +259,7 @@ export default function Home() {
         title="Randomize Studio"
         role="click to view"
         stack="Google Fonts"
-        href="https://experiments-five-bice.vercel.app/randomize-studio/"
+        href="https://experiments-five-bice.vercel.app/randomize-studio/intro/"
         summary={<>Generate random combinations of typography, color, layout and effects.</>}
       />
 

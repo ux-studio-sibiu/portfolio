@@ -1,5 +1,5 @@
 import Image from "next/image";
-import stage from "@/app/assets/projects/randomize-studio.jpg";
+import stage from "@/app/assets/projects/randomize-studio-2.jpg";
 import panel from "@/app/assets/projects/randomize-panel.jpg";
 import "./randomize-thumb.scss";
 
