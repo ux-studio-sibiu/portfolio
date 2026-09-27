@@ -200,41 +200,52 @@
   // for -1 to mean anything.
   .tools-entry {
     .frame-grid {
-      // A row of the narrow stack. Times the number of them, plus the gaps
-      // between, this is the height of the whole grid — and so the height of the
-      // feature spanning it.
-      --tool-row: clamp(4.5rem, 7vw, 7rem);
-      // Narrow stack first, wide one second: the feature sits against the
-      // divider, which is the edge everything in this column is aligned to and
-      // the side the frames arrive from.
-      //
-      // The feature's column is its own SPANNED HEIGHT written out, which is
-      // what makes it square — it was 2fr, and square only by accident of how
-      // the numbers happened to fall (245 against 248). The narrow stack takes
-      // whatever is left. --tool-rows is written beside the row template by the
-      // component, because the count is the one thing only it knows; the
-      // fallback is what the four tools currently come to.
-      grid-template-columns: 1fr calc(
-        var(--tool-row) * var(--tool-rows, 3) + (var(--tool-rows, 3) - 1) * var(--frame-gap)
-      );
+      // The feature takes the proportion of its picture - randomize-studio-2.jpg
+      // is 953 x 762 - rather than being cut square. Change the picture, change
+      // these two numbers.
+      --feature-ratio: calc(953 / 762);
+      // A stack frame's width over its row height: 150 across a 106px row, the
+      // shape the three had when the feature was square. Kept, so they are the
+      // same frames, only smaller.
+      --stack-ratio: calc(150 / 106);
 
-      // The feature is asked for at exactly 350px. Its width IS its spanned
-      // height, so the row is worked back from the 350 rather than the other way
-      // round: three rows and two gaps come to exactly that, and the frame stays
-      // square at 350 x 350.
-      //
-      // Held to wide and up, because 350 does not fit below it. The media column
-      // is min(742px, 50vw) less 128px of padding, so at 1024 there are 384px to
-      // share: 350 of them would leave the stack beside it 18px wide. At 1440
-      // there are 592, and the stack keeps 226. Between the two the row goes on
-      // sizing itself off 7vw as before.
-      // Off --tool-rows like everything else here, not off a hard 3: add a fifth
-      // tool and the stack grows a row, and the feature is still 350.
+      // What a row WAS, when the feature was square - the stack's row, whose
+      // count plus the gaps between is the height of the whole grid. Below wide
+      // it sized itself off 7vw; wide and up it was worked back from a 350px
+      // feature (350 does not fit below wide: at 1024 the media column has 384px
+      // to share). Off --tool-rows rather than a hard 3, so a fifth tool grows
+      // the stack by a row and nothing here changes.
+      --tool-base: clamp(4.5rem, 7vw, 7rem);
       @include respond-to("wide") {
-        --tool-row: calc(
+        --tool-base: calc(
           (350px - (var(--tool-rows, 3) - 1) * var(--frame-gap)) / var(--tool-rows, 3)
         );
       }
+
+      // The row now, worked back from the block keeping the width it had: a
+      // wider feature is paid for with height, shared by the feature and the
+      // stack beside it so their tops and bottoms still line up. With N rows, a
+      // gap g, the feature ratio k and the stack ratio a, the old block was
+      // (N + a) x base + N x g wide, and the new one is k x (N x row + (N - 1) x g)
+      // + g + a x row. Setting them equal gives this. At wide that is an 89px row:
+      // a 374 x 299 feature and a 126px stack, 516px across as before.
+      --tool-row: calc(
+        ((var(--tool-rows, 3) + var(--stack-ratio)) * var(--tool-base)
+          + (var(--tool-rows, 3) - 1) * (1 - var(--feature-ratio)) * var(--frame-gap))
+        / (var(--feature-ratio) * var(--tool-rows, 3) + var(--stack-ratio))
+      );
+
+      // Narrow stack first, wide one second: the feature sits against the
+      // divider, which is the edge everything in this column is aligned to and
+      // the side the frames arrive from. The feature's column is its own SPANNED
+      // HEIGHT times its picture's proportion; the stack takes what is left.
+      // --tool-rows is written beside the row template by the component, because
+      // the count is the one thing only it knows; the fallback is what the four
+      // tools currently come to.
+      grid-template-columns: 1fr calc(
+        (var(--tool-row) * var(--tool-rows, 3) + (var(--tool-rows, 3) - 1) * var(--frame-gap))
+          * var(--feature-ratio)
+      );
     }
 
     // Document order still leads with the feature — it is what the component
@@ -253,14 +264,13 @@
       justify-self: end;
       // One width for all three, so the stack is a column of equal frames again
       // rather than a ragged one — no per-cell rules, and adding a fifth tool
-      // needs nothing here.
+      // needs nothing here. Off the row, so they keep their shape as the row
+      // shrinks to make room for the feature.
       //
       // min(_, 100%) is what keeps it honest at every width: 100% is the track,
-      // which is 1fr of whatever the feature leaves. Where the column is wide the
-      // stated 150 wins; where it is not, a frame clips to the track instead of
-      // overrunning it. At 1024 the track is 120px and all three come out 120 —
-      // the same as when they filled it.
-      width: min(150px, 100%);
+      // which is 1fr of whatever the feature leaves, and a frame clips to it
+      // instead of overrunning it.
+      width: min(calc(var(--tool-row) * var(--stack-ratio)), 100%);
     }
   }
 
