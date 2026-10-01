@@ -5,7 +5,7 @@ import { Highlight } from "@/app/components/highlight/highlight";
 import "./fixed-column.scss";
 
 // Column 1 of the index pane: fixed, never scrolls, and carries the identity —
-// label, name, blurb and facts — faded as ONE unit by --identity-fade, which the
+// label, name and blurb — faded as ONE unit by --identity-fade, which the
 // showcase writes on scroll.
 //
 // It used to carry the section rail and the menu button too. Both are their own
@@ -30,24 +30,7 @@ export function FixedColumn() {
           Passionate about craft, I <Highlight pinned>bridge design and dev</Highlight> to build polished, practical interfaces. 
           I enjoy putting together <Highlight pinned delay={250}>creative custom designs</Highlight>, using AI tools to move from quick prototypes to finished products.
         </p>
-
-        <dl className="fixed-facts">
-          <div className="fact">
-            <dt>Based in</dt>
-            <dd>Sibiu, Romania</dd>
-          </div>
-          <div className="fact">
-            <dt>Working with</dt>
-            <dd>React, Next.js, TypeScript, GSAP</dd>
-          </div>
-          <div className="fact">
-            <dt>Contact</dt>
-            <dd><a className="fixed-mail" href="mailto:hello@example.com">hello@example.com</a></dd>
-          </div>
-        </dl>
       </div>
-
-
     </aside>
   );
 }

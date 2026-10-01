@@ -193,12 +193,7 @@
 
   // Column 1 is laid OVER the scroller, so with pointer events on it is a dead
   // half of the screen: the wheel lands on a box that does not scroll and the
-  // pane underneath never moves. It is a backdrop — it takes no events at all,
-  // and the three things you can actually press take them back for themselves.
-  //
-  // The mail link is scoped to the un-faded state rather than given a blunt
-  // `auto`: a descendant re-enables events through an ancestor that switched
-  // them off, so an invisible link would otherwise still be clickable.
+  // pane underneath never moves. It is a backdrop, and takes no events at all.
   .pane-fixed {
     pointer-events: none;
     // Fades back out as the last band comes up, so Contact reads the way the
@@ -211,10 +206,6 @@
   // target once there is nothing to see.
   &.is-column-hidden .pane-fixed {
     visibility: hidden;
-  }
-
-  &:not(.is-identity-hidden) .pane-fixed .fixed-mail {
-    pointer-events: auto;
   }
 
   // The scroller. It spans the WHOLE pane and runs under column 1 rather than

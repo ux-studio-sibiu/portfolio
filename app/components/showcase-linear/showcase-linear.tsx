@@ -274,11 +274,6 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       const sweepOver = el.clientHeight * SWEEP_OVER;
       column.style.setProperty("--sweep-px", String(el.scrollTop));
       column.style.setProperty("--sweep-over", String(sweepOver > 0 ? sweepOver : 1));
-      // Fully invisible: stop it swallowing clicks on the email link. A class on
-      // the shell is fine where a property is not — it changes at a threshold
-      // rather than on every frame, and toggling one that is already set does
-      // not touch the DOM at all.
-      shell.classList.toggle("is-identity-hidden", t === 1);
 
       // And the column itself on the way out, on both boxes that fade with it.
       const outroSpan = outroEnd - outroStart;

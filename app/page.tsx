@@ -51,7 +51,7 @@ export default function Home() {
 
             <li><Highlight>long-standing contribution</Highlight> to product development and maintenance, knowledge sharing and documentation</li>
             <li>implemented an in-house ajax library and modernized the existing .NET MVC into a <Highlight>custom SPA</Highlight></li>
-            <li><Highlight>led modernization effort</Highlight> on the UI to reduce complexity, remodel ux, addopt design system, centralize components, improve dx</li>
+            <li><Highlight>led modernization effort</Highlight> on the UI to reduce complexity, remodel ux, adopt design system, centralize components, improve dx</li>
             <li>complemented AI development by setting up <Highlight>skills, .md instructions</Highlight> and documenting existing <Highlight>confirmed patterns</Highlight></li>
                     
             
@@ -79,7 +79,7 @@ export default function Home() {
             <li>heavy media content: architectural photography</li>
             <li>focus on performance and optimization (uses sanity free plan)</li>
             <li>strenuous usage for 1-2 month around the event date</li>
-            <li><Highlight>aggresive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
+            <li><Highlight>aggressive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
             <li>analytics tracked via Umami</li>
             <li>map views with google maps api</li>
           </>

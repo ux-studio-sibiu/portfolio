@@ -131,7 +131,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                     
                     <li><Highlight>focused on frontend and UI</Highlight> to improve structure and consistency by refactoring, enforcing constraints and confirmed patterns, <Highlight>discuss design</Highlight>, push back on flawed UX and propose alternatives</li>
                     <li>developed an in-house ajax library to modernize the existing .net application into a <Highlight>custom SPA</Highlight></li>
-                    <li>led long-term ui <Highlight>modernization effort</Highlight> to refactor, remodel ux, and addopt <Highlight>design system</Highlight> by <Highlight>coordinating junior devs</Highlight>, knowledge sharing, code-reviews, effort estimation</li>
+                    <li>led long-term ui <Highlight>modernization effort</Highlight> to refactor, remodel ux, and adopt <Highlight>design system</Highlight> by <Highlight>coordinating junior devs</Highlight>, knowledge sharing, code-reviews, effort estimation</li>
                     <li>implemented refactoring and migration strategies with version control to centralize components, reduce complexity, <Highlight>improve dx</Highlight></li>
                     <li>proactive in reducing complexity, redundant dependencies, bugs and visual inconsistencies</li>
 
@@ -178,7 +178,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                   <ul className="entry-points">
 
                     <li>enhanced web applications by integrating new features and improving performance</li>
-                    <li>improved responsives of products following mobile-first best practices</li>
+                    <li>improved responsiveness of products following mobile-first best practices</li>
                     <li>
                       <Highlight>proposed and implemented</Highlight> the design of a{" "}
                       {onScrollToProject ? (
