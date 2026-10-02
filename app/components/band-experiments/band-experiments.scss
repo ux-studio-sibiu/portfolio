@@ -428,4 +428,30 @@
   .view-more-button {
     margin: 1.5rem 0 3rem;
   }
+
+  // Below tablet both grids span the column instead of holding the size they
+  // were worked out to at desktop widths. Their sizes above are measured off
+  // --col-media, which is half the SCREEN, so on a phone they shrank to a block
+  // in the corner. Here they are measured off the column itself instead: the
+  // media column becomes a size container, and 100cqw is its content width.
+  @include respond-to-max("tablet") {
+    .tools-entry .entry-visual,
+    .various-entry .entry-visual {
+      container-type: inline-size;
+    }
+
+    // The same equation the --tool-row note above sets up, solved the other way:
+    // the block's old width, (N + a) x base + N x g, set to the full column.
+    .tools-entry .frame-grid {
+      --tool-base: calc(
+        (100cqw - var(--tool-rows, 3) * var(--frame-gap)) / (var(--tool-rows, 3) + var(--stack-ratio))
+      );
+    }
+
+    // The longer line is 2.4498 heights plus a gap and 2px of slack wide; this
+    // is that width set to the column and worked back to a height.
+    .various-entry .frame-grid {
+      --frame-h: calc((100cqw - var(--frame-gap) - 2px) / 2.4498);
+    }
+  }
 }

@@ -6,8 +6,15 @@
   position: relative;
   background: #000;
 
+  // The detail pane scrolls its own body at every width. The shared rule only
+  // sizes .pane-scroll from tablet up, because below that the INDEX pane is the
+  // scroller; here that left it heightless on phones, every 100% under it came
+  // to nothing, and an embed fell back to the iframe default of 150px.
   .pane-scroll {
     padding: 0;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .detail-frame {

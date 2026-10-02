@@ -154,6 +154,15 @@
     padding: 2rem var(--gutter);
     border-bottom: var(--rule);
 
+    // Below tablet the identity is the first screen and nothing else: a full
+    // fold, with .fixed-identity's own centring putting the block in the middle
+    // of it. svh, so the iOS address bar showing or hiding does not resize it
+    // mid-scroll; vh first for anything that does not know svh.
+    @include respond-to-max("tablet") {
+      min-height: 100vh;
+      min-height: 100svh;
+    }
+
     @include respond-to("tablet") {
       // Fixed: full height, never scrolls, half the screen. No border against
       // column 2 — the two read as one half.

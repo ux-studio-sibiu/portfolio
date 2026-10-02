@@ -71,16 +71,21 @@
     border-top: 0;
   }
 
+  // Prose and points in the mono at 0.8rem, the small-copy voice the index
+  // sets its entry points and blurb in — see the note in _devices.scss. Titles
+  // stay in Archivo, so the panel reads like an entry in the index.
   p {
     margin: 0 0 0.9rem;
-    font-size: 0.9375rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.6;
   }
 
   ul {
     margin: 0.6rem 0 0;
     padding-left: 1.1rem;
-    font-size: 0.9375rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.55;
   }
 
@@ -93,7 +98,9 @@
   // because a paragraph here can hold four of them.
   code {
     font-family: var(--font-mono);
-    font-size: 0.8125em;
+    // Same face as the text around it now, so the same size: 0.8125em was there
+    // to bring the mono down to Archivo, and would now shrink it a second time.
+    font-size: 1em;
     background: var(--color-wash);
     border-radius: 2px;
     padding: 0.15em 0.4em;
@@ -130,7 +137,8 @@
   // that should be readable at a glance.
   .project-scale {
     margin: 1rem 0 0;
-    font-size: 0.9375rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     line-height: 1.5;
     color: var(--color-muted);
 

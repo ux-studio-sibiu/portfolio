@@ -107,6 +107,9 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                       <h3 className="entry-place">Visma</h3>
                       <span className="entry-role spec-note">Frontend engineer</span>
                     </span>
+                    {/* The same date again, for the title row below tablet, where the column
+                        above is hidden. Only one of the two is ever displayed. */}
+                    <span className="when-inline"><span className="when-from">2018</span><span className="when-to">present</span></span>
                     <ToggleMark />
                   </summary>
 
@@ -172,6 +175,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                       <h3 className="entry-place">Mi-Pay Sibiu</h3>
                       <span className="entry-role spec-note">Frontend developer</span>
                     </span>
+                    <span className="when-inline"><span className="when-from">2014</span><span className="when-to">2018</span></span>
                     <ToggleMark />
                   </summary>
 
@@ -217,6 +221,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                       <span className="entry-role spec-note">Bachelor's Degree -- University of Architecture, Cluj-Napoca</span>
                       <span className="entry-role spec-note"></span>
                     </span>
+                    <span className="when-inline"><span className="when-from">2007</span><span className="when-to">2013</span></span>
                     <ToggleMark />
                   </summary>
 

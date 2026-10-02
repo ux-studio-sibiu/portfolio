@@ -244,6 +244,46 @@
     transform: rotate(180deg);
   }
 
+  // The copy of the date that sits in the title row. Hidden from tablet up,
+  // where the date has its own column; below tablet it is the one shown and the
+  // column is not, so a screen reader only ever meets one of the two.
+  .when-inline {
+    display: none;
+  }
+
+  // Below tablet the date leaves its own line above the entry and moves into the
+  // title row, small and stacked, just before the caret. It is a flex item of
+  // the summary there, so the row's own centring puts it level with the caret
+  // whatever height the title and role wrap to.
+  @include respond-to-max("tablet") {
+    .history-entry {
+      gap: 0;
+    }
+
+    .entry-when {
+      display: none;
+    }
+
+    .when-inline {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.15rem;
+      margin-left: auto;
+      font-family: var(--font-sans);
+      letter-spacing: 0.04em;
+    }
+
+    .when-from {
+      font-size: 1.125rem;
+    }
+
+    .when-to {
+      font-size: 0.625rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .toggle-mark {
       transition: none;

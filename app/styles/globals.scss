@@ -495,6 +495,15 @@ a {
   @include respond-to("tablet") {
     padding-right: 3rem;
   }
+
+  // Below tablet the rail is not drawn, so there is nothing to clear on the
+  // left: the media runs the full width between equal gutters, lined up with
+  // the titles and copy, with more air before the title that follows it.
+  // Children are left to stretch — .entry-thumb is width: 100% here, so every
+  // thumbnail and every group fills the column the same way.
+  @include respond-to-max("tablet") {
+    padding: 0 var(--gutter) 30px;
+  }
 }
 
 // The clickable media box: a project thumbnail, an experiment's frame, one cell
