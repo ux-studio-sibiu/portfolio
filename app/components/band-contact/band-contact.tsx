@@ -47,9 +47,10 @@ export function BandContact() {
         <div className="contact-links reveal">
           <a href="https://github.com/razvanturcanu" target="_blank" rel="noreferrer noopener">GitHub</a>
 
-          {/* `download` names the saved file rather than leaving it as the path.
-              The PDF itself lives in /public, so it is served as-is. */}
-          <a className="contact-cv" href="/cv/resume-turcanu-razvan.pdf" download="turcanu-razvan-cv.pdf">
+          {/* Opens in the browser's PDF viewer in a new tab, which has its own
+              save button. The PDF lives in /public, so it is served as-is, and
+              the file name is what a save from the viewer suggests. */}
+          <a className="contact-cv" href="/cv/Turcanu-Razvan-Design-Engineer-CV.pdf" target="_blank" rel="noreferrer noopener">
             <svg className="pdf-icon" viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.5 1.5h6l3 3v10h-9z" />
               <path d="M9.5 1.5v3h3" />

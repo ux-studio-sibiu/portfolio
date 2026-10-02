@@ -210,7 +210,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
 
             <div className="entry-body">
               <div className="entry-text">
-                <details className="entry-detail">
+                <details className="entry-detail" open>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
                       <h3 className="entry-place">Architecture and Building Design</h3>
@@ -221,7 +221,9 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                   </summary>
 
                   <ul className="entry-points">
-                    <li> picked up elements of design theory like usability, visual composition, proportion, scale </li>
+                    <li>trained in <Highlight>cross-disciplinary</Highlight> workflows, concept-to-detail process, human-centered design</li>
+                    <li><Highlight>fast prototyping</Highlight> with presenting, defending and iterating on work</li>
+                    <li>daily power user of complex professional UIs like ArchiCAD, AutoCAD, 3ds Max</li>
                   </ul>
                 </details>
               </div>

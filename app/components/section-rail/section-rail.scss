@@ -104,6 +104,9 @@
     // here, and anything under 1 clips the glyphs against the black.
     line-height: 1;
     letter-spacing: -0.045em;
+    // Doubles the gap between words in multi-word project titles: a space is
+    // about 0.25em, plus the negative tracking that also tightens it.
+    word-spacing: 0.3em;
     font-weight: 800;
     text-transform: uppercase;
     color: var(--color-bg);

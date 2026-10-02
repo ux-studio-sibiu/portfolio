@@ -247,7 +247,7 @@ export default function Home() {
         year="2014"
         role="click to view"
         stack="jQuery, Bootstrap"
-        href="https://ux-studio-sibiu.github.io/playground/projects/radio-prototype/index.html?curated"
+        href="https://experiments-five-bice.vercel.app/instant-party/index.html?curated"
         summary={<>Plays random music and visuals</>}
       />
 

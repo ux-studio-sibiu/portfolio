@@ -444,7 +444,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
       {/* Outside the track, fixed to the viewport: the rail and the one control
           on the page stay exactly where they are while the detail pane comes
           over the top of everything else. */}
-      <SectionRail sections={sections} active={section} lit={railLit} isDetail={isDetail} onOpenMenu={() => setMenuOpen(true)} onClose={closeItem} />
+      <SectionRail sections={sections} active={section} lit={railLit} isDetail={isDetail} project={detail?.title} onOpenMenu={() => setMenuOpen(true)} onClose={closeItem} />
 
       {/* Portalled to <body> from here, so it is outside the shell entirely —
           it only needs the section list and the open state. */}

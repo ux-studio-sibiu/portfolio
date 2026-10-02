@@ -11,7 +11,7 @@ import "./experiment.scss";
 export default function Radio() {
   return (
     <div className="nsc-experiment-embed">
-      <iframe src="https://ux-studio-sibiu.github.io/playground/projects/radio-prototype/index.html?curated" title="Instant dance party, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+      <iframe src="https://experiments-five-bice.vercel.app/instant-party/index.html?curated" title="Instant dance party, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
     </div>
   );
 }

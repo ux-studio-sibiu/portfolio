@@ -22,7 +22,13 @@ import "./section-rail.scss";
 //             would go with it
 //   isDetail  a project is open, which is what the button does next: the same
 //             circle is the way back out rather than the way into the menu
-export function SectionRail({ sections, active, lit, isDetail, onOpenMenu, onClose }: { sections: string[]; active: string | null; lit: boolean; isDetail: boolean; onOpenMenu: () => void; onClose: () => void }) {
+//   project   the open project's title. It takes the rail over from the section
+//             while the pane is up, through the same cross-fade. The showcase
+//             keeps it set through the slide back, so the word fades out
+//             instead of blanking.
+export function SectionRail({ sections, active, lit, isDetail, project, onOpenMenu, onClose }: { sections: string[]; active: string | null; lit: boolean; isDetail: boolean; project?: string; onOpenMenu: () => void; onClose: () => void }) {
+  const showProject = isDetail && !!project;
+
   return (
     <div className={`nsc-section-rail${isDetail ? " is-detail" : ""}`}>
       {/* Everything that fades with the fixed column, and nothing that does not.
@@ -36,8 +42,9 @@ export function SectionRail({ sections, active, lit, isDetail, onOpenMenu, onClo
             subtree is a control screen readers cannot reach. */}
         <div className="section-stack" aria-hidden="true">
           {sections.map((label) => (
-            <span className={`rail-section${active === label ? " is-active" : ""}`} key={label}>{label}</span>
+            <span className={`rail-section${!showProject && active === label ? " is-active" : ""}`} key={label}>{label}</span>
           ))}
+          <span className={`rail-section${showProject ? " is-active" : ""}`}>{project}</span>
         </div>
       </div>
 
