@@ -56,6 +56,23 @@
     }
   }
 
+  // "Light this scene with your phone": a frame 30% under the default 320px,
+  // and a still lifted at rest — it is mostly white paper and light pencil,
+  // which the resting greyscale flattens. Pointed at, it is the plain colour
+  // picture like every other frame.
+  .scroll-entry-secondary.light-study {
+    --thumb: 224px;
+
+    .entry-thumb {
+      filter: grayscale(1) brightness(1.2);
+
+      &:hover,
+      &:focus-visible {
+        filter: grayscale(0);
+      }
+    }
+  }
+
   // The frames arrive from under the right column, and this is what makes that
   // possible: the animation pushes them right, and everything past this column's
   // right edge is cut away. That edge IS the divider — the band's first grid

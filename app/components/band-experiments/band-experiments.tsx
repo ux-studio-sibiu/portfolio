@@ -442,7 +442,7 @@ export function BandExperiments({
                 </div>
 
                 <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
-                  View <span className="row-arrow" aria-hidden="true">&rarr;</span>
+                  {child.props.viewLabel ?? "View"} <span className="row-arrow" aria-hidden="true">&rarr;</span>
                 </button>
               </div>
             </li>

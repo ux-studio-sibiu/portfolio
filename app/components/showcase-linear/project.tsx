@@ -29,7 +29,8 @@ export type ProjectProps = {
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;
-  // Replaces the "View project" wording on the entry's button.
+  // Replaces the wording on the entry's button: "View project" on a project,
+  // "View" on an experiment.
   viewLabel?: string;
   // Which band this belongs to. Everything is one list with one detail pane
   // behind it — the groups differ in how an entry is laid out, not in what

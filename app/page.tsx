@@ -9,6 +9,7 @@ import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import optimizeThumb from "@/app/assets/projects/optimize.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
+import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-color.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
 import { RadioThumb } from "@/app/components/radio-thumb/radio-thumb";
 import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb";
@@ -109,6 +110,27 @@ export default function Home() {
           </>
         }
       /> */}
+
+      <LinearProject
+        group="experiments"
+        embed
+        slug="light-study"
+        className="light-study"
+        thumb={lightStudyThumb}
+        title="Light this scene with your phone"
+        year="2026"
+        role=""
+        stack="three.js, webgl, glsl, webcam, claude code"
+        href="https://experiments-five-bice.vercel.app/3d-lighting-camera/"
+        viewLabel="Try it"
+        points={
+          <>
+            <li>1. Turn on the webcam.</li>
+            <li>2. Use phone's flashlight.</li>
+            <li>3. Point it at the webcam: it's now the light source for the scene.</li>
+          </>
+        }
+      />
 
       <LinearProject
         group="experiments"
