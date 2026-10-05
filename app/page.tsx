@@ -120,6 +120,7 @@ export default function Home() {
         thumb={lightStudyThumb}
         thumbNode={<LightStudyThumb />}
         title="Light this scene with your phone"
+        railTitle="Light this scene"
         year="2026"
         role=""
         stack="three.js, webgl, glsl, webcam, claude code"
@@ -127,9 +128,9 @@ export default function Home() {
         viewLabel="Try it"
         points={
           <>
-            <li>1. Turn on the webcam.</li>
-            <li>2. Use phone's flashlight.</li>
-            <li>3. Point it at the webcam: it's now the light source for the scene.</li>
+            <li>1. Turn on the <Highlight>webcam</Highlight>.</li>
+            <li>2. Use phone's <Highlight>flashlight</Highlight>.</li>
+            <li>3. Point it at the webcam: it's now the <Highlight>light source for the scene</Highlight>.</li>
           </>
         }
       />

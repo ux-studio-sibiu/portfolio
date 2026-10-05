@@ -2,6 +2,9 @@ import type { StaticImageData } from "next/image";
 
 export type ProjectProps = {
   title: string;
+  // A shorter title for the vertical sidebar in the detail pane, for a title
+  // too long to stand there whole. The card keeps `title`.
+  railTitle?: string;
   // Experiments carry no date, so this is optional — everything else reads it
   // as "print it if it is there".
   year?: string;
