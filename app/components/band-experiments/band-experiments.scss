@@ -57,19 +57,13 @@
   }
 
   // "Light this scene with your phone": a frame 30% under the default 320px,
-  // and a still lifted at rest — it is mostly white paper and light pencil,
-  // which the resting greyscale flattens. Pointed at, it is the plain colour
-  // picture like every other frame.
+  // shown exactly as it is at rest. Every other frame waits greyscale for the
+  // pointer; this one is already a drawing, so it gets no filter at all.
   .scroll-entry-secondary.light-study {
     --thumb: 224px;
 
     .entry-thumb {
-      filter: grayscale(1) brightness(1.2);
-
-      &:hover,
-      &:focus-visible {
-        filter: grayscale(0);
-      }
+      filter: none;
     }
   }
 

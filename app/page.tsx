@@ -9,12 +9,13 @@ import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import optimizeThumb from "@/app/assets/projects/optimize.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
-import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-color.jpg";
+import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
 import { RadioThumb } from "@/app/components/radio-thumb/radio-thumb";
 import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb";
 import { StaticThumb } from "@/app/components/static-thumb/static-thumb";
 import { FluidThumb } from "@/app/components/fluid-thumb/fluid-thumb";
+import { LightStudyThumb } from "@/app/components/light-study-thumb/light-study-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -117,6 +118,7 @@ export default function Home() {
         slug="light-study"
         className="light-study"
         thumb={lightStudyThumb}
+        thumbNode={<LightStudyThumb />}
         title="Light this scene with your phone"
         year="2026"
         role=""
