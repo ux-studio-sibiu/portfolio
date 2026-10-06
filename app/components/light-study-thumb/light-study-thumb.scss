@@ -25,9 +25,9 @@
     // doubles the grain. The
     // PATTERN jumps, not the layer: the layer fills the circle
     // and stays put, so no edge can ever slide into view and show the white
-    // sun underneath. Same technique as the film grain on Randomize Studio's
-    // thumbnail, tuned for static: laid on normally instead
-    // of multiplied. Filtered in sRGB: in the default linear light the darks
+    // sun underneath. stitchTiles lets the tile repeat without a seam; the
+    // layer is laid on normally, not blended.
+    // Filtered in sRGB: in the default linear light the darks
     // come out lifted and the static washes out flat.
     &::before {
       content: "";
