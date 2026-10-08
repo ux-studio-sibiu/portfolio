@@ -50,7 +50,7 @@ export function BandContact() {
           {/* Opens in the browser's PDF viewer in a new tab, which has its own
               save button. The PDF lives in /public, so it is served as-is, and
               the file name is what a save from the viewer suggests. */}
-          <a className="contact-cv" href="/cv/Turcanu-Razvan-Design-Engineer-CV.pdf" target="_blank" rel="noreferrer noopener">
+          <a className="contact-cv" href="/cv/Turcanu-Razvan-Creative-Design-Engineer-CV.pdf" target="_blank" rel="noreferrer noopener">
             <svg className="pdf-icon" viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.5 1.5h6l3 3v10h-9z" />
               <path d="M9.5 1.5v3h3" />
