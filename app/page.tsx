@@ -84,6 +84,7 @@ export default function Home() {
             {/* <li><Highlight>organizers handle content</Highlight> in Sanity</li> */}
             <li>heavy media content: architectural photography</li>
             <li>focus on <Highlight>performance and optimization</Highlight> (uses sanity free plan)</li>
+            <li><Highlight>mobile-first</Highlight> design</li>
             <li>strenuous usage for 1-2 month around the event date</li>
             <li><Highlight>aggressive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
             <li>analytics tracked via Umami</li>
