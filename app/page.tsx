@@ -83,12 +83,11 @@ export default function Home() {
             {/* <li>reports via dashbord in Sanity</li> */}
             {/* <li><Highlight>organizers handle content</Highlight> in Sanity</li> */}
             <li>heavy media content: architectural photography</li>
-            <li>focus on <Highlight>performance and optimization</Highlight> (uses sanity free plan)</li>
-            <li><Highlight>mobile-first</Highlight> design</li>
+            <li>focus on <Highlight>performance and optimization</Highlight> (uses sanity free plan) : <Highlight>aggressive caching</Highlight> cms queries - webhooks, revalidate, next cache</li>
             <li>strenuous usage for 1-2 month around the event date</li>
-            <li><Highlight>aggressive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
             <li>analytics tracked via Umami</li>
             <li>map views with google maps api</li>
+            <li><Highlight>mobile-first</Highlight> design</li>
           </>
         }
       />
