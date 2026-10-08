@@ -74,12 +74,16 @@ export default function Home() {
         summary={<>website for annual 'open house' event, in collaboration with <Highlight>local architects guild 'OAR'</Highlight></>}
         points={
           <>
-            <li>twin events in cities Sibiu and Valcea</li>
-            <li>registration for each location : build-in form + email QR (Resend) + <Highlight>built-in QR validator</Highlight></li>
-            <li>reports via dashbord in Sanity</li>
-            <li><Highlight>organizers handle content</Highlight> in Sanity</li>
+            <li>web platform for annual <Highlight>architecture open-house event</Highlight>, connecting visitors with participating buildings through registration, QR-based access, attendance tracking, and event coordination.</li>
+            <li><Highlight>end-to-end ownership</Highlight> : designed, developed, tested, deployed, and maintained the platform across 3 editions, in 2 cities</li>
+            <li><Highlight>strong visual design and UX focus</Highlight>, client is local architects guild</li>
+            <li>registration, participation tracking, location quotas, and QR-based attendance, stress tested the QR flow, <Highlight>polished cms experience</Highlight> (sanity).</li>
+            {/* <li>twin events in cities Sibiu and Valcea</li> */}
+            {/* <li>registration for each location : build-in form + email QR (Resend) + <Highlight>built-in QR validator</Highlight></li> */}
+            {/* <li>reports via dashbord in Sanity</li> */}
+            {/* <li><Highlight>organizers handle content</Highlight> in Sanity</li> */}
             <li>heavy media content: architectural photography</li>
-            <li>focus on performance and optimization (uses sanity free plan)</li>
+            <li>focus on <Highlight>performance and optimization</Highlight> (uses sanity free plan)</li>
             <li>strenuous usage for 1-2 month around the event date</li>
             <li><Highlight>aggressive caching</Highlight> sanity queries - webhooks, revalidate, next cache</li>
             <li>analytics tracked via Umami</li>
