@@ -16,6 +16,7 @@ import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb
 import { StaticThumb } from "@/app/components/static-thumb/static-thumb";
 import { FluidThumb } from "@/app/components/fluid-thumb/fluid-thumb";
 import { LightStudyThumb } from "@/app/components/light-study-thumb/light-study-thumb";
+import { MotionThumb } from "@/app/components/motion-thumb/motion-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -24,6 +25,11 @@ import { LightStudyThumb } from "@/app/components/light-study-thumb/light-study-
 // `className` lands on the entry in the index. "large" and "small" are the
 // off-size thumbnails — set them per project by eye, drop the prop for the
 // middle size. They are defined in band-projects.scss.
+//
+// Order is position: entries appear in the order they are written here. In the
+// experiments band a `group` (tools = Design Tooling, various = Archive) shows
+// as one row where its FIRST entry is written, so keep a group's entries
+// together.
 export default function Home() {
   return (
     <ShowcaseLinear>
@@ -119,6 +125,77 @@ export default function Home() {
       <LinearProject
         group="experiments"
         embed
+        slug="motion"
+        thumbNode={<MotionThumb />}
+        title="GSAP, motion, 3d"
+        year=""
+        stack="GSAP, three.js, webgl, glsl, claude code"
+        role=""
+        summary={<>collection of motion based concepts, tools, experiments, demos</>}
+        href="https://experiments-five-bice.vercel.app/motion/"
+        viewLabel="View Demos"
+        points={
+          <>
+            <li><Highlight>purposeful motion</Highlight>: transitions, <Highlight>scroll-based animation</Highlight> and micro-interactions, with gsap and native css</li>
+            <li>interactive 3d and webgl scenes with <Highlight>three.js</Highlight> and custom shaders</li>
+            <li>editorial and <Highlight>storytelling prototypes</Highlight> and concepts</li>
+            <li><Highlight>reusable motion patterns</Highlight>, built to be dropped into other projects</li>
+            <li>demos expose relevant animation params: sensitivity, position, duration, easing, distances, <Highlight>can be refined live</Highlight> with designers for a more natural feel</li>
+          </>
+        }
+      />
+
+      <LinearProject
+        group="tools"
+        embed
+        slug="randomize-studio"
+        thumbNode={<RandomizeThumb />}
+        title="Randomize Studio"
+        role="click to view"
+        stack="Google Fonts"
+        href="https://experiments-five-bice.vercel.app/randomize-studio/intro/"
+        summary={<>Generate random combinations of typography, color, layout and effects.</>}
+      />
+
+      <LinearProject
+        group="tools"
+        embed
+        slug="texture-studio"
+        thumb={textureStudioThumb}
+        thumbLabel
+        title="Texture Studio"
+        role="click to view"
+        href="https://experiments-five-bice.vercel.app/background-experiments/"
+        summary={<>Try out svg overlays and blending modes over images</>}
+      />
+
+      <LinearProject
+        group="tools"
+        embed
+        slug="fluid-hover"
+        thumbNode={<FluidThumb />}
+        title="Fluid hover"
+        role="click to view"
+        stack=""
+        href="https://experiments-five-bice.vercel.app/effect/"
+        summary={<> Model a mouse driven visual effect using webGL </>}
+      />
+
+      <LinearProject
+        group="tools"
+        embed
+        slug="static-background"
+        thumbNode={<StaticThumb />}
+        thumbLabel
+        title="Static background"
+        role="click to view"
+        href="https://experiments-five-bice.vercel.app/static-background/"
+        summary={<>Generate animated film-grain overlays</>}
+      />
+
+      <LinearProject
+        group="experiments"
+        embed
         slug="light-study"
         className="light-study"
         thumb={lightStudyThumb}
@@ -203,7 +280,6 @@ export default function Home() {
         role=""
         stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, claude code"
         href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
-        summary={<></>}
         points={
           <>
             <li>Sibiu, ro, city centre: <Highlight>highlights notable architecture and tell their story</Highlight></li>
@@ -280,53 +356,6 @@ export default function Home() {
         summary={<>Plays random music and visuals</>}
       />
 
-      <LinearProject
-        group="tools"
-        embed
-        slug="randomize-studio"
-        thumbNode={<RandomizeThumb />}
-        title="Randomize Studio"
-        role="click to view"
-        stack="Google Fonts"
-        href="https://experiments-five-bice.vercel.app/randomize-studio/intro/"
-        summary={<>Generate random combinations of typography, color, layout and effects.</>}
-      />
-
-      <LinearProject
-        group="tools"
-        embed
-        slug="texture-studio"
-        thumb={textureStudioThumb}
-        thumbLabel
-        title="Texture Studio"
-        role="click to view"
-        href="https://experiments-five-bice.vercel.app/background-experiments/"
-        summary={<>Try out svg overlays and blending modes over images</>}
-      />
-
-      <LinearProject
-        group="tools"
-        embed
-        slug="fluid-hover"
-        thumbNode={<FluidThumb />}
-        title="Fluid hover"
-        role="click to view"
-        stack=""
-        href="https://experiments-five-bice.vercel.app/effect/"
-        summary={<> Model a mouse driven visual effect using webGL </>}
-      />
-
-      <LinearProject
-        group="tools"
-        embed
-        slug="static-background"
-        thumbNode={<StaticThumb />}
-        thumbLabel
-        title="Static background"
-        role="click to view"
-        href="https://experiments-five-bice.vercel.app/static-background/"
-        summary={<>Generate animated film-grain overlays</>}
-      />
     </ShowcaseLinear>
   );
 }

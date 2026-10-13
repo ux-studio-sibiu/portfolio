@@ -106,17 +106,19 @@ const LINK_LABEL = "view details";
 // only thing that says the frame can be opened at all.
 const FRAME_LABEL = "view project";
 
+// `items` is every entry of the band — experiments, tools and various — in
+// page.tsx order, and that order is the order on the page: an experiment is a
+// row of its own, and a group's row (Design Tooling, Archive) appears where the
+// group's FIRST entry sits, holding all of that group's entries.
 export function BandExperiments({
   items,
-  tools = [],
-  various = [],
   onOpen,
 }: {
   items: React.ReactElement<ProjectProps>[];
-  tools?: React.ReactElement<ProjectProps>[];
-  various?: React.ReactElement<ProjectProps>[];
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
+  const tools = items.filter((child) => child.props.group === "tools");
+  const various = items.filter((child) => child.props.group === "various");
   const root = useRef<HTMLElement>(null);
   // Whether the pointer is over a tool's name in the copy, and where it was when
   // it arrived. One card for the band — only one name can be under the pointer,
@@ -126,7 +128,7 @@ export function BandExperiments({
   // Every entry the band was handed, in one list: a name in the copy is matched
   // back to its entry by slug, which is the only name a sentence can be expected
   // to know. Same lookup whichever row the name happens to sit in.
-  const all = [...items, ...tools, ...various];
+  const all = items;
 
   const hoverCard = (label: string) => ({
     // Mouse only, like the frames: on a touch screen the card would come up
@@ -146,7 +148,6 @@ export function BandExperiments({
   });
 
   const linkHover = hoverCard(LINK_LABEL);
-  const frameHover = hoverCard(FRAME_LABEL);
 
   // A tool's name inside a sentence, opening exactly what its frame opens. A
   // button, not an anchor: it is a pane sliding over the page, not a navigation
@@ -381,91 +382,68 @@ export function BandExperiments({
     return () => mm.revert();
   }, { scope: root });
 
+  // One experiment's row. A function returning an element, called rather than
+  // rendered as a component, for the same reason as toolLink above: the same
+  // nodes survive a re-render.
+  const experimentEntry = (child: React.ReactElement<ProjectProps>) => (
+    <li className={`scroll-entry-secondary${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-preload={child.props.href}>
+      <div className="entry-visual">
+        {/* The frame opens the experiment too — same target as the View
+            button, so the obvious click works — and its card says what the
+            button says (viewLabel) when the entry sets one. With no picture
+            it is a blank frame (.is-empty), the same as a project with none. */}
+        <button type="button" className={`entry-thumb${child.props.thumbNode || child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverCard(child.props.viewLabel ?? FRAME_LABEL)}>
+          {child.props.thumbNode
+            ?? (child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />)}
+        </button>
+      </div>
+
+      <div className="entry-body reveal">
+        <div className="entry-text">
+          <h3 className="entry-title">{child.props.title}</h3>
+          <p className="entry-role">{child.props.role}</p>
+          {/* The entry's `summary`, as the same paragraph a group row (Design
+              Tooling) carries under its title. */}
+          {child.props.summary && <p className="entry-blurb">{child.props.summary}</p>}
+
+          {/* The stack, one pill each, split off the `stack` prop. It replaced the
+              prose summary that used to sit here — hence the class name. */}
+          {child.props.stack && (
+            <ul className="entry-tech-stack">
+              {child.props.stack.split(",").map((tech) => tech.trim()).filter(Boolean).map((tech) => (
+                <li className="pill" key={tech}>{tech}</li>
+              ))}
+            </ul>
+          )}
+
+          {/* Same list the projects band carries, and written the same
+              way in page.tsx. An experiment had nowhere to say what it
+              actually does before this — the props were being set and
+              then rendered by nobody. */}
+          {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
+        </div>
+
+        <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
+          {child.props.viewLabel ?? "View"} <span className="row-arrow" aria-hidden="true">&rarr;</span>
+        </button>
+      </div>
+    </li>
+  );
+
   return (
     <section className="band nsc-band-experiments" data-section="Experiments" ref={root}>
       <div className="band-content is-full">
         <h2 className="band-heading">Experiments</h2>
 
         <ul className="experiment-list">
-          <FrameRow
-            items={tools}
-            className="tools-entry"
-            rows={Math.max(1, tools.length - 1)}
-            title="Design Tooling"
-            viewFeature
-            stack="claude code, .skills, html, css, js, webgl, dev-design tooling"
-            blurb={<>Simple tools for experimenting with design elements such as <Highlight>font, colour, image and texture</Highlight>. Lightweight, can be used as <Highlight>.skills</Highlight> on existing projects, to enable design previews in-browser.</>}
-            points={
-              <>
-                <li>{toolLink("randomize-studio", "Randomize Studio")} :  adobe-like ui, for experimenting with typography, layout, effects. Its modeled as a landing-page generator</li>
-                <li>{toolLink("texture-studio", "Texture Studio")} : handles svg overlays and blending modes over images</li>
-                <li>{toolLink("fluid-hover", "Fluid hover")} : models a mouse driven, webGL visual effect </li>
-                <li>{toolLink("static-background", "Static Background")} : generates animated film-grain overlays</li>
-              </>
-            }
-            onOpen={onOpen}
-          />
-
-          {items.map((child) => (
-            <li className={`scroll-entry-secondary${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-preload={child.props.href}>
-              <div className="entry-visual">
-                {/* The frame opens the experiment too — same target as the View
-                    button, so the obvious click works. */}
-                <button type="button" className="entry-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...frameHover}>
-                  {child.props.thumbNode
-                    ?? (child.props.thumb
-                      ? <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />
-                      : child.props.href && <iframe src={child.props.href} title={`${child.props.title}, live`} loading="lazy" tabIndex={-1} aria-hidden="true" referrerPolicy="no-referrer-when-downgrade" />)}
-                </button>
-              </div>
-
-              <div className="entry-body reveal">
-                <div className="entry-text">
-                  <h3 className="entry-title">{child.props.title}</h3>
-                  <p className="entry-role">{child.props.role}</p>
-
-                  {/* The stack, one pill each, split off the `stack` prop. It replaced the
-                      prose summary that used to sit here — hence the class name. */}
-                  {child.props.stack && (
-                    <ul className="entry-tech-stack">
-                      {child.props.stack.split(",").map((tech) => tech.trim()).filter(Boolean).map((tech) => (
-                        <li className="pill" key={tech}>{tech}</li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {/* Same list the projects band carries, and written the same
-                      way in page.tsx. An experiment had nowhere to say what it
-                      actually does before this — the props were being set and
-                      then rendered by nobody. */}
-                  {child.props.points && <ul className="entry-points">{child.props.points}</ul>}
-                </div>
-
-                <button type="button" className="view-more-button" onClick={() => onOpen(child)}>
-                  {child.props.viewLabel ?? "View"} <span className="row-arrow" aria-hidden="true">&rarr;</span>
-                </button>
-              </div>
-            </li>
-          ))}
-
-          {/* Last, and deliberately: it is the odds and ends, so it reads as what
-              is left rather than as one more thing in the sequence. */}
-          <FrameRow
-            items={various}
-            className="various-entry"
-            title="Archive"
-            stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, github copilot"
-            blurb={<>Concepts, prototypes and <Highlight>relics from another age</Highlight></>}
-            points={
-              <>
-                <li>2016 - {toolLink("paint", "Paint")} : Win95 MS Paint rebuilt with claude and CSS</li>
-                <li>2016 - {toolLink("optimize-studio", "Optimize Studio")} : ui interactions, effects and techniques</li>
-                <li>2015 - {toolLink("zoom", "Zoom")} : navigation concept for a presentation website</li>
-                <li>2014 - <Highlight>{toolLink("radio", "Instant dance party")}</Highlight> plays random music and visuals</li>
-              </>
-            }
-            onOpen={onOpen}
-          />
+          {/* In page.tsx order. A grouped entry renders its group's whole row
+              the first time the group comes up, and nothing after that. */}
+          {items.map((child, i) => {
+            const group = child.props.group;
+            if (group === "experiments") return experimentEntry(child);
+            if (items.findIndex((c) => c.props.group === group) !== i) return null;
+            return group === "tools" ? toolsRow() : archiveRow();
+          })}
         </ul>
       </div>
 
@@ -474,6 +452,55 @@ export function BandExperiments({
       <CursorCard item={linked} onDismiss={() => setLinked(null)} />
     </section>
   );
+
+  // The two group rows: their copy lives here, their position comes from
+  // page.tsx (see the list above). Functions returning elements, like
+  // experimentEntry.
+  function toolsRow() {
+    return (
+      <FrameRow
+        key="tools"
+        items={tools}
+        className="tools-entry"
+        rows={Math.max(1, tools.length - 1)}
+        title="Design Tooling"
+        viewFeature
+        stack="claude code, .skills, html, css, js, webgl, dev-design tooling"
+        blurb={<>Simple tools for experimenting with design elements such as <Highlight>font, colour, image and texture</Highlight>. Lightweight, can be used as <Highlight>.skills</Highlight> on existing projects, to enable design previews in-browser.</>}
+        points={
+          <>
+            <li>{toolLink("randomize-studio", "Randomize Studio")} :  adobe-like ui, for experimenting with typography, layout, effects. Its modeled as a landing-page generator</li>
+            <li>{toolLink("texture-studio", "Texture Studio")} : handles svg overlays and blending modes over images</li>
+            <li>{toolLink("fluid-hover", "Fluid hover")} : models a mouse driven, webGL visual effect </li>
+            <li>{toolLink("static-background", "Static Background")} : generates animated film-grain overlays</li>
+          </>
+        }
+        onOpen={onOpen}
+      />
+    );
+  }
+
+  function archiveRow() {
+    return (
+      <FrameRow
+        key="various"
+        items={various}
+        className="various-entry"
+        title="Archive"
+        stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, github copilot"
+        blurb={<>Concepts, prototypes and <Highlight>relics from another age</Highlight></>}
+        points={
+          <>
+            <li>2016 - {toolLink("paint", "Paint")} : Win95 MS Paint rebuilt with claude and CSS</li>
+            <li>2016 - {toolLink("optimize-studio", "Optimize Studio")} : ui interactions, effects and techniques</li>
+            <li>2015 - {toolLink("zoom", "Zoom")} : navigation concept for a presentation website</li>
+            <li>2014 - <Highlight>{toolLink("radio", "Instant dance party")}</Highlight> plays random music and visuals</li>
+          </>
+        }
+        onOpen={onOpen}
+      />
+    );
+  }
 }
 
 // A row whose visual column is a grid of frames rather than one, sharing a single

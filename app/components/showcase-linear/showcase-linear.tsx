@@ -35,6 +35,15 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 // that it wants the fixed-column title by rendering `data-section="Label"` —
 // this file reads those attributes off the DOM, so adding or reordering a band
 // is a single edit in the JSX below.
+
+// The Navigation API, where the browser has it; TypeScript's DOM types don't
+// carry it yet, so just the two members closeItem uses.
+type NavigationApi = {
+  currentEntry: { key: string } | null;
+  traverseTo(key: string): { finished: Promise<unknown> };
+};
+const navigationApi = () => (typeof window === "undefined" ? undefined : (window as Window & { navigation?: NavigationApi }).navigation);
+
 export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -61,9 +70,9 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   // One list, split for display only: both bands open into the same pane, and
   // the index that reaches history is the position in `items` either way.
   const projects = items.filter((child) => !child.props.group);
-  const experiments = items.filter((child) => child.props.group === "experiments");
-  const tools = items.filter((child) => child.props.group === "tools");
-  const various = items.filter((child) => child.props.group === "various");
+  // The experiments band takes its entries in page.tsx order, all groups in one
+  // list, so where something sits in page.tsx is where it sits on the page.
+  const bandItems = items.filter((child) => child.props.group);
   const detail = openIndex === null ? undefined : items[openIndex]?.props;
   const Body = detail ? DETAILS[detail.slug] : undefined;
   const isDetail = activeIndex !== null;
@@ -80,9 +89,35 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     if (idx < 0) return;
     setOpenIndex(idx);
     setActiveIndex(idx);
+    beforeOpen.current = { key: navigationApi()?.currentEntry?.key, length: 0 };
     history.pushState({ project: idx }, "");
+    beforeOpen.current.length = history.length;
   };
-  const closeItem = () => history.back();
+
+  // Closing goes back to where the page was before the pane opened, in ONE
+  // step. A plain history.back() is not enough: the browser keeps one history
+  // for the page and every iframe in it, so an embed that navigates inside
+  // itself (the motion page swapping pieces, a map changing view) adds entries,
+  // and back would step through those first while the pane stayed open.
+  //
+  // Where the Navigation API exists it jumps to the exact entry recorded on
+  // opening. Elsewhere it jumps by how much the history grew since then, which
+  // is exact unless someone had already gone back inside the iframe; plain
+  // back is the last resort. Either way the popstate below closes the pane.
+  const beforeOpen = useRef<{ key?: string; length: number } | null>(null);
+  const closeItem = () => {
+    const before = beforeOpen.current;
+    const nav = navigationApi();
+    if (before?.key && nav) {
+      nav.traverseTo(before.key)?.finished?.catch(() => history.back());
+      return;
+    }
+    if (before?.length) {
+      history.go(-Math.max(1, history.length - before.length + 1));
+      return;
+    }
+    history.back();
+  };
   // Takes you to a project in the list from somewhere that has no business
   // holding a reference to one. Work history names the accounting product it is
   // mostly about, and that product is a project further down the page; this is
@@ -150,7 +185,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isDetail) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") history.back(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeItem(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isDetail]);
@@ -421,7 +456,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
               {/* Two shapes for the same kind of entry: a row each with its own
                   copy, or a wall of frames with one block of copy for the set.
                   Which group takes which is the `group` prop in page.tsx. */}
-              <BandExperiments items={experiments} tools={tools} various={various} onOpen={openItem} />
+              <BandExperiments items={bandItems} onOpen={openItem} />
               <BandSkills />
               <BandContact />
             </div>
