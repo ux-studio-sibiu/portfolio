@@ -3,7 +3,7 @@
 // (86%, 18%), so the logo travels 72% across and 60% up.
 .nsc-motion-thumb {
   --ink: #111;
-  --travel: 0.77s;
+  --travel: 0.308s;
   // cubic-bezier(0.65, 0, 0.35, 1): the curve drawn in the diagram.
   --ease-curve: cubic-bezier(0.65, 0, 0.35, 1);
 
@@ -70,7 +70,7 @@
   }
 
   .ghost {
-    transition: opacity 0.21s ease;
+    transition: opacity 0.084s ease;
 
     &.one { left: 32%; top: 74.25%; opacity: 0.1; }
     &.two { left: 50%; top: 48%; opacity: 0.16; }
