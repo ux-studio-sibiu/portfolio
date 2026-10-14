@@ -26,7 +26,7 @@ import "./section-rail.scss";
 //             while the pane is up, through the same cross-fade. The showcase
 //             keeps it set through the slide back, so the word fades out
 //             instead of blanking.
-export function SectionRail({ sections, active, lit, isDetail, project, onOpenMenu, onClose }: { sections: string[]; active: string | null; lit: boolean; isDetail: boolean; project?: string; onOpenMenu: () => void; onClose: () => void }) {
+export function SectionRail({ sections, active, lit, isDetail, project, projectBox, onOpenMenu, onClose }: { sections: string[]; active: string | null; lit: boolean; isDetail: boolean; project?: string; projectBox?: { top: number; height: number }; onOpenMenu: () => void; onClose: () => void }) {
   const showProject = isDetail && !!project;
 
   return (
@@ -44,7 +44,14 @@ export function SectionRail({ sections, active, lit, isDetail, project, onOpenMe
           {sections.map((label) => (
             <span className={`rail-section${!showProject && active === label ? " is-active" : ""}`} key={label}>{label}</span>
           ))}
-          <span className={`rail-section${showProject ? " is-active" : ""}`}>{project}</span>
+          {/* projectBox centres the title on a box in the embed (see
+              .rail-section in the stylesheet). */}
+          <span
+            className={`rail-section${showProject ? " is-active" : ""}${projectBox ? " is-anchored" : ""}`}
+            style={projectBox ? ({ "--rail-project-top": `${projectBox.top}px`, "--rail-project-height": `${projectBox.height}px` } as React.CSSProperties) : undefined}
+          >
+            {project}
+          </span>
         </div>
       </div>
 

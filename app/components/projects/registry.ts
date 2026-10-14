@@ -27,4 +27,5 @@ export const DETAILS: Record<string, React.ComponentType> = {
   "static-background": dynamic(() => import("./experiments/static-background")),
   "optimize-studio": dynamic(() => import("./experiments/optimize-studio")),
   radio: dynamic(() => import("./experiments/radio")),
+  "first-website": dynamic(() => import("./experiments/first-website")),
 };

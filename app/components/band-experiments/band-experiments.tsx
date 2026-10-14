@@ -487,7 +487,7 @@ export function BandExperiments({
         items={various}
         className="various-entry"
         title="Archive"
-        stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, github copilot"
+        stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, sly, github copilot"
         blurb={<>Concepts, prototypes and <Highlight>relics from another age</Highlight></>}
         points={
           <>
@@ -495,6 +495,7 @@ export function BandExperiments({
             <li>2016 - {toolLink("optimize-studio", "Optimize Studio")} : ui interactions, effects and techniques</li>
             <li>2015 - {toolLink("zoom", "Zoom")} : navigation concept for a presentation website</li>
             <li>2014 - <Highlight>{toolLink("radio", "Instant dance party")}</Highlight> plays random music and visuals</li>
+            <li>2013 - {toolLink("first-website", "My first website")} : this one has to be in here, no matter how naive</li>
           </>
         }
         onOpen={onOpen}

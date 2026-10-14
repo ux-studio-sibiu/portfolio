@@ -117,6 +117,19 @@
       opacity: 1;
     }
 
+    // A project title centred on a box in its embed (the entry's
+    // railTitleBox): the title's own box is moved to that span and the word
+    // centred in it. The half turn spins the box about its own centre, so it
+    // stays where `top` and `height` put it. The detail pane's iframe starts
+    // at the top of the screen like the rail, so px inside the embed are the
+    // same px here.
+    &.is-anchored {
+      inset: var(--rail-project-top) 0 auto;
+      height: var(--rail-project-height);
+      padding-bottom: 0;
+      place-items: center;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       transition: none;
     }

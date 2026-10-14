@@ -8,6 +8,7 @@ import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import optimizeThumb from "@/app/assets/projects/optimize.jpg";
+import firstWebsiteThumb from "@/app/assets/projects/first-website.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
@@ -134,6 +135,11 @@ export default function Home() {
         summary={<>collection of motion based concepts, tools, experiments, demos</>}
         href="https://experiments-five-bice.vercel.app/motion/"
         viewLabel="View Demos"
+        railTitle="Demos"
+        // Centred on the motion page's sidebar: --nav-top (240px) down, and its
+        // min-height (300px), in effects-collection/motion/index.html. Change one,
+        // change both.
+        railTitleBox={{ top: 240, height: 300 }}
         points={
           <>
             <li><Highlight>purposeful motion</Highlight>: transitions, <Highlight>scroll-based animation</Highlight> and micro-interactions, with gsap and native css</li>
@@ -291,6 +297,22 @@ export default function Home() {
         }
       />
 
+      {/* First in the group, so it opens the Archive row's first line, left
+          of Paint (see .various-entry in band-experiments.scss). */}
+      <LinearProject
+        group="various"
+        embed
+        slug="first-website"
+        className="first-site"
+        thumb={firstWebsiteThumb}
+        title="My first website"
+        year="2013"
+        role="click to view"
+        stack="jQuery, Sly, fancyBox"
+        href="https://experiments-five-bice.vercel.app/arh-portfolio/"
+        summary={<>Architecture portfolio, rows of projects to scroll and drag through</>}
+      />
+
       <LinearProject
         group="various"
         embed
@@ -332,19 +354,6 @@ export default function Home() {
       <LinearProject
         group="various"
         embed
-        slug="optimize-studio"
-        thumb={optimizeThumb}
-        title="Optimize Studio"
-        year="2016"
-        role="click to view"
-        stack=".NET MVC, jQuery, Photoshop"
-        href="https://ux-studio-sibiu.github.io/playground/projects/old-portfolio/index.html"
-        summary={<>Small collage of ui interactions, effects and techniques</>}
-      />
-
-      <LinearProject
-        group="various"
-        embed
         slug="radio"
         className="tv"
         thumbNode={<RadioThumb />}
@@ -354,6 +363,20 @@ export default function Home() {
         stack="jQuery, Bootstrap"
         href="https://experiments-five-bice.vercel.app/instant-party/index.html?curated"
         summary={<>Plays random music and visuals</>}
+      />
+
+      <LinearProject
+        group="various"
+        embed
+        slug="optimize-studio"
+        className="static-hover"
+        thumb={optimizeThumb}
+        title="Optimize Studio"
+        year="2016"
+        role="click to view"
+        stack=".NET MVC, jQuery, Photoshop"
+        href="https://ux-studio-sibiu.github.io/playground/projects/old-portfolio/index.html"
+        summary={<>Small collage of ui interactions, effects and techniques</>}
       />
 
     </ShowcaseLinear>

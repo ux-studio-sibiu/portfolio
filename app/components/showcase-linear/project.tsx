@@ -5,6 +5,9 @@ export type ProjectProps = {
   // A shorter title for the vertical sidebar in the detail pane, for a title
   // too long to stand there whole. The card keeps `title`.
   railTitle?: string;
+  // A box in the embed (px from the top, and height) to centre that sidebar
+  // title on, instead of its usual place under the button.
+  railTitleBox?: { top: number; height: number };
   // Experiments carry no date, so this is optional — everything else reads it
   // as "print it if it is there".
   year?: string;
