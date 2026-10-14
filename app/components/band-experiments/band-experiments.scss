@@ -56,15 +56,20 @@
     }
   }
 
-  // "Light this scene with your phone": a frame 30% under the default 320px,
+  // "Light this scene with your phone": a frame 16% under the default 320px,
   // shown exactly as it is at rest. Every other frame waits greyscale for the
   // pointer; this one is already a drawing, so it gets no filter at all.
   .scroll-entry-secondary.light-study {
-    --thumb: 224px;
+    --thumb: 269px;
 
     .entry-thumb {
       filter: none;
     }
+  }
+
+  // "Kids STEM puzzles": 20% under the default 320px.
+  .scroll-entry-secondary.stem-puzzles {
+    --thumb: 256px;
   }
 
   // The frames arrive from under the right column, and this is what makes that

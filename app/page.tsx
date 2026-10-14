@@ -226,7 +226,7 @@ export default function Home() {
         group="experiments"
         embed
         slug="clasa-zero"
-        className=""
+        className="stem-puzzles"
         thumb={clasaZeroThumb}
         title="Kids STEM puzzles"
         year="2026 —"
