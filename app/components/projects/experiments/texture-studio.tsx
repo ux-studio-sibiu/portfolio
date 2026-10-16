@@ -6,10 +6,13 @@ import "./experiment.scss";
 // The URL keeps the old name: it is where the thing is actually deployed, and
 // renaming it here would only break the embed.
 
+// allow="clipboard-write" lets the page's copy buttons reach the clipboard from inside this
+// cross-origin frame (see randomize-studio.tsx for the full why).
+
 export default function TextureStudio() {
   return (
     <div className="nsc-experiment-embed">
-      <iframe src="https://experiments-five-bice.vercel.app/background-experiments/" title="Texture Studio, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+      <iframe src="https://experiments-five-bice.vercel.app/background-experiments/" title="Texture Studio, live" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allow="clipboard-write" />
     </div>
   );
 }
