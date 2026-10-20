@@ -67,4 +67,20 @@
       content: none;
     }
   }
+
+  // Second-level points, a list inside a point: the same spacing a step
+  // tighter, and a hollow marker so they read as belonging to the one above.
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+
+    li::before {
+      background: none;
+      border: 1px solid var(--color-ink);
+    }
+  }
 }

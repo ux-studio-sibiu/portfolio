@@ -38,8 +38,8 @@
     padding: 0;
   }
 
-  // Packed close: there is no sticky frame to give travel to any more, so a row
-  // only needs enough room to read as its own thing.
+  // Packed close: a row only needs enough room to read as its own thing. The
+  // sticky frame (below) travels through whatever height the copy gives it.
   // One number for every row in the band, the tools grid at the top included:
   // the rows are different heights and hold different things, and letting any
   // of them carry its own spacing is what made the column look unevenly set.
@@ -67,11 +67,6 @@
     }
   }
 
-  // "Kids STEM puzzles": 20% under the default 320px.
-  .scroll-entry-secondary.stem-puzzles {
-    --thumb: 256px;
-  }
-
   // The frames arrive from under the right column, and this is what makes that
   // possible: the animation pushes them right, and everything past this column's
   // right edge is cut away. That edge IS the divider — the band's first grid
@@ -89,6 +84,28 @@
   .entry-visual {
     @include respond-to("tablet") {
       clip-path: polygon(-100% -100%, 100% -100%, 100% 200%, -100% 200%);
+    }
+  }
+
+  // A single experiment's frame holds at the top of the screen while its copy
+  // scrolls past, like a project thumbnail (.visual-sticky in band-projects,
+  // same top). The column stretches to the row's height, so the frame has
+  // exactly its own row to travel through; a row whose copy is shorter than the
+  // frame has nothing to hold through and simply scrolls. In the grid rows
+  // (Design Tooling, Archive) the whole grid holds as one block; the arrival
+  // still moves each frame in it on its own.
+  //
+  // Sticky survives the clip-path above (only an overflow ancestor would break
+  // it), and the arrival's transform on the frame itself moves it sideways on
+  // top of the pin.
+  //
+  // From tablet up: below it the frame sits over its copy, in a column of its
+  // own height, so there is nothing to travel.
+  .scroll-entry-secondary > .entry-visual > .entry-thumb,
+  .scroll-entry-secondary > .entry-visual > .frame-grid {
+    @include respond-to("tablet") {
+      position: sticky;
+      top: 2.5rem;
     }
   }
 
@@ -333,10 +350,11 @@
 
       // Exactly the LONGER of the two lines — the square, the television and
       // Optimize Studio, which come to 3.4537 heights between them (1 + 298/205 + 1)
-      // — and no wider, which is what makes the five wrap two (My first website,
+      // — and no wider, which is what makes them wrap two (Sibiu, city center,
       // Paint) and three without being told to: the square does not fit after
-      // the first two (3.7179 heights). The 2px is rounding slack: at a hair
-      // under, the second line breaks early.
+      // the first two (3.6667 heights). The 2px is rounding slack: at a hair
+      // under, the second line breaks early. My first website, written last,
+      // wraps onto a third line of its own, against the right edge.
       //
       // It follows the ORDER of the entries in page.tsx, so reordering them or
       // changing which one is .wide wants this number worked out again: it is
@@ -376,8 +394,8 @@
     // My first website: the still is the left 450 x 325 of the old site's
     // 1495 x 325 banner (subtitlu4.jpg), cut to exactly what shows. Cropping
     // the strip in CSS instead left the visible third blurred, since the image
-    // was sized for the whole strip at the cell's width. Written first in
-    // page.tsx, so it opens the first line, left of Paint.
+    // was sized for the whole strip at the cell's width. Written last in
+    // page.tsx, so it has the third line to itself.
     .frame-cell.first-site {
       width: calc(var(--frame-h) * 450 / 325);
     }
@@ -511,9 +529,10 @@
 
     // Three to a line would make every frame small on a phone, so here the box
     // goes back to the width of the square and the television (2.4498 heights
-    // plus a gap and 2px of slack): My first website takes a line of its own
-    // and the other four wrap two and two below it. That width set to the
-    // column and worked back to a height.
+    // plus a gap and 2px of slack): Sibiu, city center and My first website
+    // each take a line of their own, at the top and the bottom, and the other
+    // four wrap two and two between them. That width set to the column and
+    // worked back to a height.
     .various-entry .frame-grid {
       --frame-h: calc((100cqw - var(--frame-gap) - 2px) / 2.4498);
       width: calc(var(--frame-h) * 2.4498 + var(--frame-gap) + 2px);

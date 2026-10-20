@@ -20,6 +20,7 @@ export const DETAILS: Record<string, React.ComponentType> = {
   // same detail pane as a project does, and only the index entry differs.
   "light-study": dynamic(() => import("./experiments/light-study")),
   motion: dynamic(() => import("./experiments/motion")),
+  "carbon-divide": dynamic(() => import("./experiments/carbon-divide")),
   "texture-studio": dynamic(() => import("./experiments/texture-studio")),
   "fluid-hover": dynamic(() => import("./experiments/fluid-hover")),
   "randomize-studio": dynamic(() => import("./experiments/randomize-studio")),

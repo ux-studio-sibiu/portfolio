@@ -2,13 +2,13 @@ import { ShowcaseLinear, LinearProject } from "@/app/components/showcase-linear/
 import advisorThumb from "@/app/assets/projects/advisor.jpg";
 import clasaZeroThumb from "@/app/assets/projects/clasa-zero-2.jpg";
 import mapThumb from "@/app/assets/projects/map.jpg";
-import zoomThumb from "@/app/assets/projects/zoom.jpg";
 import casedeschiseThumb from "@/app/assets/projects/case-deschise.jpg";
 import photographyThumb from "@/app/assets/projects/photo.jpg";
 import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import optimizeThumb from "@/app/assets/projects/optimize.jpg";
 import firstWebsiteThumb from "@/app/assets/projects/first-website.jpg";
+import dataVizThumb from "@/app/assets/projects/data-viz-thumb.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
@@ -152,6 +152,28 @@ export default function Home() {
       />
 
       <LinearProject
+        group="experiments"
+        embed
+        slug="carbon-divide"
+        thumb={dataVizThumb}
+        href="https://data-viz-phi.vercel.app/"
+        title="The carbon divide"
+        year="2026"
+        role=""
+        stack="angular, three.js, d3, gsap, webgl, glsl, our world in data"
+        summary={<>An interactive globe of country-level climate data: who emits, and who pays for it</>}
+        points={
+          <>
+            <li>a <Highlight>3d globe</Highlight> coloured by CO₂ metrics, with a flat SVG map as its fallback</li>
+            <li><Highlight>d3 does the math, angular renders the DOM</Highlight>: projections, scales and line charts as templates</li>
+            <li>country picking through an <Highlight>ID-map texture</Highlight> in a shader, so even microstates can be selected</li>
+            <li>camera flights and palette transitions with gsap, a year slider to <Highlight>play the data through time</Highlight></li>
+            <li>signal stores synced to the URL, so <Highlight>every view is a shareable link</Highlight></li>
+          </>
+        }
+      />
+
+      <LinearProject
         group="tools"
         embed
         slug="randomize-studio"
@@ -223,35 +245,6 @@ export default function Home() {
       />
 
       <LinearProject
-        group="experiments"
-        embed
-        slug="clasa-zero"
-        className="stem-puzzles"
-        thumb={clasaZeroThumb}
-        title="Kids STEM puzzles"
-        year="2026 —"
-        role=""
-        stack="react, next.js, zustand, sanity, github copilot, vscode"
-        href="https://clasa-zero.vercel.app/game"
-        points={
-          <>
-            
-            <li>this iframe demo <Highlight>highlights the correct answer</Highlight></li>
-
-            <li>randomly generated puzzles and possible answers, ai generated graphics</li>
-            <li>10+ puzzle types: sequences, matching, counting, simple reading</li>
-            {/* <li>persist settings with <Highlight>local storage</Highlight></li> */}
-            <li>custom puzzles can be added on <Highlight>sanity</Highlight> cms</li>
-
-            <li>in progress — user testing with help from my 6 year old</li>
-            {/* <li><Highlight>next.js</Highlight> with <Highlight>zustand</Highlight> for state management</li> */}
-            {/* <li>focus on performance and optimization: smooth transitions, preload next puzzle</li> */}
-            <li>slide back to review previous puzzles and answers</li>
-          </>
-        }
-      />
-
-      <LinearProject
         slug="four-in-one"
         className="large"
         thumb={fourInOneThumb}
@@ -275,42 +268,20 @@ export default function Home() {
         }
       />
 
-      <LinearProject
-        group="experiments"
-        slug="map"
-        className="large"
-        thumb={mapThumb}
-        embed
-        title="Map based web app"
-        year="2026"
-        role=""
-        stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, claude code"
-        href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
-        points={
-          <>
-            <li>Sibiu, ro, city centre: <Highlight>highlights notable architecture and tell their story</Highlight></li>
-            <li>content via sanity cms</li>
-            <li>vector .pmtiles hosted as a static file, via MapLibre (open-source)</li>
-            <li>geolocation with boundary awareness - when used on mobile</li>
-            <li>draft concept, presented here in iframe</li>
-          </>
-        }
-      />
-
       {/* First in the group, so it opens the Archive row's first line, left
           of Paint (see .various-entry in band-experiments.scss). */}
       <LinearProject
         group="various"
         embed
-        slug="first-website"
-        className="first-site"
-        thumb={firstWebsiteThumb}
-        title="My first website"
-        year="2013"
+        slug="map"
+        className="wide"
+        thumb={mapThumb}
+        title="Sibiu, city center"
+        year="2022"
         role="click to view"
-        stack="jQuery, Sly, fancyBox"
-        href="https://experiments-five-bice.vercel.app/arh-portfolio/"
-        summary={<>Architecture portfolio, rows of projects to scroll and drag through</>}
+        stack="vue, nuxt, MapLibre, sanity, vercel, git, github copilot, claude code"
+        href="https://vue-playground-mauve.vercel.app/map?curated&sort=year"
+        summary={<>Map of the city centre that highlights notable architecture and tells its story</>}
       />
 
       <LinearProject
@@ -327,24 +298,15 @@ export default function Home() {
 
       <LinearProject
         group="various"
-        slug="zoom"
-        className="small"
-        thumb={zoomThumb}
         embed
-        title="Zoom"
-        year="2015"
+        slug="clasa-zero"
+        thumb={clasaZeroThumb}
+        title="Kids STEM puzzles"
+        year="2021"
         role="click to view"
-        stack=""
-        href="https://vue-playground-mauve.vercel.app/zoom"
-        summary={<>Navigation concept for a presentation website</>}
-        points={
-          <>
-            <li>css-transform navigation using Zoomooz.js</li>
-            <li>draft concept, presented here in iframe</li>
-            <li><Highlight>iframe to parent page messaging</Highlight></li>
-            <li>AI-assisted (github copilot), reviewed and refined</li>
-          </>
-        }
+        stack="react, next.js, zustand, sanity, github copilot, vscode"
+        href="https://clasa-zero.vercel.app/game"
+        summary={<>Randomly generated puzzles for kids, the iframe demo highlights the correct answer</>}
       />
 
 
@@ -377,6 +339,22 @@ export default function Home() {
         stack=".NET MVC, jQuery, Photoshop"
         href="https://ux-studio-sibiu.github.io/playground/projects/old-portfolio/index.html"
         summary={<>Small collage of ui interactions, effects and techniques</>}
+      />
+
+      {/* Last, so it takes the Archive row's third line on its own, under the
+          television and Optimize Studio. */}
+      <LinearProject
+        group="various"
+        embed
+        slug="first-website"
+        className="first-site"
+        thumb={firstWebsiteThumb}
+        title="My first website"
+        year="2013"
+        role="click to view"
+        stack="jQuery, Sly, fancyBox"
+        href="https://experiments-five-bice.vercel.app/arh-portfolio/"
+        summary={<>Architecture portfolio, rows of projects to scroll and drag through</>}
       />
 
     </ShowcaseLinear>

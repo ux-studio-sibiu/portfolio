@@ -94,6 +94,16 @@ const GROUP_LAST_DELAY = 10;
 // past the divider when the stack had settled. 4 brings it in behind them and
 // still has it landing last, by 4% of the screen rather than 9.
 const GROUP_CLEAR = 4;
+// The latest a row's FIRST frame may set off, as a row-top percentage: just
+// inside the bottom of the screen. A sequence counted back from its last frame
+// can start well below that once a row is tall and has many frames — the
+// Archive, at three lines and six frames, had its first frame setting off at
+// 112%, so the top line was most of the way in before it came into view. Such
+// a sequence is squeezed toward its end until it fits, every run and wait by
+// the same factor, so order, overlap and pace between the frames stay as they
+// were and it simply plays faster. A row that already fits (the tools row
+// starts at about 80%) is left alone.
+const GROUP_START_MAX = 98;
 
 // What a tool's name in the copy promises. The frames say "there is something
 // behind this" with a card at the pointer, so a name that opens the same thing
@@ -317,6 +327,18 @@ export function BandExperiments({
             from = next;
           }
 
+          // Squeezed toward where the sequence ends if it would set off below
+          // the screen — see GROUP_START_MAX.
+          const first = Math.max(...spans.map((s) => s.from));
+          const end = Math.min(...spans.map((s) => s.to));
+          if (first > GROUP_START_MAX && first > end) {
+            const k = (GROUP_START_MAX - end) / (first - end);
+            for (const s of spans) {
+              s.from = end + (s.from - end) * k;
+              s.to = end + (s.to - end) * k;
+            }
+          }
+
           return spans;
         };
 
@@ -487,13 +509,21 @@ export function BandExperiments({
         items={various}
         className="various-entry"
         title="Archive"
-        stack="vue, nuxt, jquery, bootstrap, scss, zoomooz, sly, github copilot"
+        stack="react, next.js, zustand, vue, nuxt, maplibre, sanity, jquery, bootstrap, scss, sly, github copilot"
         blurb={<>Concepts, prototypes and <Highlight>relics from another age</Highlight></>}
         points={
           <>
+            <li>
+              2022 - {toolLink("map", "Sibiu, city center")} : map that highlights notable architecture and tells its story
+              <ul>
+                <li>content via sanity cms</li>
+                <li>vector .pmtiles hosted as a static file, via <Highlight>MapLibre (open-source)</Highlight></li>
+                <li><Highlight>geolocation</Highlight> with boundary awareness - when used on mobile</li>
+              </ul>
+            </li>
+            <li>2021 - {toolLink("clasa-zero", "Kids STEM puzzles")} : randomly generated puzzles for kids</li>
             <li>2016 - {toolLink("paint", "Paint")} : Win95 MS Paint rebuilt with claude and CSS</li>
             <li>2016 - {toolLink("optimize-studio", "Optimize Studio")} : ui interactions, effects and techniques</li>
-            <li>2015 - {toolLink("zoom", "Zoom")} : navigation concept for a presentation website</li>
             <li>2014 - <Highlight>{toolLink("radio", "Instant dance party")}</Highlight> plays random music and visuals</li>
             <li>2013 - {toolLink("first-website", "My first website")} : this one has to be in here, no matter how naive</li>
           </>
