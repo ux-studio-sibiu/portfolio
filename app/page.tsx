@@ -8,7 +8,6 @@ import photographyThumbAlt from "@/app/assets/projects/photo-2.jpg";
 import fourInOneThumb from "@/app/assets/projects/4in1-3.jpg";
 import optimizeThumb from "@/app/assets/projects/optimize.jpg";
 import firstWebsiteThumb from "@/app/assets/projects/first-website.jpg";
-import dataVizThumb from "@/app/assets/projects/data-viz-thumb.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
 import { Highlight } from "@/app/components/highlight/highlight";
@@ -18,6 +17,7 @@ import { StaticThumb } from "@/app/components/static-thumb/static-thumb";
 import { FluidThumb } from "@/app/components/fluid-thumb/fluid-thumb";
 import { LightStudyThumb } from "@/app/components/light-study-thumb/light-study-thumb";
 import { MotionThumb } from "@/app/components/motion-thumb/motion-thumb";
+import { DataVizThumb } from "@/app/components/data-viz-thumb/data-viz-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -155,20 +155,19 @@ export default function Home() {
         group="experiments"
         embed
         slug="carbon-divide"
-        thumb={dataVizThumb}
+        thumbNode={<DataVizThumb />}
         href="https://data-viz-phi.vercel.app/"
-        title="The carbon divide"
+        title="Interactive data visualization"
         year="2026"
         role=""
-        stack="angular, three.js, d3, gsap, webgl, glsl, our world in data"
-        summary={<>An interactive globe of country-level climate data: who emits, and who pays for it</>}
+        stack="data visualization, angular, three.js, d3.js, gsap, webgl, claude code"
+        summary={<><Highlight>The carbon divide</Highlight> : interactive data visualization of country-level CO₂ emissions on an interactive 3d globe, built with angular, d3 and three.js</>}
         points={
           <>
-            <li>a <Highlight>3d globe</Highlight> coloured by CO₂ metrics, with a flat SVG map as its fallback</li>
-            <li><Highlight>d3 does the math, angular renders the DOM</Highlight>: projections, scales and line charts as templates</li>
-            <li>country picking through an <Highlight>ID-map texture</Highlight> in a shader, so even microstates can be selected</li>
-            <li>camera flights and palette transitions with gsap, a year slider to <Highlight>play the data through time</Highlight></li>
-            <li>signal stores synced to the URL, so <Highlight>every view is a shareable link</Highlight></li>
+            <li><Highlight>three.js</Highlight>: handles the 3d globe, colors countries by relevant metrics</li>
+            <li><Highlight>d3.js</Highlight>: handles map projections, colour scales and chart geometry</li>
+            <li>gsap.js : centers selected country and palette transitions on year changes</li>
+            <li>angular: wrapper for state, ui and routing </li>
           </>
         }
       />

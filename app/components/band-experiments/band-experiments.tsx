@@ -216,6 +216,18 @@ export function BandExperiments({
 
         // The right edge of the column, which is where the clip cuts.
         const edge = () => visual.offsetLeft + visual.offsetWidth;
+        // A frame's left edge in the SAME coordinates as edge(): offsets summed up
+        // to the column's own offsetParent. A frame's offsetLeft alone is measured
+        // from ITS offsetParent, and the grids are position: sticky, which makes
+        // the grid that parent. edge() minus that started every frame past the cut
+        // by however far the grid sits in from the column's left (196px in the
+        // Archive), so each crossed that much ground out of sight, and a narrower,
+        // further-in grid looked faster rather than slower.
+        const leftOf = (frame: HTMLElement) => {
+          let x = 0;
+          for (let el: HTMLElement | null = frame; el && el !== visual.offsetParent; el = el.offsetParent as HTMLElement | null) x += el.offsetLeft;
+          return x;
+        };
 
         const alone = frames.length === 1;
 
@@ -247,7 +259,7 @@ export function BandExperiments({
         // A function, not a value: the column is fluid, so the schedule is re-cut
         // from the measured positions every time ScrollTrigger refreshes.
         const schedule = () => {
-          const distances = frames.map((f) => edge() - f.offsetLeft);
+          const distances = frames.map((f) => edge() - leftOf(f));
           // Which frame, if any, is the feature: taller than half again the
           // middle of the pack. Measured rather than declared, so the row that
           // has no such frame simply has none and nothing is special-cased.
@@ -286,9 +298,27 @@ export function BandExperiments({
           // .entry-visual is no better: it is a grid item and stretches to the
           // row's height, so it measured 525 of those 589. The frames' own
           // extent is the only thing here that is actually the frames.
+          //
+          // Divided by the row's --frame-scale (the Archive's is 0.8): a row drawn
+          // smaller keeps the timing of its full size. Left alone, smaller frames
+          // moved this anchor, and with it the sequence's end, down the screen:
+          // the run got 7% shorter and, squeezed less to fit, the frames FASTER.
+          // This way start, end and every run stay where they were, only the
+          // distances shrink, so the same crossing happens more slowly.
           const top = Math.min(...frames.map((f) => f.offsetTop));
           const bottom = Math.max(...frames.map((f) => f.offsetTop + f.offsetHeight));
-          const halfRow = ((bottom - top) / (scroller.clientHeight || 1)) * 50;
+          // Per-row settings from the grid's CSS (custom properties), falling back to the constants above.
+          // --frame-scale: see .various-entry; --arrive-delay, --arrive-last-delay, --arrive-clear: see .tools-entry.
+          const gridStyle = getComputedStyle(frames[0].parentElement ?? visual);
+          const setting = (name: string, fallback: number) => {
+            const v = parseFloat(gridStyle.getPropertyValue(name));
+            return Number.isFinite(v) ? v : fallback;
+          };
+          const frameScale = setting("--frame-scale", 1) || 1;
+          const delay = setting("--arrive-delay", GROUP_DELAY);
+          const lastDelay = setting("--arrive-last-delay", GROUP_LAST_DELAY);
+          const clear = setting("--arrive-clear", GROUP_CLEAR);
+          const halfRow = ((bottom - top) / frameScale / (scroller.clientHeight || 1)) * 50;
           const lastFrom = GROUP_END - halfRow + GROUP_LAST_RUN;
 
           // Counted back from the last frame's start: one longer wait to clear it,
@@ -308,7 +338,7 @@ export function BandExperiments({
             if (place === 0) break;
 
             const prev = frames[order[place - 1]];
-            let next = from + (place === order.length - 1 ? GROUP_LAST_DELAY : GROUP_DELAY);
+            let next = from + (place === order.length - 1 ? lastDelay : delay);
 
             // The waits above are a rhythm, not a guarantee. Two frames that
             // share a band all set off from the same edge at the same speed, so
@@ -321,7 +351,7 @@ export function BandExperiments({
             for (let later = place; later < order.length; later++) {
               const other = frames[order[later]];
               if (!sameBand(prev, other)) continue;
-              next = Math.max(next, spans[order[later]].from + Math.abs(prev.offsetLeft - other.offsetLeft) * pace + GROUP_CLEAR);
+              next = Math.max(next, spans[order[later]].from + Math.abs(prev.offsetLeft - other.offsetLeft) * pace + clear);
             }
 
             from = next;
@@ -373,7 +403,7 @@ export function BandExperiments({
               // actually need. Measured off the layout box rather than a rect,
               // because a rect would already have this transform in it and every
               // refresh would compound.
-              x: () => edge() - frame.offsetLeft,
+              x: () => edge() - leftOf(frame),
             },
             {
               x: 0,
@@ -514,7 +544,7 @@ export function BandExperiments({
         points={
           <>
             <li>
-              2022 - {toolLink("map", "Sibiu, city center")} : map that highlights notable architecture and tells its story
+              2022 - {toolLink("map", "Sibiu, city center")} : highlights notable architecture and tells its story
               <ul>
                 <li>content via sanity cms</li>
                 <li>vector .pmtiles hosted as a static file, via <Highlight>MapLibre (open-source)</Highlight></li>

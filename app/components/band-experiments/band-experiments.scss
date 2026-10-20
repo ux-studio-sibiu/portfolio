@@ -233,6 +233,13 @@
   // for -1 to mean anything.
   .tools-entry {
     .frame-grid {
+      // Tighter arrival than the shared defaults in band-experiments.tsx (5, 10, 4):
+      // the stack sets off 3% of the screen apart instead of 5, and the feature
+      // follows the last of it by 1% instead of 4 — one group arriving, not a queue.
+      // Read by schedule() there; the Archive keeps the defaults.
+      --arrive-delay: 3;
+      --arrive-last-delay: 5;
+      --arrive-clear: 1;
       // The feature takes the proportion of its picture - randomize-studio-2.jpg
       // is 953 x 762 - rather than being cut square. Change the picture, change
       // these two numbers.
@@ -338,9 +345,15 @@
       //
       // That lands 10rem from roughly 1100px up and eases down to about 9.3rem at
       // 1024, where the old 8rem was leaving room it did not need.
-      --frame-h: min(
-        10rem,
-        calc((var(--col-media) - var(--rail) - 3rem - var(--frame-gap) * 2 - 2px) / 3.4537)
+      //
+      // --frame-scale then takes the whole row down a fifth (8rem at full width).
+      // The arrival in band-experiments.tsx reads it too: it keeps the sequence's
+      // timing worked out at full size, so the frames cross the same stretch of
+      // scroll over a shorter distance, i.e. more slowly. See frameScale there.
+      --frame-scale: 0.8;
+      --frame-h: calc(
+        var(--frame-scale) *
+          min(10rem, calc((var(--col-media) - var(--rail) - 3rem - var(--frame-gap) * 2 - 2px) / 3.4537))
       );
 
       display: flex;
