@@ -23,6 +23,12 @@ export function BandCoreTechnologies() {
           </li>
 
           <li className="spec-row">
+            <h2 className="spec-name">Data Visualization</h2>
+            <p className="spec-note">d3.js, three.js, map-libre, webgl</p>
+          </li>
+
+
+          <li className="spec-row">
             <h2 className="spec-name">GSAP, Motion, Lenis</h2>
             <p className="spec-note">scroll-driven motion, vector animation, micro-interactions</p>
           </li>

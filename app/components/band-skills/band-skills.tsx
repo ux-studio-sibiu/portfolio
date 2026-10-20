@@ -37,6 +37,11 @@ export function BandSkills() {
           <li className="spec-row">
             <span className="spec-name spec-name-small">Fast learner, team player, good communication skills</span>
           </li>
+
+          <li className="spec-row">
+            <span className="spec-name spec-name-small">Can make effective use of <Highlight>AI tools</Highlight> for design and development</span>
+          </li>
+
           <li className="spec-row">
             <span className="spec-name spec-name-small">High attention to detail, can work to <Highlight>tight deadlines</Highlight></span>
           </li>
@@ -44,24 +49,28 @@ export function BandSkills() {
             <span className="spec-name spec-name-small">Can take <Highlight>ownership and accountability</Highlight></span>
           </li>
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can work effectively with internal animation, design, content teams</span>
+            <span className="spec-name spec-name-small">Can work effectively with ux, animation, design, content teams</span>
           </li>
 
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can constructively complement vague or incomplete requirements</span>
           </li>
 
-          <li className="spec-row">
+          {/* <li className="spec-row">
             <span className="spec-name spec-name-small">Can discuss design </span>
-          </li>
+          </li> */}
 
           <li className="spec-row">
             <span className="spec-name spec-name-small">Can <Highlight>challenge procedures</Highlight> and suggest new ideas</span>
           </li>
-          
+
           <li className="spec-row">
-            <span className="spec-name spec-name-small">Can provide <Highlight>headless CMS training</Highlight> to clients</span>
+            <span className="spec-name spec-name-small">Experience with <Highlight>interactive data visualization</Highlight></span>
           </li>
+          
+          {/* <li className="spec-row">
+            <span className="spec-name spec-name-small">Can provide <Highlight>headless CMS training</Highlight> to clients</span>
+          </li> */}
           <li className="spec-row">
             <span className="spec-name spec-name-small">Experience of <Highlight>mentoring</Highlight> (peer QA and feedback)</span>
           </li>
