@@ -158,6 +158,7 @@ export default function Home() {
         thumbNode={<DataVizThumb />}
         href="https://data-viz-phi.vercel.app/"
         title="Interactive data visualization"
+        railTitle="The carbon divide"
         year="2026"
         role=""
         stack="data visualization, angular, three.js, d3.js, gsap, webgl, claude code"
