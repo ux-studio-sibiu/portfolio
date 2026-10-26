@@ -8,6 +8,7 @@ import { DETAILS } from "@/app/components/projects/registry";
 import { FixedColumn } from "@/app/components/fixed-column/fixed-column";
 import { DetailPane } from "@/app/components/detail-pane/detail-pane";
 import { useEmbedPreload } from "@/app/components/embed-preload/embed-preload";
+import { readMore } from "@/app/components/read-more/read-more";
 import { ElasticLine } from "@/app/components/elastic-line/elastic-line";
 import { SideMenu } from "@/app/components/side-menu/side-menu";
 import { SectionRail } from "@/app/components/section-rail/section-rail";
@@ -81,6 +82,10 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
   // open — and usually the document cached — by the time the cover comes down
   // over the detail pane. Entries opt in with `data-preload` on themselves.
   useEmbedPreload(scroller);
+
+  // On phones, every entry's bullet list behind a "read more" link. Once, after
+  // mount: the lists it collapses are rendered by the bands and never re-keyed.
+  useEffect(() => (scroller.current ? readMore(scroller.current) : undefined), []);
 
   // Takes the element rather than a number, so a band can hand back whatever it
   // was given without having to know where that sits in the whole list.

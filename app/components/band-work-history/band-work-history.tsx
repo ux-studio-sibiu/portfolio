@@ -11,6 +11,10 @@ import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cu
 // one to learn for no reason.
 const JUMP_LABEL = "view in projects";
 
+// Closes the entries on phones, before the first paint — see where it is
+// rendered, under the list. 767.98px is respond-to-max("tablet").
+const CLOSE_ON_PHONES = `if (matchMedia("(max-width: 767.98px)").matches) document.currentScript.closest(".nsc-band-work-history").querySelectorAll("details[open]").forEach(function (d) { d.removeAttribute("open"); });`;
+
 // Work history. Deliberately NOT a `data-section` band: it is read over the
 // identity, which is still up while it passes, and a band only declares
 // `data-section` to claim the black rail's title and a line in the section
@@ -101,7 +105,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
                     the section says anything. The degree below stays closed —
                     `open` is the initial state only, so any of them still shuts
                     like the others once it is touched. */}
-                <details className="entry-detail" open>
+                <details className="entry-detail" open suppressHydrationWarning>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
                       <h3 className="entry-place">Visma</h3>
@@ -169,7 +173,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
 
             <div className="entry-body">
               <div className="entry-text">
-                <details className="entry-detail" open>
+                <details className="entry-detail" open suppressHydrationWarning>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
                       <h3 className="entry-place">Mi-Pay Sibiu</h3>
@@ -214,7 +218,7 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
 
             <div className="entry-body">
               <div className="entry-text">
-                <details className="entry-detail" open>
+                <details className="entry-detail" open suppressHydrationWarning>
                   <summary className="detail-toggle">
                     <span className="toggle-text">
                       <h3 className="entry-place">Architecture and Building Design</h3>
@@ -235,6 +239,17 @@ export function BandWorkHistory({ onScrollToProject }: { onScrollToProject?: (sl
             </div>
           </li>
         </ol>
+
+        {/* On phones the entries start CLOSED: open, the three of them make a
+            very long first stretch of a page read on a small screen. The server
+            cannot know the viewport, and an effect would close them only after
+            hydration, a visible flash later. An inline script in the server
+            HTML runs while the page is still being parsed, before the first
+            paint. Hence `suppressHydrationWarning` on the <details>: on a phone
+            their `open` no longer matches what was rendered, on purpose. React
+            leaves the attribute alone afterwards — `open` is only the initial
+            state. Without JavaScript they stay open, the safe way round. */}
+        <script dangerouslySetInnerHTML={{ __html: CLOSE_ON_PHONES }} />
       </div>
 
       {/* Portalled to <body> from in here, the same as the one in the projects
