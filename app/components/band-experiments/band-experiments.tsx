@@ -17,8 +17,8 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 // over halfway up, written as the percentages ScrollTrigger reads. Scrubbed, so
 // these are scroll positions and not durations — the frame is wherever between
 // them the scroll says it is, and it goes back the way it came.
-const ARRIVE_FROM = 95;
-const ARRIVE_TO = 55;
+const ARRIVE_FROM = 110;
+const ARRIVE_TO = 50;
 // A row of several frames — only the tools row — arrives over its own, much
 // longer window, because the four of them come in one after another.
 //
@@ -407,8 +407,8 @@ export function BandExperiments({
             },
             {
               x: 0,
-              // Linear: the scroll is the easing.
-              ease: "none",
+              // A soft landing on top of the scroll.
+              ease: "sine.out",
               scrollTrigger: {
                 trigger: row,
                 scroller,

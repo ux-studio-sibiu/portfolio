@@ -236,7 +236,7 @@ export function ShowcaseLinear({ children }: { children: React.ReactNode }) {
     // How far the pane scrolls before a pinned highlight is fully swept, as a
     // fraction of the pane height. A phrase in the fixed column has no travel of
     // its own to measure against, so this is the travel of the PAGE instead.
-    const SWEEP_OVER = 0.5;
+    const SWEEP_OVER = 0.65;
 
     let bands: HTMLElement[] = [];
     // What is actually measured against the trigger line, one per band. A band

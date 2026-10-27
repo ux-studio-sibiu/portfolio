@@ -25,8 +25,8 @@ const VIEW_LABEL = "View project";
 //
 // It is over well before the entry's top reaches the pin line, so the slide has
 // always finished by the time the thumbnail sticks.
-const ARRIVE_FROM = 95;
-const ARRIVE_TO = 55;
+const ARRIVE_FROM = 110;
+const ARRIVE_TO = 50;
 // Daylight between two thumbnails that travel the same track, on top of the
 // ground that merely keeps them from touching. Without it they clear each other
 // by exactly nothing and read as one object sliding in.
@@ -198,8 +198,8 @@ export function BandProjects({
             { x: () => travel(thumb) },
             {
               x: 0,
-              // Linear: the scroll is the easing.
-              ease: "none",
+              // A soft landing on top of the scroll.
+              ease: "sine.out",
               scrollTrigger: {
                 trigger: entry,
                 scroller,
