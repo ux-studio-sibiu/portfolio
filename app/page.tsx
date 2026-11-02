@@ -279,7 +279,7 @@ export default function Home() {
         railTitle="Interactive history"
         year="2026"
         role="concept, design, dev"
-        stack="storytelling, angular, sanity, d3-geo, node scripts, claude code"
+        stack="storytelling, motion, angular, sanity, gsap, d3-geo, node scripts, claude code"
         href="https://interactive-learning-omega.vercel.app/"
         summary={<>An illustrated history of how the lands of today's Romania changed, from the Dacians to 2007, <Highlight>for primary school history lessons</Highlight></>}
         points={

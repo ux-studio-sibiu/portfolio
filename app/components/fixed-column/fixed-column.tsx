@@ -27,8 +27,9 @@ export function FixedColumn() {
           <span className="name-mask"><span>Turcanu</span></span>
         </h1>
         <p className="fixed-blurb">
-          Passionate about craft, I <Highlight pinned>bridge design and dev</Highlight> to build polished, practical interfaces. 
-          I enjoy putting together <Highlight pinned delay={250}>creative custom designs</Highlight>, using AI tools to move from quick prototypes to finished products.
+          Frontend engineer with strong experience in <Highlight pinned>product UI and design systems</Highlight>.
+          I&rsquo;m most interested in <Highlight pinned>design engineering</Highlight>, data-driven storytelling and <Highlight pinned>interactive work</Highlight> that feels considered.
+          AI tools help me prototype fast, then I refine by hand.
         </p>
       </div>
     </aside>
