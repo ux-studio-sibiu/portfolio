@@ -15,6 +15,7 @@ export const DETAILS: Record<string, React.ComponentType> = {
   map: dynamic(() => import("./map/map")),
   casedeschise: dynamic(() => import("./casedeschise/casedeschise")),
   "four-in-one": dynamic(() => import("./four-in-one/four-in-one")),
+  "romanian-borders": dynamic(() => import("./romanian-borders/romanian-borders")),
 
   // Experiments. Same registry, same lazy chunk per entry — they open into the
   // same detail pane as a project does, and only the index entry differs.

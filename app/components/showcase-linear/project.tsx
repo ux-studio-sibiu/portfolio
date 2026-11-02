@@ -27,6 +27,11 @@ export type ProjectProps = {
   // to recognise, so they say what they are. Opt-in, because a screenshot of a
   // tool does not need a caption stamped on it.
   thumbLabel?: boolean;
+  // The thumbnail is a transparent picture cut to its own outline (a map, an
+  // object) rather than a rectangle. It loses the box's border and plate, gets
+  // the same 2px border drawn around its edge instead, and its hatch shadow
+  // takes the same shape — see .entry-thumb.cutout in globals.scss.
+  thumbCutout?: boolean;
   // A thumbnail that is built rather than photographed, for the entry where
   // neither a still nor a live frame is the right answer — see RadioThumb,
   // which assembles the prototype's own television out of two files instead of
@@ -47,6 +52,14 @@ export type ProjectProps = {
   // reachable the same way.
   className?: string;
 };
+
+// What a cutout thumbnail's button needs on top of .entry-thumb: the variant
+// class, and its own picture handed to CSS as the shadow's mask. Shared by both
+// bands so a cutout behaves the same wherever it lands.
+export function cutoutProps(props: ProjectProps) {
+  if (!props.thumbCutout || !props.thumb) return { className: "", style: undefined };
+  return { className: " cutout", style: { "--thumb-mask": `url(${props.thumb.src})` } as React.CSSProperties };
+}
 
 // Declaration only. ShowcaseLinear reads these props off its children to build
 // the projects band and the detail pane, so this renders nothing itself.

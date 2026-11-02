@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
 import { Highlight } from "@/app/components/highlight/highlight";
-import type { ProjectProps } from "@/app/components/showcase-linear/project";
+import { cutoutProps, type ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-projects.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -300,7 +300,7 @@ export function BandProjects({
               <div className="visual-sticky">
                 {/* The image opens the project too — same target as the
                     View project button, so the obvious click works. */}
-                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
+                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
                   {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 420px, (min-width: 768px) 30vw, 100vw" placeholder="blur" className="thumb-img" />}
                   {/* <span className="thumb-index">{num(idx)}</span> */}
                 </button>

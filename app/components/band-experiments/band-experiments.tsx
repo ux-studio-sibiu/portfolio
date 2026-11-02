@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
 import { Highlight } from "@/app/components/highlight/highlight";
-import type { ProjectProps } from "@/app/components/showcase-linear/project";
+import { cutoutProps, type ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-experiments.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -444,7 +444,7 @@ export function BandExperiments({
             button, so the obvious click works — and its card says what the
             button says (viewLabel) when the entry sets one. With no picture
             it is a blank frame (.is-empty), the same as a project with none. */}
-        <button type="button" className={`entry-thumb${child.props.thumbNode || child.props.thumb ? "" : " is-empty"}`} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverCard(child.props.viewLabel ?? FRAME_LABEL)}>
+        <button type="button" className={`entry-thumb${child.props.thumbNode || child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverCard(child.props.viewLabel ?? FRAME_LABEL)}>
           {child.props.thumbNode
             ?? (child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />)}
         </button>
@@ -636,7 +636,7 @@ function FrameRow({
               // take the card down.
               onPointerDown={() => setHovered(null)}
             >
-              <button type="button" className="entry-thumb" onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
+              <button type="button" className={`entry-thumb${cutoutProps(item.props).className}`} style={cutoutProps(item.props).style} onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
                 {item.props.thumbNode
                   ?? (item.props.thumb
                     ? <Image src={item.props.thumb} alt="" sizes="(min-width: 768px) 20vw, 50vw" placeholder="blur" className="frame-img" />

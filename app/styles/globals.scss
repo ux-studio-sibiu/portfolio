@@ -590,6 +590,37 @@ a {
     }
   }
 
+  // A picture cut to its own outline (a map, an object) instead of a box —
+  // <LinearProject thumbCutout>. No border or plate, so the corners stay
+  // see-through; the hatch shadow is masked by the picture's own alpha, handed
+  // in as --thumb-mask by cutoutProps() in project.tsx, so it is the same shape
+  // thrown 10px down and right rather than a rectangle.
+  &.cutout {
+    border: 0;
+    background: none;
+
+    &:hover,
+    &:focus-visible {
+      background: none;
+    }
+
+    &::before {
+      -webkit-mask: var(--thumb-mask) center / 100% 100% no-repeat;
+      mask: var(--thumb-mask) center / 100% 100% no-repeat;
+    }
+
+    // The same 2px ink border the boxed thumbnails have, drawn around the
+    // outline: four hard shadows, each stacked on the last, make a stroke that
+    // follows the picture's edge at any size.
+    img {
+      filter:
+        drop-shadow(2px 0 0 var(--color-ink))
+        drop-shadow(-2px 0 0 var(--color-ink))
+        drop-shadow(0 2px 0 var(--color-ink))
+        drop-shadow(0 -2px 0 var(--color-ink));
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }

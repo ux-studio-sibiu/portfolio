@@ -10,6 +10,7 @@ import optimizeThumb from "@/app/assets/projects/optimize.jpg";
 import firstWebsiteThumb from "@/app/assets/projects/first-website.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
+import romanianBordersThumb from "@/app/assets/projects/romanian-borders.webp";
 import { Highlight } from "@/app/components/highlight/highlight";
 import { RadioThumb } from "@/app/components/radio-thumb/radio-thumb";
 import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb";
@@ -264,6 +265,32 @@ export default function Home() {
 
             <li>several clients were migrated to this concept, and was a starting point for all new ones. Clients include: <Highlight>O2 Germany, Tesco, 3Roi, FooCall UK</Highlight></li>
           
+          </>
+        }
+      />
+
+      <LinearProject
+        slug="romanian-borders"
+        className="large"
+        thumb={romanianBordersThumb}
+        thumbCutout
+        embed
+        title="Interactive history of Romania"
+        year="2026"
+        role="concept, design, dev"
+        stack="storytelling, angular, sanity, d3-geo, node scripts, claude code"
+        href="https://interactive-learning-omega.vercel.app/"
+        summary={<>An illustrated history of how the lands of today's Romania changed, from the Dacians to 2007, <Highlight>for primary school history lessons</Highlight></>}
+        points={
+          <>
+            <li>volunteer initiative built in collaboration with primary school teachers</li>
+            <li>web based, <Highlight>interactive support for history lessons</Highlight>, in line with official curriculum (3-4 grades)</li>
+            <li>supports teaching history as narrative, adding visual structure via <Highlight>timeline and maps</Highlight> </li>
+            <li>optimized for use on <Highlight>interactive whiteboards</Highlight></li>
+            <li>interactive elements link history, stories and legends to real places pupils can still visit today</li>
+            
+
+            <li><Highlight>d3-geo</Highlight> projection over topojson map data</li>
           </>
         }
       />
