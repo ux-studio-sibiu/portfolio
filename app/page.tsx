@@ -276,6 +276,7 @@ export default function Home() {
         thumbCutout
         embed
         title="Interactive history of Romania"
+        railTitle="Interactive history"
         year="2026"
         role="concept, design, dev"
         stack="storytelling, angular, sanity, d3-geo, node scripts, claude code"

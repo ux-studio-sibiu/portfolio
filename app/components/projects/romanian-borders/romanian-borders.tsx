@@ -6,7 +6,7 @@ import "./romanian-borders.scss";
 export default function ProjectRomanianBorders() {
   return (
     <div className="nsc-project-romanian-borders">
-      <iframe src="https://interactive-learning-omega.vercel.app/" title="Romania's borders, live site" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+      <iframe src="https://interactive-learning-omega.vercel.app/" title="Romania's borders, live site" allow="fullscreen" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
     </div>
   );
 }
