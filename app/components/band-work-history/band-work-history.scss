@@ -122,7 +122,7 @@
   //
   // The flex box went with it; it existed to lay the dash out beside the text.
   .when-to {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-ink);
@@ -315,7 +315,7 @@
     // size — this band states its own only because it wants different spacing
     // and a smaller marker, not a different type.
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     line-height: 1.5;
 
     // The marker is hung out of the text block rather than set in a track of
