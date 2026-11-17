@@ -76,6 +76,9 @@ export function DataVizThumb() {
     host.addEventListener("pointerleave", away);
     host.addEventListener("focusin", look);
     host.addEventListener("focusout", away);
+    // And pointing at its name in the copy — see preview() in band-experiments.tsx.
+    host.addEventListener("thumb-preview", look);
+    host.addEventListener("thumb-preview-end", away);
     still.addEventListener("change", update);
 
     return () => {
@@ -86,6 +89,8 @@ export function DataVizThumb() {
       host.removeEventListener("pointerleave", away);
       host.removeEventListener("focusin", look);
       host.removeEventListener("focusout", away);
+      host.removeEventListener("thumb-preview", look);
+      host.removeEventListener("thumb-preview-end", away);
       still.removeEventListener("change", update);
     };
   }, []);

@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
 import { Highlight } from "@/app/components/highlight/highlight";
 import { cutoutProps, type ProjectProps } from "@/app/components/showcase-linear/project";
+import { stableHash } from "@/app/components/stable-hash/stable-hash";
 import "./band-experiments.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -116,6 +117,21 @@ const LINK_LABEL = "view details";
 // only thing that says the frame can be opened at all.
 const FRAME_LABEL = "view project";
 
+// How far the dashed ring round a link-lit frame is turned — see .frame-cell in
+// band-experiments.scss. Its own for each entry, worked out from the slug (its
+// stableHash), so the rings do not all lean the same way and each one
+// leans the same way on every load: between TILT_MIN and TILT_MAX degrees,
+// either way, never so close to flat that it reads as a mistake.
+//
+// Both 0 for now, so every ring sits square; 1 and 4 were the tilted setting.
+const TILT_MIN = 0;
+const TILT_MAX = 0;
+const tiltOf = (slug = "") => {
+  const h = stableHash(slug);
+  const size = TILT_MIN + ((h % 1000) / 1000) * (TILT_MAX - TILT_MIN);
+  return `${(h & 1 ? -size : size).toFixed(1)}deg`;
+};
+
 // `items` is every entry of the band — experiments, tools and various — in
 // page.tsx order, and that order is the order on the page: an experiment is a
 // row of its own, and a group's row (Design Tooling, Archive) appears where the
@@ -128,6 +144,7 @@ export function BandExperiments({
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
 }) {
   const tools = items.filter((child) => child.props.group === "tools");
+  const data = items.filter((child) => child.props.group === "data");
   const various = items.filter((child) => child.props.group === "various");
   const root = useRef<HTMLElement>(null);
   // Whether the pointer is over a tool's name in the copy, and where it was when
@@ -172,10 +189,39 @@ export function BandExperiments({
   // being made. The node the press started on is gone before the click can
   // land, so the name looked live and opened nothing. Called rather than
   // rendered, the same button survives the re-render.
+  //
+  // Pointing at the name also lights up its frame, as if the frame itself were
+  // pointed at: `is-linked` on the frame's .entry-thumb, which every hover style
+  // also answers to, and a `thumb-preview` event for the thumbnails that run
+  // their own motion in JS (StaticThumb). Toggled on the element directly rather
+  // than through state, so pointing at a name does not re-render the band.
+  const preview = (slug: string, on: boolean) => {
+    const thumb = root.current?.querySelector<HTMLElement>(`.frame-cell[data-slug="${slug}"] .entry-thumb`);
+    if (!thumb || thumb.classList.contains("is-linked") === on) return;
+    thumb.classList.toggle("is-linked", on);
+    thumb.dispatchEvent(new CustomEvent(on ? "thumb-preview" : "thumb-preview-end"));
+  };
+
   const toolLink = (slug: string, label: string) => {
     const item = all.find((child) => child.props.slug === slug);
     if (!item) return label;
-    return <button type="button" className="inline-link" onClick={() => onOpen(item)} {...linkHover}>{label}</button>;
+    return (
+      <button
+        type="button"
+        className="inline-link"
+        onClick={() => onOpen(item)}
+        {...linkHover}
+        onPointerEnter={(e) => { linkHover.onPointerEnter(e); if (e.pointerType === "mouse") preview(slug, true); }}
+        onPointerLeave={() => { linkHover.onPointerLeave(); preview(slug, false); }}
+        onPointerDown={() => { linkHover.onPointerDown(); preview(slug, false); }}
+        // Keyboard focus only: a mouse press focuses the button too, and would
+        // light the frame back up just as the press opens the detail.
+        onFocus={(e) => { if (e.currentTarget.matches(":focus-visible")) preview(slug, true); }}
+        onBlur={() => preview(slug, false)}
+      >
+        {label}
+      </button>
+    );
   };
 
   // Each frame slides in from under the right column. The clip that hides it on
@@ -494,7 +540,9 @@ export function BandExperiments({
             const group = child.props.group;
             if (group === "experiments") return experimentEntry(child);
             if (items.findIndex((c) => c.props.group === group) !== i) return null;
-            return group === "tools" ? toolsRow() : archiveRow();
+            if (group === "tools") return toolsRow();
+            if (group === "data") return dataRow();
+            return archiveRow();
           })}
         </ul>
       </div>
@@ -513,7 +561,7 @@ export function BandExperiments({
       <FrameRow
         key="tools"
         items={tools}
-        className="tools-entry"
+        className="feature-entry tools-entry"
         rows={Math.max(1, tools.length - 1)}
         title="Design Tooling"
         viewFeature
@@ -529,6 +577,46 @@ export function BandExperiments({
         }
         onOpen={onOpen}
       />
+    );
+  }
+
+  // Data visualization: the carbon divide is the feature against the divider,
+  // and the smaller maps stack beside it — the same shape as the tools row.
+  function dataRow() {
+    return (
+      <FrameRow
+        key="data"
+        items={data}
+        className="feature-entry data-entry"
+        // No rows prop: the data row writes its own row template, two map
+        // rows sat on the bottom edge — see .data-entry in the stylesheet.
+        title="Interactive data visualizations"
+        viewFeature
+        stack="data visualization, angular, three.js, d3.js, gsap, webgl, claude code"
+        blurb={<><Highlight><b>{toolLink("carbon-divide", "The carbon divide")}</b></Highlight> : interactive data visualization of country-level CO₂ emissions on an interactive 3d globe, built with angular, d3 and three.js</>}
+        points={
+          <>
+            <li><Highlight>three.js</Highlight>: handles the 3d globe, colors countries by relevant metrics</li>
+            <li><Highlight>d3.js</Highlight>: handles map projections, colour scales and chart geometry</li>
+            <li>gsap.js : centers selected country and palette transitions on year changes</li>
+            <li>angular: wrapper for state, ui and routing </li>
+          </>
+        }
+        onOpen={onOpen}
+      >
+        <div className="entry-text">
+          <p className="entry-blurb"><b>Maps of Romania</b> : interactive maps made with school children in mind, as <Highlight>visual support material</Highlight> for geography lessons</p>
+
+          <ul className="entry-tech-stack">
+            {["javascript", "canvas 2d", "svg", "geodata", "claude code"].map((tech) => <li className="pill" key={tech}>{tech}</li>)}
+          </ul>
+
+          <ul className="entry-points">
+            <li>{toolLink("romanian-rivers", "Romania's Rivers")}</li>
+            <li>{toolLink("romanian-power-grid", "Romania's Power Grid")}</li>
+          </ul>
+        </div>
+      </FrameRow>
     );
   }
 
@@ -583,6 +671,7 @@ function FrameRow({
   rows,
   viewFeature,
   onOpen,
+  children,
 }: {
   items: React.ReactElement<ProjectProps>[];
   className: string;
@@ -597,6 +686,10 @@ function FrameRow({
   // has no one frame that stands for the set.
   viewFeature?: boolean;
   onOpen: (item: React.ReactElement<ProjectProps>) => void;
+  // More copy after the first block and its button, for a row whose frames
+  // are more than one piece of work. Written with the same classes, so a second
+  // block reads as the same kind of entry as the first.
+  children?: React.ReactNode;
 }) {
   // Which frame the pointer is over, if any. These are frames without captions —
   // the row has one block of copy for the whole set — so this is where each one
@@ -622,6 +715,9 @@ function FrameRow({
             <li
               className={`frame-cell${item.props.className ? ` ${item.props.className}` : ""}`}
               key={item.props.title}
+              // What a name in the copy finds its frame by — see preview().
+              data-slug={item.props.slug}
+              style={{ "--ring-tilt": tiltOf(item.props.slug) } as React.CSSProperties}
               data-preload={item.props.href}
               // Mouse only: on a touch screen the card would come up under the
               // finger that just tapped the frame open.
@@ -636,7 +732,7 @@ function FrameRow({
               // take the card down.
               onPointerDown={() => setHovered(null)}
             >
-              <button type="button" className={`entry-thumb${cutoutProps(item.props).className}`} style={cutoutProps(item.props).style} onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
+              <button type="button" className={`entry-thumb${item.props.thumbNode || item.props.thumb || item.props.href ? "" : " is-empty"}${cutoutProps(item.props).className}`} style={cutoutProps(item.props).style} onClick={() => onOpen(item)} aria-label={`Open ${item.props.title}`}>
                 {item.props.thumbNode
                   ?? (item.props.thumb
                     ? <Image src={item.props.thumb} alt="" sizes="(min-width: 768px) 20vw, 50vw" placeholder="blur" className="frame-img" />
@@ -677,9 +773,11 @@ function FrameRow({
             same control as every other View on the page. */}
         {viewFeature && (
           <button type="button" className="view-more-button" onClick={() => onOpen(items[0])}>
-            View {items[0].props.title} <span className="row-arrow" aria-hidden="true">&rarr;</span>
+            {items[0].props.viewLabel ?? `View ${items[0].props.title}`} <span className="row-arrow" aria-hidden="true">&rarr;</span>
           </button>
         )}
+
+        {children}
       </div>
     </li>
   );

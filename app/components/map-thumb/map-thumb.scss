@@ -1,0 +1,140 @@
+// The two Romania map thumbnails — see map-thumb.tsx. They fill the frame
+// they are dropped in; the frame's own grey-until-hover filter does the rest.
+
+// How far the river pulses have moved, in gaps: 0 to -1 per loop. Registered
+// so it can be animated, and inherited, so the one animation on the pulses'
+// group reaches every river path inside it — each adds it to its own offset
+// (see the generated rivers-map.tsx).
+@property --pulse-t {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.nsc-map-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0b1a;
+
+  .ground,
+  svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .ground {
+    object-fit: cover;
+  }
+
+  .river,
+  .line,
+  .flow,
+  .pulse {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // Overlapping light adds up, as it does in the live maps ("lighter"): where
+  // rivers meet, or lines run side by side, they brighten instead of covering
+  // each other.
+  .river,
+  .line,
+  .plants,
+  .flow,
+  .pulse {
+    mix-blend-mode: plus-lighter;
+  }
+
+  // The moving parts, hidden until the frame is pointed at, and faded in
+  // rather than switched on — the live map brings its water in the same way.
+  .flow,
+  .pulses {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  // The rivers' water comes in almost at once: at thumbnail size a slow fade
+  // read as the hover not having registered.
+  .pulses {
+    transition-duration: 0.15s;
+  }
+
+  // The power grid's flow: <use>s of the line paths, dashed, the dashes running
+  // along them — a glow in the line's own colour (set on it by the generator)
+  // under a white bead. Spaced well apart, so beads this size stay separate.
+  &.power-grid .flow {
+    stroke-dasharray: 3 25;
+  }
+
+  &.power-grid .flow:not(.flow-glow) {
+    stroke: #fff;
+  }
+}
+
+// Pointed at or focused: the frame colours in (globals) and the map moves.
+.entry-thumb:is(:hover, :focus-visible, .is-linked) .nsc-map-thumb {
+  // The rivers' water: round pulses, a gap apart, moving downstream. The
+  // duration is the live map's pace, written inline by the generator.
+  .pulses {
+    opacity: 1;
+    animation: map-thumb-water linear infinite;
+  }
+
+  .flow {
+    opacity: 0.95;
+    animation: map-thumb-flow 1.8s linear infinite;
+  }
+
+  .flow-glow {
+    opacity: 0.55;
+  }
+
+  // The plants breathe, each source on its own beat, so the field shimmers
+  // rather than blinking as one. Deep enough to see at thumbnail size.
+  .plants {
+    animation: map-thumb-pulse 1.8s ease-in-out infinite;
+  }
+
+  .plants.wind { animation-delay: -0.3s; }
+  .plants.hydro { animation-delay: -0.6s; }
+  .plants.gas { animation-delay: -0.9s; }
+  .plants.coal { animation-delay: -1.2s; }
+  .plants.nuclear { animation-delay: -1.5s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-thumb:is(:hover, :focus-visible, .is-linked) .nsc-map-thumb {
+    .flow,
+    .pulses,
+    .plants {
+      animation: none;
+    }
+
+    .flow,
+    .pulses {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes map-thumb-water {
+  to { --pulse-t: -1; }
+}
+
+// One dash pattern's length (dash + gap: 3 + 25) per loop, so it repeats
+// seamlessly. Negative: the pattern moves toward the END of each path.
+@keyframes map-thumb-flow {
+  to { stroke-dashoffset: -28; }
+}
+
+@keyframes map-thumb-pulse {
+  50% { opacity: 0.35; }
+}

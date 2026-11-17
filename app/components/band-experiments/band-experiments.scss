@@ -174,6 +174,37 @@
   .frame-cell {
     display: flex;
     min-width: 0;
+
+    // A frame lit from its name in the copy is usually not where the eye is, so
+    // it also gets a heavy dashed ring to be found by, a little askew — drawn
+    // here on the cell, as the frame's own ::before and ::after are taken (the
+    // hatch shadow, the hatch at rest), and because an outline cannot turn on
+    // its own. It sits well outside the box, so the cell is lifted too, or the
+    // frames painted after it would cover it; each cell is a layer of its own
+    // (the arrival moves it), so it is the cell that goes up.
+    &:has(.is-linked) {
+      position: relative;
+      z-index: 5;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: -28px;
+        border: 8px dashed var(--color-ink);
+        // Each entry's own lean, written on the cell by tiltOf() in
+        // band-experiments.tsx.
+        transform: rotate(var(--ring-tilt, 0deg));
+        // A 3px white halo round every dash, so the ring still reads where it
+        // crosses a frame — four hard shadows, each on the last, the same
+        // stroke the cut-out thumbnails get (see globals).
+        filter:
+          drop-shadow(3px 0 0 #fff)
+          drop-shadow(-3px 0 0 #fff)
+          drop-shadow(0 3px 0 #fff)
+          drop-shadow(0 -3px 0 #fff);
+        pointer-events: none;
+      }
+    }
   }
 
   // The title printed on a frame that has nothing recognisable in it — a texture,
@@ -235,26 +266,41 @@
     }
   }
 
-  // The Tools row: the FIRST tool takes the wide column and the full height of
-  // the row, and the rest stack in the narrow one beside it. Which tool is the
-  // big one is therefore document order — reorder them in page.tsx to change it.
+  // A feature row (Design Tooling, Interactive data visualization): the FIRST
+  // entry takes the wide column and the full height of the row, and the rest
+  // stack in the narrow one beside it. Which one is the big one is therefore
+  // document order — reorder them in page.tsx to change it. What differs per row
+  // — the feature's proportion, and how fast the group arrives — is set on the
+  // row's own class below.
   //
   // The row count is written inline by the component, because only it knows how
-  // many tools there are, and `grid-row: 1 / -1` needs the rows to be explicit
+  // many entries there are, and `grid-row: 1 / -1` needs the rows to be explicit
   // for -1 to mean anything.
-  .tools-entry {
+  .tools-entry .frame-grid,
+  .data-entry .frame-grid {
+    // Tighter arrival than the shared defaults in band-experiments.tsx (5, 10, 4):
+    // the stack sets off 3% of the screen apart instead of 5, and the feature
+    // follows the last of it by 1% instead of 4 — one group arriving, not a queue.
+    // Read by schedule() there; the Archive keeps the defaults.
+    --arrive-delay: 3;
+    --arrive-last-delay: 5;
+    --arrive-clear: 1;
+  }
+
+  // The feature takes the proportion of its picture - randomize-studio-2.jpg
+  // is 953 x 762 - rather than being cut square. Change the picture, change
+  // this number.
+  .tools-entry .frame-grid {
+    --feature-ratio: calc(953 / 762);
+  }
+
+  // The globe frame, 400 x 319 like data-viz-thumb.png.
+  .data-entry .frame-grid {
+    --feature-ratio: calc(400 / 319);
+  }
+
+  .feature-entry {
     .frame-grid {
-      // Tighter arrival than the shared defaults in band-experiments.tsx (5, 10, 4):
-      // the stack sets off 3% of the screen apart instead of 5, and the feature
-      // follows the last of it by 1% instead of 4 — one group arriving, not a queue.
-      // Read by schedule() there; the Archive keeps the defaults.
-      --arrive-delay: 3;
-      --arrive-last-delay: 5;
-      --arrive-clear: 1;
-      // The feature takes the proportion of its picture - randomize-studio-2.jpg
-      // is 953 x 762 - rather than being cut square. Change the picture, change
-      // these two numbers.
-      --feature-ratio: calc(953 / 762);
       // A stack frame's width over its row height: 150 across a 106px row, the
       // shape the three had when the feature was square. Kept, so they are the
       // same frames, only smaller.
@@ -322,6 +368,41 @@
       // which is 1fr of whatever the feature leaves, and a frame clips to it
       // instead of overrunning it.
       width: min(calc(var(--tool-row) * var(--stack-ratio)), 100%);
+    }
+  }
+
+  // The data row: the globe across the full height, and the two maps sat on
+  // its bottom edge, one above the other, with the space above them left open.
+  //
+  // Sized as if the stack were three rows (--tool-rows' fallback of 3): its
+  // base is set smaller than the tools' — after the shared block, which sets
+  // one of its own — so the globe keeps the size it had as a single frame,
+  // worked through the --tool-row equation above to a 75px row at wide and a
+  // globe of about 320 x 255. The maps are then 15% larger than that row
+  // (--map-row, about 122 x 86), both the same size, and the open row on top
+  // takes whatever height is left. Phones size off the column (below).
+  .data-entry {
+    .frame-grid {
+      --tool-base: clamp(3.8rem, 5.9vw, 5.9rem);
+      @include respond-to("wide") {
+        --tool-base: 89.4px;
+      }
+      --map-row: calc(var(--tool-row) * 1.15);
+
+      height: calc(var(--tool-row) * 3 + 2 * var(--frame-gap));
+      grid-template-rows: 1fr var(--map-row) var(--map-row);
+    }
+
+    .frame-cell:not(:first-child) {
+      width: min(calc(var(--map-row) * var(--stack-ratio)), 100%);
+    }
+
+    .frame-cell:nth-child(2) {
+      grid-row: 2;
+    }
+
+    .frame-cell:nth-child(3) {
+      grid-row: 3;
     }
   }
 
@@ -450,14 +531,16 @@
       }
 
       &:hover::after,
-      &:focus-visible::after {
+      &:focus-visible::after,
+      &.is-linked::after {
         opacity: 0.45;
         animation: archive-static 0.25s steps(1, end) infinite;
       }
 
       @media (prefers-reduced-motion: reduce) {
         &:hover::after,
-        &:focus-visible::after {
+        &:focus-visible::after,
+        &.is-linked::after {
           animation: none;
         }
       }
@@ -494,6 +577,14 @@
   .entry-text {
     width: 100%;
     max-width: 38rem;
+  }
+
+  // The maps block ends the data row with no View button under it, so it takes
+  // the room that button and its margins would have left, and the next row does
+  // not crowd up against it. That row only: the Archive also ends on copy, but
+  // it is the band's last row and has its own space after it.
+  .data-entry .entry-text:last-child {
+    padding-bottom: 7rem;
   }
 
   // Shared with the projects band — see the mixin in app/styles/_devices.scss.
@@ -544,14 +635,15 @@
   // in the corner. Here they are measured off the column itself instead: the
   // media column becomes a size container, and 100cqw is its content width.
   @include respond-to-max("tablet") {
-    .tools-entry .entry-visual,
+    .feature-entry .entry-visual,
     .various-entry .entry-visual {
       container-type: inline-size;
     }
 
     // The same equation the --tool-row note above sets up, solved the other way:
     // the block's old width, (N + a) x base + N x g, set to the full column.
-    .tools-entry .frame-grid {
+    .feature-entry .frame-grid,
+    .data-entry .frame-grid {
       --tool-base: calc(
         (100cqw - var(--tool-rows, 3) * var(--frame-gap)) / (var(--tool-rows, 3) + var(--stack-ratio))
       );

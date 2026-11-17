@@ -19,6 +19,8 @@ import { FluidThumb } from "@/app/components/fluid-thumb/fluid-thumb";
 import { LightStudyThumb } from "@/app/components/light-study-thumb/light-study-thumb";
 import { MotionThumb } from "@/app/components/motion-thumb/motion-thumb";
 import { DataVizThumb } from "@/app/components/data-viz-thumb/data-viz-thumb";
+// The two Romania maps are drawn, not photographed — see map-thumb.tsx.
+import { RiversThumb, PowerGridThumb } from "@/app/components/map-thumb/map-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -152,26 +154,42 @@ export default function Home() {
         }
       />
 
+      {/* First in the data group, so it is the feature: the globe against the
+          divider, with the maps after it stacked beside it. The row's copy is
+          dataRow() in band-experiments.tsx. */}
       <LinearProject
-        group="experiments"
+        group="data"
         embed
         slug="carbon-divide"
         thumbNode={<DataVizThumb />}
         href="https://data-viz-phi.vercel.app/"
-        title="Interactive data visualization"
-        railTitle="The carbon divide"
+        title="The carbon divide"
         year="2026"
-        role=""
-        stack="data visualization, angular, three.js, d3.js, gsap, webgl, claude code"
-        summary={<><Highlight>The carbon divide</Highlight> : interactive data visualization of country-level CO₂ emissions on an interactive 3d globe, built with angular, d3 and three.js</>}
-        points={
-          <>
-            <li><Highlight>three.js</Highlight>: handles the 3d globe, colors countries by relevant metrics</li>
-            <li><Highlight>d3.js</Highlight>: handles map projections, colour scales and chart geometry</li>
-            <li>gsap.js : centers selected country and palette transitions on year changes</li>
-            <li>angular: wrapper for state, ui and routing </li>
-          </>
-        }
+        role="click to view"
+        summary={<>Interactive data visualization of country-level CO₂ emissions on an interactive 3d globe, built with angular, d3 and three.js</>}
+      />
+
+      {/* No href: the live pages open from the detail (see registry.ts). */}
+      <LinearProject
+        group="data"
+        embed
+        slug="romanian-rivers"
+        thumbNode={<RiversThumb />}
+        title="Romania's Rivers"
+        year="2026"
+        role="click to view"
+        summary={<>Rivers, river basins, cities and roads across Romania</>}
+      />
+
+      <LinearProject
+        group="data"
+        embed
+        slug="romanian-power-grid"
+        thumbNode={<PowerGridThumb />}
+        title="Romania's Power Grid"
+        year="2026"
+        role="click to view"
+        summary={<>Power plants by source, the 400 and 220 kV lines and the flow between them</>}
       />
 
       <LinearProject

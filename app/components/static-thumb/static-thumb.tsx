@@ -109,6 +109,10 @@ export function StaticThumb() {
     // tabbed to.
     host.addEventListener("focusin", start);
     host.addEventListener("focusout", onLeave);
+    // And pointing at the tool's name in the copy, which lights the frame up
+    // from there — see preview() in band-experiments.tsx.
+    host.addEventListener("thumb-preview", start);
+    host.addEventListener("thumb-preview-end", onLeave);
 
     still.addEventListener("change", () => { stop(); draw(); });
 
@@ -119,6 +123,8 @@ export function StaticThumb() {
       host.removeEventListener("pointerleave", onLeave);
       host.removeEventListener("focusin", start);
       host.removeEventListener("focusout", onLeave);
+      host.removeEventListener("thumb-preview", start);
+      host.removeEventListener("thumb-preview-end", onLeave);
     };
   }, []);
 

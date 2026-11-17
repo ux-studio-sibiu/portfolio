@@ -575,9 +575,11 @@ a {
     aspect-ratio: 4 / 3;
   }
 
-  // Keyboard gets the same thing the pointer does.
+  // Keyboard gets the same thing the pointer does, and so does pointing at the
+  // frame's name in the copy (.is-linked, set by the experiments band).
   &:hover,
-  &:focus-visible {
+  &:focus-visible,
+  &.is-linked {
     background-color: var(--color-ink);
     background-image: none;
     filter: grayscale(0);
@@ -600,7 +602,8 @@ a {
     background: none;
 
     &:hover,
-    &:focus-visible {
+    &:focus-visible,
+    &.is-linked {
       background: none;
     }
 
