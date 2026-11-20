@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -112,6 +112,9 @@ const GROUP_START_MAX = 98;
 // card is deliberately just the label: the sentence around the name is already
 // the description, which is what a frame's card has to supply and this does not.
 const LINK_LABEL = "view details";
+
+// How long the pointer rests on a tool's name before its frame lights up.
+const INTENT = 250;
 // What a project frame promises, as against a tool's name in a sentence. The
 // rows built from single entries have no copy naming them, so the card is the
 // only thing that says the frame can be opened at all.
@@ -193,9 +196,20 @@ export function BandExperiments({
   // Pointing at the name also lights up its frame, as if the frame itself were
   // pointed at: `is-linked` on the frame's .entry-thumb, which every hover style
   // also answers to, and a `thumb-preview` event for the thumbnails that run
-  // their own motion in JS (StaticThumb). Toggled on the element directly rather
-  // than through state, so pointing at a name does not re-render the band.
+  // their own motion in JS (see watchLook in thumb-look.ts). Toggled on the
+  // element directly rather than through state, so pointing at a name does not
+  // re-render the band.
+  //
+  // The pointer lights it only after a short hover intent (INTENT ms resting on
+  // the name), so sweeping across the list on the way elsewhere does not flash
+  // every frame. Keyboard focus lights it at once.
+  const intent = useRef<number | null>(null);
+  // A wait still pending when the band goes away is dropped with it.
+  useEffect(() => () => { if (intent.current !== null) window.clearTimeout(intent.current); }, []);
+  const cancelIntent = () => { if (intent.current !== null) { window.clearTimeout(intent.current); intent.current = null; } };
+  const previewSoon = (slug: string) => { cancelIntent(); intent.current = window.setTimeout(() => { intent.current = null; preview(slug, true); }, INTENT); };
   const preview = (slug: string, on: boolean) => {
+    if (!on) cancelIntent();
     const thumb = root.current?.querySelector<HTMLElement>(`.frame-cell[data-slug="${slug}"] .entry-thumb`);
     if (!thumb || thumb.classList.contains("is-linked") === on) return;
     thumb.classList.toggle("is-linked", on);
@@ -211,7 +225,7 @@ export function BandExperiments({
         className="inline-link"
         onClick={() => onOpen(item)}
         {...linkHover}
-        onPointerEnter={(e) => { linkHover.onPointerEnter(e); if (e.pointerType === "mouse") preview(slug, true); }}
+        onPointerEnter={(e) => { linkHover.onPointerEnter(e); if (e.pointerType === "mouse") previewSoon(slug); }}
         onPointerLeave={() => { linkHover.onPointerLeave(); preview(slug, false); }}
         onPointerDown={() => { linkHover.onPointerDown(); preview(slug, false); }}
         // Keyboard focus only: a mouse press focuses the button too, and would
@@ -276,6 +290,14 @@ export function BandExperiments({
         };
 
         const alone = frames.length === 1;
+
+        // A lone frame arrives over ARRIVE_FROM to ARRIVE_TO, unless its row says
+        // otherwise with --arrive-from / --arrive-to (row-top percentages, set in
+        // band-experiments.scss). Read at each refresh, like everything here.
+        const rowSetting = (name: string, fallback: number) => {
+          const v = parseFloat(getComputedStyle(row).getPropertyValue(name));
+          return Number.isFinite(v) ? v : fallback;
+        };
 
         // Alone, a frame crosses the whole window. In company they share it, one
         // after another with no overlap, on two rules:
@@ -458,8 +480,8 @@ export function BandExperiments({
               scrollTrigger: {
                 trigger: row,
                 scroller,
-                start: () => `top ${alone ? ARRIVE_FROM : spansNow()[i].from}%`,
-                end: () => `top ${alone ? ARRIVE_TO : spansNow()[i].to}%`,
+                start: () => `top ${alone ? rowSetting("--arrive-from", ARRIVE_FROM) : spansNow()[i].from}%`,
+                end: () => `top ${alone ? rowSetting("--arrive-to", ARRIVE_TO) : spansNow()[i].to}%`,
                 scrub: true,
                 // Thumbnails are pictures and the column is fluid, so the
                 // distance is only right until something reflows.

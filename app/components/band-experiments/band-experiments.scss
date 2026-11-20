@@ -67,6 +67,32 @@
     }
   }
 
+  // A frame with no frame: no border, no hatched shadow, no plate behind it, so
+  // a picture already on white (the particles portrait) sits straight on the
+  // page. Set per entry with className="plain-thumb" in page.tsx.
+  .scroll-entry-secondary.plain-thumb > .entry-visual > .entry-thumb {
+    border: 0;
+    background: none;
+
+    &::before {
+      content: none;
+    }
+
+    &:hover,
+    &:focus-visible,
+    &.is-linked {
+      background: none;
+    }
+  }
+
+  // Interactive particles arrives later than the other single frames: start and
+  // end both 25% of the screen further up than the shared 110 / 50 in
+  // band-experiments.tsx, so it keeps their pace and just comes in later.
+  .scroll-entry-secondary.particles-entry {
+    --arrive-from: 85;
+    --arrive-to: 25;
+  }
+
   // "Light this scene with your phone": a frame 16% under the default 320px,
   // shown exactly as it is at rest. Every other frame waits greyscale for the
   // pointer; this one is already a drawing, so it gets no filter at all.

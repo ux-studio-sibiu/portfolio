@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import globe from "@/app/assets/projects/data-viz-thumb.png";
+import { watchLook } from "@/app/components/thumb-look/thumb-look";
 import "./data-viz-thumb.scss";
 
 // "The carbon divide" thumbnail: the globe cut out (a transparent PNG) over a
@@ -51,7 +52,6 @@ export function DataVizThumb() {
     };
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const host = el.closest<HTMLElement>(".entry-thumb") ?? el;
     let timer: number | null = null, onScreen = false, looking = false;
 
     // One place decides: running only when on screen, not looked at, and motion is welcome
@@ -71,26 +71,14 @@ export function DataVizThumb() {
 
     const look = () => { looking = true; update(); };
     const away = () => { looking = false; update(); };
-    const onEnter = (e: PointerEvent) => { if (e.pointerType === "mouse") look(); };
-    host.addEventListener("pointerenter", onEnter);
-    host.addEventListener("pointerleave", away);
-    host.addEventListener("focusin", look);
-    host.addEventListener("focusout", away);
-    // And pointing at its name in the copy — see preview() in band-experiments.tsx.
-    host.addEventListener("thumb-preview", look);
-    host.addEventListener("thumb-preview-end", away);
+    const unwatch = watchLook(el, look, away);
     still.addEventListener("change", update);
 
     return () => {
       if (timer !== null) window.clearInterval(timer);
       ro.disconnect();
       io.disconnect();
-      host.removeEventListener("pointerenter", onEnter);
-      host.removeEventListener("pointerleave", away);
-      host.removeEventListener("focusin", look);
-      host.removeEventListener("focusout", away);
-      host.removeEventListener("thumb-preview", look);
-      host.removeEventListener("thumb-preview-end", away);
+      unwatch();
       still.removeEventListener("change", update);
     };
   }, []);

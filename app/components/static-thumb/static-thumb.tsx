@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { watchLook } from "@/app/components/thumb-look/thumb-look";
 import "./static-thumb.scss";
 
 // Static background's thumbnail: the experiment itself, drawn rather than
@@ -92,39 +93,16 @@ export function StaticThumb() {
     const ro = new ResizeObserver(() => { resize(); draw(); });
     ro.observe(el);
 
-    // The button around it is what is hovered, exactly as with every other frame
-    // in this row — the canvas is only the picture inside it. Listening here
-    // rather than on the canvas also means the whole frame is the target,
-    // including whatever padding the button carries.
-    const host = el.closest<HTMLElement>(".entry-thumb") ?? el;
-
-    // Mouse only, like the cards on the other frames: a touch screen has no
-    // hover, and a tap is opening the thing rather than asking to look at it.
-    const onEnter = (e: PointerEvent) => { if (e.pointerType === "mouse") start(); };
-    const onLeave = () => { stop(); draw(); };
-
-    host.addEventListener("pointerenter", onEnter);
-    host.addEventListener("pointerleave", onLeave);
-    // And the keyboard gets the same, since the frame is a button and can be
-    // tabbed to.
-    host.addEventListener("focusin", start);
-    host.addEventListener("focusout", onLeave);
-    // And pointing at the tool's name in the copy, which lights the frame up
-    // from there — see preview() in band-experiments.tsx.
-    host.addEventListener("thumb-preview", start);
-    host.addEventListener("thumb-preview-end", onLeave);
-
-    still.addEventListener("change", () => { stop(); draw(); });
+    // Grain while looked at — see watchLook; a still frame again after.
+    const rest = () => { stop(); draw(); };
+    const unwatch = watchLook(el, start, rest);
+    still.addEventListener("change", rest);
 
     return () => {
       stop();
       ro.disconnect();
-      host.removeEventListener("pointerenter", onEnter);
-      host.removeEventListener("pointerleave", onLeave);
-      host.removeEventListener("focusin", start);
-      host.removeEventListener("focusout", onLeave);
-      host.removeEventListener("thumb-preview", start);
-      host.removeEventListener("thumb-preview-end", onLeave);
+      unwatch();
+      still.removeEventListener("change", rest);
     };
   }, []);
 

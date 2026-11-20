@@ -21,6 +21,7 @@ import { MotionThumb } from "@/app/components/motion-thumb/motion-thumb";
 import { DataVizThumb } from "@/app/components/data-viz-thumb/data-viz-thumb";
 // The two Romania maps are drawn, not photographed — see map-thumb.tsx.
 import { RiversThumb, PowerGridThumb } from "@/app/components/map-thumb/map-thumb";
+import { ParticlesThumb } from "@/app/components/particles-thumb/particles-thumb";
 
 // `slug` selects the detail component in ShowcaseLinear's DETAILS registry.
 // Each one lives in app/components/projects/<slug>/ with its own stylesheet and
@@ -190,6 +191,30 @@ export default function Home() {
         year="2026"
         role="click to view"
         summary={<>Power plants by source, the 400 and 220 kV lines and the flow between them</>}
+      />
+
+      {/* After the data row. The thumbnail is the effect drawn on a plain canvas
+          (particles-thumb.tsx); three.js only loads with the real page, in the
+          detail. */}
+      <LinearProject
+        group="experiments"
+        embed
+        slug="interactive-particles"
+        className="plain-thumb particles-entry"
+        thumbNode={<ParticlesThumb />}
+        href="https://experiments-five-bice.vercel.app/interactive-particles/"
+        title="Particle effect"
+        viewLabel="Open playground"
+        year="2026"
+        role=""
+        stack="three.js, webgl, glsl, canvas, claude code"
+        summary="Playground to experiment and tune the effect"
+        points={
+          <>
+            <li><Highlight>use any image or text</Highlight> as source</li>
+            <li>generates a prompt for rebuilding the effect in any project</li>
+          </>
+        }
       />
 
       <LinearProject

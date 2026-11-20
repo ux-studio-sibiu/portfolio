@@ -24,6 +24,7 @@ export const DETAILS: Record<string, React.ComponentType> = {
   "carbon-divide": dynamic(() => import("./experiments/carbon-divide")),
   "romanian-rivers": dynamic(() => import("./experiments/romanian-rivers")),
   "romanian-power-grid": dynamic(() => import("./experiments/romanian-power-grid")),
+  "interactive-particles": dynamic(() => import("./experiments/interactive-particles")),
   "texture-studio": dynamic(() => import("./experiments/texture-studio")),
   "fluid-hover": dynamic(() => import("./experiments/fluid-hover")),
   "randomize-studio": dynamic(() => import("./experiments/randomize-studio")),

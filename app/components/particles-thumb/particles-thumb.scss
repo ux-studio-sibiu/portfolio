@@ -1,0 +1,20 @@
+// Interactive particles' thumbnail — see particles-thumb.tsx. Square, on the
+// page's paper white. The canvas reaches 40% past the square on every side
+// (SPILL there), so a pushed particle can fly out of the frame rather than be
+// cut at its edge; the square is still what is laid out, hovered and clicked.
+.nsc-particles-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+
+  canvas {
+    position: absolute;
+    inset: -40%;
+    display: block;
+    width: 180%;
+    height: 180%;
+    max-width: none; // the reset in globals caps images at their box; a canvas is sized here
+    // The spill is for the eye only: the pointer still meets the frame.
+    pointer-events: none;
+  }
+}
