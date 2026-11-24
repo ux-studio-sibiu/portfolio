@@ -98,6 +98,23 @@
     }
   }
 
+  // Two thumbnails at one height. The first keeps its --thumb width, the second
+  // is as wide as that height needs; where the column cannot hold both, the
+  // pair shrinks together and stays level. --pair-main / --pair-alt are each
+  // picture's width / height, set by pairStyle() in band-projects.tsx.
+  .visual-sticky.has-pair {
+    --pair-h: min(var(--thumb) / var(--pair-main), (100% - 1.75rem) / (var(--pair-main) + var(--pair-alt)));
+
+    > .entry-thumb {
+      flex-shrink: 0;
+      width: calc(var(--pair-h) * var(--pair-main));
+    }
+
+    > .alt-thumb {
+      width: calc(var(--pair-h) * var(--pair-alt));
+    }
+  }
+
   // The last entry has nothing coming after it to release the pin, so its
   // thumbnail would hold at the top of the screen through the whole gap below
   // the band. It scrolls away with its own copy instead.

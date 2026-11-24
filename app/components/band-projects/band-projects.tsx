@@ -32,6 +32,15 @@ const ARRIVE_TO = 50;
 // by exactly nothing and read as one object sliding in.
 const THUMB_CLEAR = 6;
 
+// An entry with two thumbnails sets them at one height: each picture's
+// proportion (width / height) handed to the stylesheet, which sizes both off
+// the first one's --thumb width — see .visual-sticky.has-pair there.
+const ratio = (img: { width: number; height: number }) => img.width / img.height;
+const pairStyle = ({ thumb, thumbAlt }: ProjectProps) => {
+  if (!thumb || !thumbAlt) return undefined;
+  return { "--pair-main": ratio(thumb), "--pair-alt": ratio(thumbAlt) } as React.CSSProperties;
+};
+
 // Projects. The thumbnail is the scroll device: its column is full-entry height
 // and holds a sticky box, so the image pins while its own entry scrolls and
 // releases when the next one arrives.
@@ -297,7 +306,7 @@ export function BandProjects({
         {items.map((child, idx) => (
           <article className={`scroll-entry${child.props.className ? ` ${child.props.className}` : ""}`} key={child.props.title} data-slug={child.props.slug} data-preload={child.props.href} data-section-anchor={idx === 0 ? "" : undefined}>
             <div className="entry-visual">
-              <div className="visual-sticky">
+              <div className={`visual-sticky${child.props.thumbAlt ? " has-pair" : ""}`} style={pairStyle(child.props)}>
                 {/* The image opens the project too — same target as the
                     View project button, so the obvious click works. */}
                 <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
@@ -309,8 +318,8 @@ export function BandProjects({
                     not cover. It opens the same detail — there is nothing else
                     to go to. */}
                 {child.props.thumbAlt && (
-                  <button type="button" className="entry-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
-                    <Image src={child.props.thumbAlt} alt="" sizes="(min-width: 1440px) 320px, (min-width: 768px) 30vw, 100vw" placeholder="blur" className="thumb-img" />
+                  <button type="button" className="entry-thumb alt-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
+                    <Image src={child.props.thumbAlt} alt="" sizes="(min-width: 768px) 600px, 100vw" placeholder="blur" className="thumb-img" />
                   </button>
                 )}
                 {/* <span className="visual-marker" aria-hidden="true" /> */}

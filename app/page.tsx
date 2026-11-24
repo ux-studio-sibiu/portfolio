@@ -11,6 +11,7 @@ import firstWebsiteThumb from "@/app/assets/projects/first-website.jpg";
 import textureStudioThumb from "@/app/assets/projects/texture-studio.jpg";
 import lightStudyThumb from "@/app/assets/projects/flashlight-webcam-2.jpg";
 import romanianBordersThumb from "@/app/assets/projects/romanian-borders.webp";
+import stopMotionEditorThumb from "@/app/assets/projects/stop-motion-editor.webp";
 import { Highlight } from "@/app/components/highlight/highlight";
 import { RadioThumb } from "@/app/components/radio-thumb/radio-thumb";
 import { RandomizeThumb } from "@/app/components/randomize-thumb/randomize-thumb";
@@ -313,8 +314,18 @@ export default function Home() {
       />
 
       <LinearProject
-        slug="romanian-borders"
+        slug="stop-motion"
         className="large"
+        thumb={stopMotionEditorThumb}
+        embed
+        title="Stop-Motion Studio"
+        role="concept, design, dev"
+        href="https://stop-motion.studiosibiu.com/"
+      />
+
+      <LinearProject
+        slug="romanian-borders"
+        className="wide"
         thumb={romanianBordersThumb}
         thumbCutout
         embed
