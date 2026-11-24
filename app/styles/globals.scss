@@ -561,6 +561,14 @@ a {
   // rather than snapping.
   filter: grayscale(1);
   transition: background-color 0.25s ease, filter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  // On its own layer from the start, and never off it. Otherwise the first
+  // filter transition is what promotes it (and the arrival slide, ending on a
+  // flat 2D transform, what demotes it), and the picture re-snaps to the pixel
+  // grid as it switches — a visible nudge upwards on the first hover, worst at
+  // a fractional display scale (125%, 150%). `transform` is the hint every
+  // browser honours with a layer; `filter` alone was not enough.
+  will-change: transform, filter;
+  backface-visibility: hidden;
 
   @include respond-to("tablet") {
     // One fixed measure rather than whatever the column happens to be — the

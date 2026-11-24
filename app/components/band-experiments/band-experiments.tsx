@@ -5,9 +5,9 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
+import { CursorCard, useCursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
 import { Highlight } from "@/app/components/highlight/highlight";
-import { cutoutProps, type ProjectProps } from "@/app/components/showcase-linear/project";
+import { cutoutProps, VIEW_LABEL, type ProjectProps } from "@/app/components/showcase-linear/project";
 import { stableHash } from "@/app/components/stable-hash/stable-hash";
 import "./band-experiments.scss";
 
@@ -115,10 +115,6 @@ const LINK_LABEL = "view details";
 
 // How long the pointer rests on a tool's name before its frame lights up.
 const INTENT = 250;
-// What a project frame promises, as against a tool's name in a sentence. The
-// rows built from single entries have no copy naming them, so the card is the
-// only thing that says the frame can be opened at all.
-const FRAME_LABEL = "view project";
 
 // How far the dashed ring round a link-lit frame is turned — see .frame-cell in
 // band-experiments.scss. Its own for each entry, worked out from the slug (its
@@ -153,31 +149,15 @@ export function BandExperiments({
   // Whether the pointer is over a tool's name in the copy, and where it was when
   // it arrived. One card for the band — only one name can be under the pointer,
   // and the frames' own cards are a row's business, held in FrameRow.
-  const [linked, setLinked] = useState<CursorCardItem | null>(null);
+  const card = useCursorCard();
 
   // Every entry the band was handed, in one list: a name in the copy is matched
   // back to its entry by slug, which is the only name a sentence can be expected
   // to know. Same lookup whichever row the name happens to sit in.
   const all = items;
 
-  const hoverCard = (label: string) => ({
-    // Mouse only, like the frames: on a touch screen the card would come up
-    // under the finger that just tapped the name open.
-    onPointerEnter: (e: React.PointerEvent) => {
-      if (e.pointerType === "mouse") setLinked({ title: label, x: e.clientX, y: e.clientY });
-    },
-    // Brings it back after a scroll has closed it, without having to leave the
-    // name and come back.
-    onPointerMove: (e: React.PointerEvent) => {
-      if (!linked && e.pointerType === "mouse") setLinked({ title: label, x: e.clientX, y: e.clientY });
-    },
-    onPointerLeave: () => setLinked(null),
-    // Opening the detail slides the track out from under the pointer without it
-    // ever leaving the name, so there is no pointerleave to take the card down.
-    onPointerDown: () => setLinked(null),
-  });
 
-  const linkHover = hoverCard(LINK_LABEL);
+  const linkHover = card.bind(LINK_LABEL);
 
   // A tool's name inside a sentence, opening exactly what its frame opens. A
   // button, not an anchor: it is a pane sliding over the page, not a navigation
@@ -512,7 +492,7 @@ export function BandExperiments({
             button, so the obvious click works — and its card says what the
             button says (viewLabel) when the entry sets one. With no picture
             it is a blank frame (.is-empty), the same as a project with none. */}
-        <button type="button" className={`entry-thumb${child.props.thumbNode || child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverCard(child.props.viewLabel ?? FRAME_LABEL)}>
+        <button type="button" className={`entry-thumb${child.props.thumbNode || child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...card.bind(child.props.viewLabel ?? VIEW_LABEL)}>
           {child.props.thumbNode
             ?? (child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 768px) 30vw, 100vw" placeholder="blur" className="frame-img" />)}
         </button>
@@ -571,7 +551,7 @@ export function BandExperiments({
 
       {/* Portalled to <body> from in here, the same as a row's own — it has to
           outlive this subtree's clipping and stacking. */}
-      <CursorCard item={linked} onDismiss={() => setLinked(null)} />
+      <CursorCard item={card.item} onDismiss={card.dismiss} />
     </section>
   );
 

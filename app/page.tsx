@@ -319,8 +319,26 @@ export default function Home() {
         thumb={stopMotionEditorThumb}
         embed
         title="Stop-Motion Studio"
-        role="concept, design, dev"
+        year="2026"
+        role="concept, ux, design, testing, dev"
+        stack="next.js, react, zustand, dexie (indexeddb), canvas 2d, design system, vitest, playwright, claude code, web-worker"
         href="https://stop-motion.studiosibiu.com/"
+        viewLabel="View Studio"
+        summary={<>a stop-motion studio <Highlight>made for children</Highlight>, cut from cardboard like the sets they build</>}
+        points={
+          <>
+            <li>stop-motion studio I use for <Highlight>kids workshops</Highlight>, with intuitive UI and a cardboard-craft visual language</li>
+            <li><Highlight>concept:</Highlight> simple, entirely web-based, no download, no account, no server storage, no ads, works offline, full control to refine</li>
+            <li>allows <Highlight>manual drawing</Highlight> over photos, onion skinning, <Highlight>undo-redo</Highlight>, adding text, sound effects and music, persistent settings, multiple projects</li>
+            <li>works well with external webcam and  wireless presenter setup, focused on laptop use, proper touch device support is on the roadmap</li>
+            <li>uses browser storage via <Highlight>dexie (indexeddb)</Highlight>, projects can be downloaded as .zip to continue projects on other devices, exports .mp4 and .gif </li>
+            <li><Highlight>4-layer architecture</Highlight> : react ui, zustand store, a plain-typescript core (model, commands, renderer) and adapters for storage, camera and encoding; lint keeps the <Highlight>core framework-free</Highlight></li>
+            <li>testing: <Highlight>vitest + playwright</Highlight>, design system <Highlight><a href="https://stop-motion.studiosibiu.com/design" target="_blank" rel="noreferrer">here</a></Highlight> </li>
+            <li><Highlight>measured performance</Highlight>: 2000 pictures open in  ~1s and scroll at 60fps</li>
+            
+            
+          </>
+        }
       />
 
       <LinearProject

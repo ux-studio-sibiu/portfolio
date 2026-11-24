@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./cursor-card.scss";
 
@@ -19,6 +19,32 @@ export type CursorCardItem = {
   x: number;
   y: number;
 };
+
+// The state behind one <CursorCard>, and the handlers that open it. `bind(title)`
+// is spread onto whatever the card describes; `item` and `dismiss` go to the
+// card. One per band: only one thing can be under the pointer at a time.
+export function useCursorCard() {
+  const [item, setItem] = useState<CursorCardItem | null>(null);
+  const dismiss = () => setItem(null);
+  const bind = (title: string) => ({
+    // Mouse only: on a touch screen the card would come up under the finger
+    // that just tapped the thing open.
+    onPointerEnter: (e: React.PointerEvent) => {
+      if (e.pointerType === "mouse") setItem({ title, x: e.clientX, y: e.clientY });
+    },
+    // Brings it back after a scroll has closed it, which is otherwise impossible
+    // without leaving and coming back: the pointer is already inside, so there
+    // is no second enter to wait for.
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!item && e.pointerType === "mouse") setItem({ title, x: e.clientX, y: e.clientY });
+    },
+    onPointerLeave: dismiss,
+    // Opening the detail slides the track out from under the pointer without it
+    // ever leaving, so there is no pointerleave to take the card down.
+    onPointerDown: dismiss,
+  });
+  return { item, dismiss, bind };
+}
 
 // A panel that appears at the pointer and follows it until it leaves whatever
 // opened it. `item` is the whole of its state: something to say means it is up,

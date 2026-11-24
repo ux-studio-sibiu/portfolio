@@ -1,5 +1,11 @@
 import type { StaticImageData } from "next/image";
 
+// What opening an entry is called when it does not say otherwise (viewLabel) —
+// on a project's button, and on the card at the pointer over any thumbnail.
+// One wording for both bands, so a frame never promises something its button
+// calls by another name.
+export const VIEW_LABEL = "View project";
+
 export type ProjectProps = {
   title: string;
   // A shorter title for the vertical sidebar in the detail pane, for a title
@@ -40,8 +46,8 @@ export type ProjectProps = {
   // Embeds fill the detail pane edge to edge; everything else gets padding.
   embed?: boolean;
   href?: string;
-  // Replaces the wording on the entry's button: "View project" on a project,
-  // "View" on an experiment.
+  // Replaces the wording on the entry's button and on the card its thumbnail
+  // shows at the pointer: VIEW_LABEL on a project, "View" on an experiment.
   viewLabel?: string;
   // Which band this belongs to. Everything is one list with one detail pane
   // behind it — the groups differ in how an entry is laid out, not in what

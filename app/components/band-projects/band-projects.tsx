@@ -1,21 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { CursorCard, type CursorCardItem } from "@/app/components/cursor-card/cursor-card";
+import { CursorCard, useCursorCard } from "@/app/components/cursor-card/cursor-card";
 import { Highlight } from "@/app/components/highlight/highlight";
-import { cutoutProps, type ProjectProps } from "@/app/components/showcase-linear/project";
+import { cutoutProps, VIEW_LABEL, type ProjectProps } from "@/app/components/showcase-linear/project";
 import "./band-projects.scss";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
-
-// What the thumbnail does, said once. The button below the copy is written from
-// the same constant, so the card at the pointer and the control at the foot of
-// the entry cannot end up promising different things.
-const VIEW_LABEL = "View project";
 
 // Where a thumbnail starts and finishes arriving, as positions of its ENTRY
 // against the scroller: from its top near the bottom of the screen to its top a
@@ -268,28 +263,11 @@ export function BandProjects({
   // A thumbnail here is a button with no words on it, which is the same problem
   // the experiments frames have — so it gets the same answer, the card that
   // follows the pointer. What it says is what pressing it does.
-  const [hovered, setHovered] = useState<CursorCardItem | null>(null);
+  //
+  // bind() is spread onto every thumbnail, with the label the entry's button
+  // carries — the photography entry has two thumbnails.
+  const card = useCursorCard();
 
-  // Spread onto every thumbnail. Written once because the photography entry has
-  // two of them and a second copy is a second thing to keep in step.
-  const hoverProps = {
-    // Mouse only: on a touch screen the card would come up under the finger
-    // that just tapped the thumbnail open.
-    onPointerEnter: (e: React.PointerEvent) => {
-      if (e.pointerType === "mouse") setHovered({ title: VIEW_LABEL, x: e.clientX, y: e.clientY });
-    },
-    // Brings it back after a scroll has closed it, which is otherwise impossible
-    // without leaving the thumbnail and coming back: the pointer is already
-    // inside, so there is no second enter to wait for.
-    onPointerMove: (e: React.PointerEvent) => {
-      if (!hovered && e.pointerType === "mouse") setHovered({ title: VIEW_LABEL, x: e.clientX, y: e.clientY });
-    },
-    onPointerLeave: () => setHovered(null),
-    // Opening the detail slides the track out from under the pointer without it
-    // ever leaving the thumbnail, so there is no pointerleave to take the card
-    // down.
-    onPointerDown: () => setHovered(null),
-  };
 
   // `data-identity-handover` is what makes the cover in the fixed column fade
   // out as THIS band arrives rather than as the first band does — the bands
@@ -309,7 +287,7 @@ export function BandProjects({
               <div className={`visual-sticky${child.props.thumbAlt ? " has-pair" : ""}`} style={pairStyle(child.props)}>
                 {/* The image opens the project too — same target as the
                     View project button, so the obvious click works. */}
-                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
+                <button type="button" className={`entry-thumb${child.props.thumb ? "" : " is-empty"}${cutoutProps(child.props).className}`} style={cutoutProps(child.props).style} onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...card.bind(child.props.viewLabel ?? VIEW_LABEL)}>
                   {child.props.thumb && <Image src={child.props.thumb} alt="" sizes="(min-width: 1440px) 420px, (min-width: 768px) 30vw, 100vw" placeholder="blur" className="thumb-img" />}
                   {/* <span className="thumb-index">{num(idx)}</span> */}
                 </button>
@@ -318,7 +296,7 @@ export function BandProjects({
                     not cover. It opens the same detail — there is nothing else
                     to go to. */}
                 {child.props.thumbAlt && (
-                  <button type="button" className="entry-thumb alt-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...hoverProps}>
+                  <button type="button" className="entry-thumb alt-thumb" onClick={() => onOpen(child)} aria-label={`Open ${child.props.title}`} {...card.bind(child.props.viewLabel ?? VIEW_LABEL)}>
                     <Image src={child.props.thumbAlt} alt="" sizes="(min-width: 768px) 600px, 100vw" placeholder="blur" className="thumb-img" />
                   </button>
                 )}
@@ -364,7 +342,7 @@ export function BandProjects({
           to leave this subtree: the media column is clipped at the divider —
           see .entry-visual in band-projects.scss — and a card drawn inside that
           column would be cut off on the same line. */}
-      <CursorCard item={hovered} onDismiss={() => setHovered(null)} />
+      <CursorCard item={card.item} onDismiss={card.dismiss} />
     </section>
   );
 }
